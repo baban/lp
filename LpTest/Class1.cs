@@ -16,10 +16,13 @@ namespace Lp
         public void test()
         {
             Assert.AreEqual(true, true);
+        }
 
+        [Test]
+        public void private_test()
+        {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-
             System.Type type = mod.GetType("LP.Object.LpObject");
             Object o = Activator.CreateInstance(type);
             Console.WriteLine(o.GetType().InvokeMember("fuga", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
@@ -28,9 +31,11 @@ namespace Lp
             Assert.AreEqual( result, 1 );
         }
         [Test]
-        public void static_test()
+        public void private_static_test()
         {
-            Type t = typeof(LP.Object.LpObject);
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.Object.LpObject");
             Assert.AreEqual(t.GetMethod("hoge", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null), 1);
         }
     }

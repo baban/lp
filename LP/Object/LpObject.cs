@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    public class LpObject
+    class LpObject
     {
         private bool fuga = true;
         private bool puyo = true;
@@ -20,7 +20,5 @@ namespace LP.Object
         {
             return 1;
         }
-
-    
     }
 }
