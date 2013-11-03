@@ -18,7 +18,7 @@ namespace Lp
             //Type t = Type.GetType("LP.Object.LpObject");
             Type t = Type.GetType("LP.Object.LpObject");
             Console.WriteLine("hoge");
-            Console.WriteLine( t.GetMethod("hoge", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null,null) );
+            //Console.WriteLine( t.GetMethod("hoge", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null,null) );
             //t.GetType().InvokeMember(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, null, null);
             //t.GetType().InvokeMember( "hoge",BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, null, null );
             /*
