@@ -20,7 +20,7 @@ namespace LP.Object
         private static LpObject init(string s)
         {
             LpObject obj = LpObject.initialize();
-            //obj.superclass = LpObject.initialize();
+            obj.superclass = LpObject.initialize();
             obj.stringValue = s;
             return obj;
         }
