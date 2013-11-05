@@ -8,7 +8,6 @@ namespace LP.Object
 {
     class LpMethod : LpObject
     {
-
         public static LpObject initialize(BinMethod method)
         {
             var obj = LpObject.initialize();
@@ -19,5 +18,6 @@ namespace LP.Object
         public LpObject funcall( string name, LpObject args ) {
             return null;
         }
+        
     }
 }

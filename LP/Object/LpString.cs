@@ -9,7 +9,6 @@ namespace LP.Object
     class LpString : LpObject
     {
         public static LpObject initialize() {
-            return new LpObject();
             return init( "" );
         }
         
@@ -18,10 +17,11 @@ namespace LP.Object
             return init(s);
         }
         
-        private static LpObject init( string s ) {
+        private static LpObject init(string s)
+        {
             LpObject obj = LpObject.initialize();
             //obj.superclass = LpObject.initialize();
-            obj.stringValue = "";
+            obj.stringValue = s;
             return obj;
         }
 
