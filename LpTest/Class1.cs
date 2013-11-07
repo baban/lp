@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Lp;
 using System.Reflection;
 
-namespace Lp
+namespace LpTest
 {
     [TestFixture]
     public class Class1
@@ -17,7 +16,7 @@ namespace Lp
         {
             Assert.AreEqual(true, true);
         }
-
+        /*
         [Test]
         public void private_test()
         {
@@ -38,5 +37,6 @@ namespace Lp
             Type t = mod.GetType("LP.Object.LpObject");
             Assert.AreEqual(t.GetMethod("hoge", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null), 1);
         }
+         */
     }
 }
