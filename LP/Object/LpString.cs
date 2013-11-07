@@ -30,6 +30,15 @@ namespace LP.Object
             return self;
         }
 
+        protected static LpObject inspect(LpObject self, LpObject args)
+        {
+            return self;
+        }
 
+        protected static LpObject display(LpObject self, LpObject args)
+        {
+            Console.WriteLine(self.stringValue);
+            return null;
+        }
     }
 }

@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Object\LpMethod.cs" />
+    <Compile Include="Object\LpNumeric.cs" />
     <Compile Include="Object\LpObject.cs" />
     <Compile Include="Object\LpString.cs" />
     <Compile Include="Program.cs" />
