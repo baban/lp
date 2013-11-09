@@ -8,14 +8,17 @@ namespace LP.Object
 {
     class LpMethod : LpObject
     {
+        //BinMethod method = null;
         public static LpObject initialize(BinMethod method)
         {
-            var obj = LpObject.initialize();
-            obj.superclass = LpObject.initialize();
-            return obj;
+            //var obj = LpObject.initialize();
+            //obj.superclass = LpObject.initialize();
+            //obj.method = method;
+            return null;
         }
 
-        public LpObject funcall( string name, LpObject args ) {
+        public LpObject funcall( LpObject self, LpObject args ) {
+            Console.WriteLine("funcall2");
             return null;
         }
         

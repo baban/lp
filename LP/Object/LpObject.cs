@@ -10,6 +10,7 @@ namespace LP.Object
     class LpObject
     {
         public LpObject superclass = null;
+        public BinMethod method = null;
         public delegate LpObject BinMethod(LpObject self, LpObject args);
         protected Hashtable methods = new Hashtable();
         protected Hashtable variables = new Hashtable();
@@ -18,7 +19,11 @@ namespace LP.Object
         public string stringValue = null;
         public List<LpObject> arrayValues = new List<LpObject>();
         public List<string> statements = new List<string>();
-        
+
+        public LpObject() {
+            setMethods();
+        }
+
         private void setMethods()
         {
             //methods["+"] = new MethodObj(plus);
@@ -31,9 +36,9 @@ namespace LP.Object
             //methods["=="] = new MethodObj(equal);
             //methods["==="] = new MethodObj(eq);
 
-            //methods["to_s"] = new BinMethod(to_s);
-            //methods["display"] = new BinMethod(display);
-            methods["to_s"] = LpMethod.initialize(to_s);
+            methods["inspect"] = new BinMethod(inspect);
+            methods["display"] = new BinMethod(display);
+            methods["to_s"] = new BinMethod(to_s);
         }
 
         public override string ToString()
@@ -62,19 +67,15 @@ namespace LP.Object
 
         protected static LpObject display(LpObject self, LpObject args)
         {
+            var so = to_s( self, args );
+            Console.WriteLine( so.stringValue );
             return null;
         }
 
         protected static LpObject inspect(LpObject self, LpObject args)
         {
-            return null;
+            return to_s( self, args );
         }
-
-        /*protected static LpObject to_s(LpObject self, LpObject args)
-        {
-            LpObject o = new LpString().initialize(self.ToString());
-            return o;
-        }*/
 
         /*
         public virtual LpObject display(LpObject self, LpObject args)
@@ -84,11 +85,11 @@ namespace LP.Object
             return o;
         }*/
 
-        public LpObject funcall(String name, LpObject args)
+        public LpObject funcall( string name, LpObject args)
         {
             if (null != methods[name])
             {
-                return null;
+                return ((BinMethod)methods[name])(this,args);
             }
             return null;
         }

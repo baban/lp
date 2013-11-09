@@ -42,6 +42,7 @@ namespace LP.Object
             return LpString.initialize(self.doubleValue.ToString());
         }
 
+
         protected static LpObject inspect(LpObject self, LpObject args)
         {
             return LpString.initialize(self.doubleValue.ToString());
