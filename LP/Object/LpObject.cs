@@ -12,7 +12,7 @@ namespace LP.Object
         public LpObject superclass = null;
         public BinMethod method = null;
         public delegate LpObject BinMethod(LpObject self, LpObject args);
-        protected Hashtable methods = new Hashtable();
+        public Hashtable methods = new Hashtable();
         protected Hashtable variables = new Hashtable();
 
         public double? doubleValue = null;
@@ -85,11 +85,12 @@ namespace LP.Object
             return o;
         }*/
 
-        public LpObject funcall( string name, LpObject args)
+        public LpObject funcall( string name, LpObject args )
         {
             if (null != methods[name])
             {
-                return ((BinMethod)methods[name])(this,args);
+                var m = new LpMethod((BinMethod)methods[name]);
+                return m.funcall(this,args);
             }
             return null;
         }

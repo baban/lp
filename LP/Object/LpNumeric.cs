@@ -27,9 +27,26 @@ namespace LP.Object
         {
             LpObject obj = LpObject.initialize();
             obj.superclass = LpObject.initialize();
+            setMethods(obj);
             obj.doubleValue = i;
             return obj;
         }
+
+        private static void setMethods( LpObject obj )
+        {
+            //methods["+"] = new MethodObj(plus);
+            //methods["-"] = new MethodObj(minus);
+            //methods["/"] = new MethodObj(times);
+            //methods["*"] = new MethodObj(div);
+            //methods["%"] = new MethodObj(mod);
+            //methods[">"] = new MethodObj(compareTo);
+            //methods["**"] = new MethodObj(pow);
+            //methods["=="] = new MethodObj(equal);
+            //methods["==="] = new MethodObj(eq);
+
+            obj.methods["to_s"] = new BinMethod(to_s);
+        }
+
 
         protected static LpObject display(LpObject self, LpObject args)
         {
@@ -41,7 +58,6 @@ namespace LP.Object
         {
             return LpString.initialize(self.doubleValue.ToString());
         }
-
 
         protected static LpObject inspect(LpObject self, LpObject args)
         {
