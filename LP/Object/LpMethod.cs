@@ -17,13 +17,13 @@ namespace LP.Object
         public static LpObject initialize(BinMethod method)
         {
             var obj = LpObject.initialize();
+            obj.class_name = "method";
             obj.superclass = LpObject.initialize();
             obj.method = method;
             return obj;
         }
 
         public LpObject funcall( LpObject self, LpObject args ) {
-            Console.WriteLine("funcall2");
             return method(self,args);
         }
         

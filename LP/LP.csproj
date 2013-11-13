@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Sprache">
+      <HintPath>..\..\..\..\Visual Studio 2012\Projects\Questionnaire DSL Example\References\Sprache\Sprache.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LpParser.cs" />
+    <Compile Include="Object\LpArguments.cs" />
     <Compile Include="Object\LpMethod.cs" />
     <Compile Include="Object\LpNumeric.cs" />
     <Compile Include="Object\LpObject.cs" />

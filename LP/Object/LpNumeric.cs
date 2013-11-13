@@ -23,9 +23,18 @@ namespace LP.Object
             return init((double)i);
         }
 
+        public static LpObject initialize(string s)
+        {
+            Console.WriteLine("numeric#init");
+            Console.WriteLine(s);
+            return init( double.Parse(s) );
+        }
+
+
         private static LpObject init(double i)
         {
             LpObject obj = LpObject.initialize();
+            obj.class_name = "numeric";
             obj.superclass = LpObject.initialize();
             setMethods(obj);
             obj.doubleValue = i;

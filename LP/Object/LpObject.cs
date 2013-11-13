@@ -17,10 +17,13 @@ namespace LP.Object
 
         public double? doubleValue = null;
         public string stringValue = null;
-        public List<LpObject> arrayValues = new List<LpObject>();
+        public List<LpObject> arrayValues = null;
         public List<string> statements = new List<string>();
 
+        public string class_name = null;
+
         public LpObject() {
+            class_name = "object";
             setMethods();
         }
 
@@ -77,13 +80,10 @@ namespace LP.Object
             return to_s( self, args );
         }
 
-        /*
-        public virtual LpObject display(LpObject self, LpObject args)
+        protected static LpObject className(LpObject self, LpObject args)
         {
-            LpObject o = self.funcall("to_s", null);
-            Console.WriteLine(o.stringValue);
-            return o;
-        }*/
+            return LpString.initialize(self.class_name);
+        }
 
         public LpObject funcall( string name, LpObject args )
         {

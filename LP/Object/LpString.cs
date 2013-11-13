@@ -22,6 +22,7 @@ namespace LP.Object
             LpObject obj = LpObject.initialize();
             obj.superclass = LpObject.initialize();
             obj.stringValue = s;
+            obj.class_name = "striing";
             return obj;
         }
 
