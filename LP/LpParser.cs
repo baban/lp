@@ -21,6 +21,7 @@ namespace LP
 
         static readonly Parser<string> Int = Parse.Digit.Many().Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
+        static readonly Parser<string> Primary = Numeric;
         static readonly Parser<string> Arg = Numeric;
         static readonly Parser<string> SepArg = (from sep in Parse.Char(',')
                                                  from s in Arg
@@ -46,8 +47,8 @@ namespace LP
 
         // 演算子一覧
         static readonly Parser<string> Expr = ExpAdditive;
-        static readonly Parser<string> Stmt = from s in Parse.Decimal.Token()
-                                              from t in Parse.Char(';')
+        static readonly Parser<string> Stmt = from s in Primary
+                                              from t in Parse.Char(';').Or( Parse.Char('\n') )
                                               select s;
 
         static readonly Parser<Object.LpObject> Block = from a in Parse.String("do").Token()
@@ -60,7 +61,7 @@ namespace LP
         static readonly Parser<Object.LpObject> NUMERIC = from n in Numeric
                                                           select Object.LpNumeric.initialize(double.Parse(n));
 
-        static readonly Parser<Object.LpObject> PRIMARY = NUMERIC;
+        public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC;
         static readonly Parser<Object.LpObject> ARG = PRIMARY;
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select makeArgs( gs );

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="LpBlock.cs" />
     <Compile Include="LpParsetTest.cs" />
     <Compile Include="Object\LpArgumentsTest.cs" />
     <Compile Include="Object\LpMethodTest.cs" />
