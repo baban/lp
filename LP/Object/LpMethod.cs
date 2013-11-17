@@ -12,8 +12,6 @@ namespace LP.Object
             method = m;
         }
 
-
-        //BinMethod method = null;
         public static LpObject initialize(BinMethod method)
         {
             var obj = LpObject.initialize();
