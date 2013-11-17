@@ -19,14 +19,17 @@ namespace LP
                                                  from b in Parse.Digit.Many().Text()
                                                  select a + dot + b;
 
-        static readonly Parser<string> Int = Parse.Digit.Many().Token().Text();
+        static readonly Parser<string> Int = Parse.Digit.Many().Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
         static readonly Parser<string> Arg = Numeric;
-        static readonly Parser<string> SepArg = (from sep in Parse.Char(',').Token()
+        static readonly Parser<string> SepArg = (from sep in Parse.Char(',')
                                                  from s in Arg
-                                                 select s).Or(Arg);
-        static readonly Parser<List<string>> Args = from ags in SepArg.Once()
-                                                select ags.ToList();
+                                                 select s);
+        static readonly Parser<string[]> Args = from ags1 in Arg
+                                                from ags in SepArg.Many()
+                                                select ags1=="" ?
+                                                        new string[] {} :
+                                                        new string[] { ags1 }.Concat( ags.ToArray() ).ToArray();
 
         static readonly Parser<LP.Object.LpObject> NUMERIC = from n in Numeric
                                                              select Object.LpNumeric.initialize(double.Parse(n));
@@ -36,10 +39,12 @@ namespace LP
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select makeArgs( gs );
 
-        static Object.LpObject makeArgs( List<string> os )
+        static Object.LpObject makeArgs( string[] os )
         {
             Object.LpObject args = Object.LpArguments.initialize();
-            os.ForEach(delegate(string s) { args.funcall("push", ARG.Parse(s)); });
+            foreach (var v in os) {
+                args.funcall("push", ARG.Parse(v) );
+            }
             return args;
         }
 
@@ -49,7 +54,7 @@ namespace LP
         }
 
         // 単体テスト時にアクセスしやすいように
-        static List<string> parseArrString(Parser<List<string>> psr, string ctx)
+        static string[] parseArrString(Parser<string[]> psr, string ctx)
         {
             return psr.Parse(ctx);
         }

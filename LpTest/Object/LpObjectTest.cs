@@ -25,7 +25,6 @@ namespace LpTest.Object
             Type t = initModule();
             Assert.AreEqual(t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null).GetType().ToString(), "LP.Object.LpObject");
         }
-
         
         [Test]
         public void to_s()
@@ -42,6 +41,19 @@ namespace LpTest.Object
             var r = new Regex(@"<obj \w+?>");
             Assert.True( r.IsMatch( str.ToString() ) );
         }
-        
+
+        [Test]
+        public void funcall()
+        {
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            // 引数なし
+            var prms = new object[] { "to_s", null };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            var str = so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
+            var r = new Regex(@"<obj \w+?>");
+            Assert.True(r.IsMatch(str.ToString()));
+        }
     }
 }

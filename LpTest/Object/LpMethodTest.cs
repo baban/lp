@@ -26,7 +26,7 @@ namespace LpTest.Object
             Type t = mod.GetType("LP.Object.LpMethod");
             return t;
         }
-
+        /*
         [Test]
         public void initialize()
         {
@@ -35,6 +35,6 @@ namespace LpTest.Object
             var prms = new object[] { null };
             Assert.AreEqual(t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, prms).GetType().ToString(), "LP.Object.LpObject");
         }
-
+        */
     }
 }

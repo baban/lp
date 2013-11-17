@@ -60,7 +60,6 @@ namespace LpTest.Object
         [Test]
         public void to_s()
         {
-            Type ot = initModule();
             Type st = initStringModule();
             var types = new Type[] { typeof(string) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });

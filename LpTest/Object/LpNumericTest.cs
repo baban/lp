@@ -17,6 +17,7 @@ namespace LpTest.Object
             Type t = mod.GetType("LP.Object.LpObject");
             return t;
         }
+
         private Type initNumericModule()
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
@@ -58,6 +59,20 @@ namespace LpTest.Object
         }
 
         [Test]
+        public void initialize1string()
+        {
+            Type ot = initModule();
+            Type t = initNumericModule();
+            var types = new Type[] { typeof(string) };
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "1" });
+            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+            Assert.AreEqual(1.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+            o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { " 2.5 " });
+            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+            Assert.AreEqual(2.5, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+
+        [Test]
         public void to_s()
         {
             Type ot = initModule();
@@ -66,6 +81,18 @@ namespace LpTest.Object
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.0 });
             var so = st.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
             Assert.AreEqual("1", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void to_s_funcall()
+        {
+            Type ot = initModule();
+            Type st = initNumericModule();
+            var types = new Type[] { typeof(double) };
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.5 });
+            var prms = new object[] { "to_s", null };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual("1.5", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
         
         [Test]
