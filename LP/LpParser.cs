@@ -10,13 +10,13 @@ namespace LP
     class LpParser
     {
         static readonly Parser<string> Identifier =
-                                            from first in Parse.Letter.Once()
-                                            from rest in Parse.LetterOrDigit.Many()
+                                            from first in Parse.Letter.Or(Parse.Char('_')).Once()
+                                            from rest in Parse.LetterOrDigit.Or(Parse.Char('_')).Many()
                                             select new string(first.Concat(rest).ToArray());
 
-        static readonly Parser<string> Decimal = from a in Parse.Digit.Many().Text()
+        static readonly Parser<string> Decimal = from a in Parse.Digit.AtLeastOnce().Text()
                                                  from dot in Parse.Char('.').Once().Text()
-                                                 from b in Parse.Digit.Many().Text()
+                                                 from b in Parse.Digit.AtLeastOnce().Text()
                                                  select a + dot + b;
 
         static readonly Parser<string> Int = Parse.Digit.Many().Text().Token();
@@ -31,13 +31,47 @@ namespace LP
                                                         new string[] {} :
                                                         new string[] { ags1 }.Concat( ags.ToArray() ).ToArray();
 
-        static readonly Parser<LP.Object.LpObject> NUMERIC = from n in Numeric
-                                                             select Object.LpNumeric.initialize(double.Parse(n));
+        static readonly Parser<string> Operands = Parse.String("(+)").Or(Parse.String("(-)")).Or(Parse.String("(*)")).Or(Parse.String("(/)")).Text();
+        static readonly Parser<string> Fname = Operands.Or(Identifier);
+        // +,-
+        static readonly Parser<string> ExpAdditive = from a in Numeric.Token()
+                                                     from op in (Parse.String("+").Or(Parse.String("-"))).Token().Text()
+                                                     from b in Numeric.Token()
+                                                     select a + ".(" + op + ")(" + b + ")";
+        // *, /
+        static readonly Parser<string> ExpMul = from a in Numeric.Token()
+                                                from op in (Parse.String("*").Or(Parse.String("/"))).Token().Text()
+                                                from b in Numeric.Token()
+                                                select a + ".(" + op + ")(" + b + ")";
+
+        // 演算子一覧
+        static readonly Parser<string> Expr = ExpAdditive;
+        static readonly Parser<string> Stmt = from s in Parse.Decimal.Token()
+                                              from t in Parse.Char(';')
+                                              select s;
+
+        static readonly Parser<Object.LpObject> Block = from a in Parse.String("do").Token()
+                                                        from tks in Stmt.Token().Many()
+                                                        from b in Parse.String("end").Token()
+                                                        select makeBlock(tks.ToArray());
+
+        static readonly Parser<Object.LpObject> INT = from n in Int
+                                                      select Object.LpNumeric.initialize(double.Parse(n));
+        static readonly Parser<Object.LpObject> NUMERIC = from n in Numeric
+                                                          select Object.LpNumeric.initialize(double.Parse(n));
 
         static readonly Parser<Object.LpObject> PRIMARY = NUMERIC;
         static readonly Parser<Object.LpObject> ARG = PRIMARY;
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select makeArgs( gs );
+
+        static readonly Parser<Object.LpObject> FUNCALL = from obj in NUMERIC
+                                                          from dot in Parse.Char('.').Once()
+                                                          from fname in Fname
+                                                          from brace1 in Parse.Char('(').Once()
+                                                          from args in ARGS.Token()
+                                                          from brace2 in Parse.Char(')').Once()
+                                                          select obj.funcall(fname, args);
 
         static Object.LpObject makeArgs( string[] os )
         {
@@ -46,6 +80,19 @@ namespace LP
                 args.funcall("push", ARG.Parse(v) );
             }
             return args;
+        }
+
+        static Object.LpObject makeBlock(string[] os)
+        {
+            /*
+            Object.LpObject o = Object.LpBlock.initialize();
+            foreach (var v in os)
+            {
+                o.stmts.Add(v);
+            }
+            return o;
+            */
+            return null;
         }
 
         // 単体テスト時にアクセスしやすいように
