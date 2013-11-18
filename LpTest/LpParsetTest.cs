@@ -69,6 +69,17 @@ namespace LpTest
         }
 
         [Test]
+        public void String()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("String", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"10\"" });
+            Assert.AreEqual("\"10\"", pm);
+            pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"10\"" });
+            Assert.AreEqual("\"10\"", pm);
+        }
+
+        [Test]
         public void NUMERIC()
         {
             Type t = initParser();
@@ -94,6 +105,16 @@ namespace LpTest
             o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, " 12.5 " });
             str = o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
             Assert.AreEqual(12.5, str);
+        }
+
+        [Test]
+        public void STRING()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("STRING", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"a10f\"" });
+            var str = o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
+            Assert.AreEqual("a10f", str);
         }
 
         [Test]
