@@ -12,7 +12,7 @@ namespace LpTest
     [TestFixture]
     class ParserTest
     {
-        public Type initParser() {
+        private Type initParser() {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
             Type t = mod.GetType("LP.LpParser");
@@ -237,8 +237,17 @@ namespace LpTest
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10+5" });
             Assert.AreEqual(s, "10.(+)(5)");
         }
-        /*
+
+        [Test]
+        public void BLOCK()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var block = " do 10; end ";
+            var s = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+        }
         
+        /*
         [Test]
         public void Funcall3()
         {
@@ -264,30 +273,25 @@ namespace LpTest
             Assert.AreEqual(o.doubleValue, 5.0);
         }
         */
-            /*
-            [Test]
-            public void Quote()
-            {
-                string token = TestRubyParser.LpParser.Quote.Parse("'10");
-                Assert.AreEqual(token, "'10");
-            }
-            [Test]
-            public void QuasiQuote()
-            {
-                TestRubyParser.Object.LpObject o;
-                o = TestRubyParser.LpParser.Quasiquote.Parse("`10");
-                Assert.AreEqual( o.doubleValue, 10.0 );
-                o = TestRubyParser.LpParser.Quasiquote.Parse("`5 + ?name");
-                Assert.AreEqual(o.doubleValue, 11.0);
-                //o = TestRubyParser.LpParser.Quasiquote.Parse("`a+b");
-                //Assert.AreEqual(o, "`a+b");
-                //o = TestRubyParser.LpParser.Quasiquote.Parse("`a+?b");
-                //Assert.AreEqual(o, "`a+10");
-                //TestRubyParser.Object.LpObject o = new TestRubyParser.Object.LpNumeric().initialize(10);
-                //TestRubyParser.Object.LpIndexer.set("name", o );
-                //o = TestRubyParser.LpParser.ExpAdditive.Parse("19 + 2");
-                //Assert.AreEqual(o,"19+2");
-            }
+
+        [Test]
+        public void Quote()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Quote", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"'10" });
+            Assert.AreEqual(s, "10");
+        }
+
+        [Test]
+        public void QuasiQuote()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("QuasiQuote", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"`10" });
+            Assert.AreEqual( "10", s );
+        }
+        /*
             [Test]
             public void Identifier()
             {

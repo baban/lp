@@ -47,17 +47,22 @@ namespace LP
 
         // 演算子一覧
         static readonly Parser<string> Expr = ExpAdditive;
+
         static readonly Parser<string> Stmt = from s in Primary
                                               from t in Parse.Char(';').Or( Parse.Char('\n') )
                                               select s;
 
-        static readonly Parser<Object.LpObject> Block = from a in Parse.String("do").Token()
-                                                        from tks in Stmt.Token().Many()
-                                                        from b in Parse.String("end").Token()
-                                                        select makeBlock(tks.ToArray());
+        static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
+                                               from idf in Primary
+                                               select idf;
+
+        static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
+                                                    from idf in Primary
+                                                    select idf;
 
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
+
         static readonly Parser<Object.LpObject> NUMERIC = from n in Numeric
                                                           select Object.LpNumeric.initialize(double.Parse(n));
 
@@ -74,6 +79,12 @@ namespace LP
                                                           from brace2 in Parse.Char(')').Once()
                                                           select obj.funcall(fname, args);
 
+        static readonly Parser<Object.LpObject> BLOCK = from a in Parse.String("do").Token()
+                                                        from tks in Stmt.Token().Many()
+                                                        from b in Parse.String("end").Token()
+                                                        select makeBlock(tks.ToArray());
+
+
         static Object.LpObject makeArgs( string[] os )
         {
             Object.LpObject args = Object.LpArguments.initialize();
@@ -85,15 +96,12 @@ namespace LP
 
         static Object.LpObject makeBlock(string[] os)
         {
-            /*
             Object.LpObject o = Object.LpBlock.initialize();
             foreach (var v in os)
             {
-                o.stmts.Add(v);
+                o.statements.Add(v);
             }
             return o;
-            */
-            return null;
         }
 
         // 単体テスト時にアクセスしやすいように
