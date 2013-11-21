@@ -22,13 +22,10 @@ namespace LP
         static readonly Parser<string> Int = Parse.Digit.Many().Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
 
-        static readonly Parser<string> QuoteString = from s in Parse.String("\\\"").XOr(Parse.CharExcept('"').Many()).Text()
-                                                     select s;
-
         static readonly Parser<string> String = from a in Parse.Char('"')
-                                                from s in Parse.String("\\\"").XOr( Parse.CharExcept('"').Many()).Text()
+                                                from s in Parse.String("\\\"").Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
-                                                select "\""+s+"\"";
+                                                select "\"" + string.Join("", s.ToArray<string>() ) + "\"";
 
         static readonly Parser<string> Primary = Numeric;
         static readonly Parser<string> Arg = Numeric;

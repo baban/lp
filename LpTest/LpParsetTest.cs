@@ -84,6 +84,24 @@ namespace LpTest
         }
 
         [Test]
+        public void String2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("String", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"aaa\\\"vvv\"" });
+            Assert.AreEqual("\"aaa\\\"vvv\"", pm);
+        }
+
+        [Test]
+        public void String3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("String", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"\\\"\\\"\\\"\"" });
+            Assert.AreEqual("\"\\\"\\\"\\\"\"", pm);
+        }
+
+        [Test]
         public void NUMERIC()
         {
             Type t = initParser();
