@@ -75,8 +75,12 @@ namespace LpTest
             var p = t.InvokeMember("String", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"10\"" });
             Assert.AreEqual("\"10\"", pm);
-            pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"10\"" });
-            Assert.AreEqual("\"10\"", pm);
+            pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"advg\"" });
+            Assert.AreEqual("\"advg\"", pm);
+            pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"\"" });
+            Assert.AreEqual("\"\"", pm);
+            pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"(lk)\"" });
+            Assert.AreEqual("\"(lk)\"", pm);
         }
 
         [Test]
