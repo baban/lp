@@ -15,6 +15,7 @@ namespace LP.Object
         public Hashtable methods = new Hashtable();
         protected Hashtable variables = new Hashtable();
 
+        public bool? boolValue = null;
         public double? doubleValue = null;
         public string stringValue = null;
         public List<LpObject> arrayValues = null;

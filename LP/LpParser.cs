@@ -23,9 +23,9 @@ namespace LP
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
 
         static readonly Parser<string> String = from a in Parse.Char('"')
-                                                from s in Parse.String("\\\"").Or(Parse.CharExcept('"').Once()).Text().Many()
+                                                from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
-                                                select "\"" + string.Join("", s.ToArray<string>() ) + "\"";
+                                                select '"' + string.Join("", s.ToArray() ) + '"';
 
         static readonly Parser<string> Primary = Numeric;
         static readonly Parser<string> Arg = Numeric;

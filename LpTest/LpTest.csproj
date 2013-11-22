@@ -52,6 +52,7 @@
     <Compile Include="Object\LpBlockTest.cs" />
     <Compile Include="LpParsetTest.cs" />
     <Compile Include="Object\LpArgumentsTest.cs" />
+    <Compile Include="Object\LpBoolTest.cs" />
     <Compile Include="Object\LpMethodTest.cs" />
     <Compile Include="Object\LpNumericTest.cs" />
     <Compile Include="Object\LpObjectTest.cs" />
