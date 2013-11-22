@@ -19,6 +19,7 @@ namespace LP
                                                  from b in Parse.Digit.AtLeastOnce().Text()
                                                  select a + dot + b;
 
+        static readonly Parser<string> Bool = Parse.String("true").Or( Parse.String("false") ).Text().Token();
         static readonly Parser<string> Int = Parse.Digit.Many().Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
 
@@ -76,6 +77,9 @@ namespace LP
 
         static readonly Parser<Object.LpObject> NUMERIC = from n in Numeric
                                                           select Object.LpNumeric.initialize(double.Parse(n));
+
+        static readonly Parser<Object.LpObject> BOOL = from b in Bool
+                                                          select Object.LpBool.initialize( bool.Parse(b) );
 
         public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC;
         static readonly Parser<Object.LpObject> ARG = PRIMARY;
