@@ -22,7 +22,6 @@ namespace LP
         static readonly Parser<string> Bool = Parse.String("true").Or( Parse.String("false") ).Text().Token();
         static readonly Parser<string> Int = Parse.Digit.Many().Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
-
         static readonly Parser<string> String = from a in Parse.Char('"')
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
@@ -41,17 +40,45 @@ namespace LP
 
         static readonly Parser<string> Operands = Parse.String("(+)").Or(Parse.String("(-)")).Or(Parse.String("(*)")).Or(Parse.String("(/)")).Text();
         static readonly Parser<string> Fname = Operands.Or(Identifier);
-        // +,-
-        static readonly Parser<string> ExpAdditive = from a in Numeric.Token()
-                                                     from op in (Parse.String("+").Or(Parse.String("-"))).Token().Text()
-                                                     from b in Numeric.Token()
-                                                     select a + ".(" + op + ")(" + b + ")";
+        // ::
+        // []
+        // not
+        // +(単項)  !  ~
+        // **
+        // -(単項)
         // *, /
-        static readonly Parser<string> ExpMul = from a in Numeric.Token()
+        static readonly Parser<string> ExpMul = from a in Primary
                                                 from op in (Parse.String("*").Or(Parse.String("/"))).Token().Text()
-                                                from b in Numeric.Token()
+                                                from b in Primary
                                                 select a + ".(" + op + ")(" + b + ")";
-
+        // +,-,%
+        static readonly Parser<string> ExpAdditive = ExpMul.Or(
+                                                      from a in Primary
+                                                      from op in (Parse.String("+").Or(Parse.String("-"))).Token().Text()
+                                                      from b in Primary
+                                                      select a + ".(" + op + ")(" + b + ")");
+        // << >>
+        static readonly Parser<string> ExpShift = null;
+        // & 
+        static readonly Parser<string> ExpAnd = null;
+        // |  
+        static readonly Parser<string> ExpInclusiveOr = null;
+        // ^ 
+        static readonly Parser<string> ExpRelational = null;
+        // > >=  < <= 
+        static readonly Parser<string> ExpExclusiveOr = null;
+        // <=> ==  === !=  =~  !~ 
+        static readonly Parser<string> ExpEquality = null;
+        // &&
+        static readonly Parser<string> ExpLogicalAnd = null;
+        // ||
+        static readonly Parser<string> ExpLogicalOr = null;
+        // ..  ...
+        static readonly Parser<string> ExpRange = null;
+        // =(+=, -= ... )
+        static readonly Parser<string> ExpAssignment = null;
+        // and or
+        static readonly Parser<string> ExpAndOr = null;
         // 演算子一覧
         static readonly Parser<string> Expr = ExpAdditive;
 
@@ -70,16 +97,16 @@ namespace LP
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
 
-        static readonly Parser<Object.LpObject> STRING = from a in Parse.Char('"')
-                                                         from s in Parse.CharExcept('"').Many().Text()
-                                                         from b in Parse.Char('"')
-                                                         select Object.LpString.initialize(s);
-
         static readonly Parser<Object.LpObject> NUMERIC = from n in Numeric
                                                           select Object.LpNumeric.initialize(double.Parse(n));
 
         static readonly Parser<Object.LpObject> BOOL = from b in Bool
                                                           select Object.LpBool.initialize( bool.Parse(b) );
+
+        static readonly Parser<Object.LpObject> STRING = from a in Parse.Char('"')
+                                                         from s in Parse.CharExcept('"').Many().Text()
+                                                         from b in Parse.Char('"')
+                                                         select Object.LpString.initialize(s);
 
         public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC;
         static readonly Parser<Object.LpObject> ARG = PRIMARY;
