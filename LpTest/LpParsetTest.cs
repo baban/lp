@@ -202,15 +202,6 @@ namespace LpTest
         }
 
         [Test]
-        public void ExpVal()
-        {
-            Type t = initParser();
-            var p = t.InvokeMember("ExpVal", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10" });
-            Assert.AreEqual(s, "10");
-        }
-
-        [Test]
         public void ExpAdditive()
         {
             Type t = initParser();
@@ -223,6 +214,19 @@ namespace LpTest
         }
 
         [Test]
+        public void ExpAdditive2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpAdditive", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10*5" });
+            Assert.AreEqual(s, "10.(*)(5)");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 / 5" });
+            Assert.AreEqual(s, "10.(/)(5)");
+        }
+
+
+        [Test]
         public void ExpMul()
         {
             Type t = initParser();
@@ -232,6 +236,110 @@ namespace LpTest
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 / 5" });
             Assert.AreEqual(s, "10.(/)(5)");
         }
+
+        [Test]
+        public void ExpShift()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpShift", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10>>5" });
+            Assert.AreEqual(s, "10.(>>)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 << 5" });
+            Assert.AreEqual(s, "10.(<<)(5)");
+        }
+
+        [Test]
+        public void ExpAnd()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpAnd", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10&5" });
+            Assert.AreEqual(s, "10.(&)(5)");
+        }
+
+        [Test]
+        public void ExpInclusiveOr()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpInclusiveOr", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 | 5" });
+            Assert.AreEqual(s, "10.(|)(5)");
+        }
+
+        [Test]
+        public void ExpExclusiveOr()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpExclusiveOr", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 < 5" });
+            Assert.AreEqual(s, "10.(<)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 <= 5" });
+            Assert.AreEqual(s, "10.(<=)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 > 5" });
+            Assert.AreEqual(s, "10.(>)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 >= 5" });
+            Assert.AreEqual(s, "10.(>=)(5)");
+        }
+
+        [Test]
+        public void ExpEquality()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpEquality", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 <=> 5" });
+            Assert.AreEqual(s, "10.(<=>)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 === 5" });
+            Assert.AreEqual(s, "10.(===)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 == 5" });
+            Assert.AreEqual(s, "10.(==)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 != 5" });
+            Assert.AreEqual(s, "10.(!=)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 =~ 5" });
+            Assert.AreEqual(s, "10.(=~)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 !~ 5" });
+            Assert.AreEqual(s, "10.(!~)(5)");
+        }
+
+        [Test]
+        public void ExpLogicalAnd()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpLogicalAnd", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 && 5" });
+            Assert.AreEqual(s, "10.(&&)(5)");
+        }
+
+        [Test]
+        public void ExpLogicalOr()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpLogicalOr", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 || 5" });
+            Assert.AreEqual(s, "10.(||)(5)");
+        }
+
+        [Test]
+        public void ExpRange()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpRange", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10...5" });
+            Assert.AreEqual(s, "10.(...)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10..5" });
+            Assert.AreEqual(s, "10.(..)(5)");
+        }
+
+        [Test]
+        public void ExpAndOr()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpAndOr", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 and 5" });
+            Assert.AreEqual(s, "10.(and)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 or 5" });
+            Assert.AreEqual(s, "10.(or)(5)");
+        }
+
 
         [Test]
         public void Expr()
