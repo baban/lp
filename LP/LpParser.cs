@@ -40,6 +40,11 @@ namespace LP
 
         static readonly Parser<string> Operands = Parse.String("(+)").Or(Parse.String("(-)")).Or(Parse.String("(*)")).Or(Parse.String("(/)")).Text();
         static readonly Parser<string> Fname = Operands.Or(Identifier);
+        static readonly Parser<string> ExpVal = Primary.Or(
+                                                 from a1 in Parse.Char('(')
+                                                 from v  in Expr
+                                                 from a2 in Parse.Char(')')
+                                                 select v);
         // ::
         // []
         // not
@@ -47,38 +52,38 @@ namespace LP
         // **
         // -(単項)
         // *, /
-        static readonly Parser<string> ExpMul = from a in Primary
+        static readonly Parser<string> ExpMul = from a in ExpVal
                                                 from op in (Parse.String("*").Or(Parse.String("/"))).Token().Text()
-                                                from b in Primary
+                                                from b in ExpVal
                                                 select a + ".(" + op + ")(" + b + ")";
         // +,-,%
         static readonly Parser<string> ExpAdditive = ExpMul.Or(
-                                                      from a in Primary
+                                                      from a in ExpVal
                                                       from op in (Parse.String("+").Or(Parse.String("-"))).Token().Text()
-                                                      from b in Primary
+                                                      from b in ExpVal
                                                       select a + ".(" + op + ")(" + b + ")");
         // << >>
-        static readonly Parser<string> ExpShift = null;
+        static readonly Parser<string> ExpShift = ExpAdditive;
         // & 
-        static readonly Parser<string> ExpAnd = null;
+        static readonly Parser<string> ExpAnd = ExpShift;
         // |  
-        static readonly Parser<string> ExpInclusiveOr = null;
+        static readonly Parser<string> ExpInclusiveOr = ExpAnd;
         // ^ 
-        static readonly Parser<string> ExpRelational = null;
+        static readonly Parser<string> ExpRelational = ExpInclusiveOr;
         // > >=  < <= 
-        static readonly Parser<string> ExpExclusiveOr = null;
+        static readonly Parser<string> ExpExclusiveOr = ExpRelational;
         // <=> ==  === !=  =~  !~ 
-        static readonly Parser<string> ExpEquality = null;
+        static readonly Parser<string> ExpEquality = ExpExclusiveOr;
         // &&
-        static readonly Parser<string> ExpLogicalAnd = null;
+        static readonly Parser<string> ExpLogicalAnd = ExpEquality;
         // ||
-        static readonly Parser<string> ExpLogicalOr = null;
+        static readonly Parser<string> ExpLogicalOr = ExpLogicalAnd;
         // ..  ...
-        static readonly Parser<string> ExpRange = null;
+        static readonly Parser<string> ExpRange = ExpLogicalOr;
         // =(+=, -= ... )
-        static readonly Parser<string> ExpAssignment = null;
+        static readonly Parser<string> ExpAssignment = ExpRange;
         // and or
-        static readonly Parser<string> ExpAndOr = null;
+        static readonly Parser<string> ExpAndOr = ExpAssignment;
         // 演算子一覧
         static readonly Parser<string> Expr = ExpAdditive;
 

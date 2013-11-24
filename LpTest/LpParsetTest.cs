@@ -202,6 +202,15 @@ namespace LpTest
         }
 
         [Test]
+        public void ExpVal()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpVal", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10" });
+            Assert.AreEqual(s, "10");
+        }
+
+        [Test]
         public void ExpAdditive()
         {
             Type t = initParser();
