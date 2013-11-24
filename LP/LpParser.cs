@@ -20,7 +20,7 @@ namespace LP
                                                  select a + dot + b;
 
         static readonly Parser<string> Bool = Parse.String("true").Or( Parse.String("false") ).Text().Token();
-        static readonly Parser<string> Int = Parse.Digit.Many().Text().Token();
+        static readonly Parser<string> Int = Parse.Digit.AtLeastOnce().Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
         static readonly Parser<string> String = from a in Parse.Char('"')
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
@@ -31,19 +31,16 @@ namespace LP
         static readonly Parser<string> Arg = Numeric;
         static readonly Parser<string> SepArg = (from sep in Parse.Char(',')
                                                  from s in Arg
-                                                 select s);
-        static readonly Parser<string[]> Args = from ags1 in Arg
-                                                from ags in SepArg.Many()
-                                                select ags1=="" ?
-                                                        new string[] {} :
-                                                        new string[] { ags1 }.Concat( ags.ToArray() ).ToArray();
+                                                 select s).Or(Arg);
+        static readonly Parser<string[]> Args = from ags in SepArg.Many()
+                                                select ags.ToArray();
 
         static readonly Parser<string> Operands = Parse.String("(+)").Or(Parse.String("(-)")).Or(Parse.String("(*)")).Or(Parse.String("(/)")).Text();
         static readonly Parser<string> Fname = Operands.Or(Identifier);
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
-                                                from v in Expr
-                                                from b in Parse.Char(')')
-                                                select v).Or(Primary);
+                                                 from v in Primary
+                                                 from b in Parse.Char(')')
+                                                 select a+v+b).Or(Primary);
         // ::
         // []
         static readonly Parser<string> ExpPostfix = ExpVal;
@@ -52,61 +49,61 @@ namespace LP
         // **
         // -(単項)
         // *, /
-        static readonly Parser<string> ExpMul = (from a in Primary
+        static readonly Parser<string> ExpMul = (from a in ExpPostfix
                                                  from op in (Parse.String("*").Or(Parse.String("/")).Or(Parse.String("%"))).Token().Text()
-                                                 from b in Primary
+                                                 from b in ExpPostfix
                                                  select a + ".(" + op + ")(" + b + ")").Or(ExpPostfix);
         // +,-,%
-        static readonly Parser<string> ExpAdditive = (from a in Primary
+        static readonly Parser<string> ExpAdditive = (from a in ExpMul
                                                       from op in (Parse.String("+").Or(Parse.String("-"))).Token().Text()
-                                                      from b in ExpPostfix
+                                                      from b in ExpMul
                                                       select a + ".(" + op + ")(" + b + ")").Or(ExpMul);
         // << >>
-        static readonly Parser<string> ExpShift = (from a in Primary
+        static readonly Parser<string> ExpShift = (from a in ExpAdditive
                                                    from op in (Parse.String("<<").Or(Parse.String(">>"))).Token().Text()
                                                    from b in ExpAdditive
                                                    select a + ".(" + op + ")(" + b + ")").Or(ExpAdditive);
         // & 
-        static readonly Parser<string> ExpAnd = (from a in Primary
+        static readonly Parser<string> ExpAnd = (from a in ExpShift
                                                  from op in (Parse.String("&")).Token().Text()
                                                  from b in ExpShift
                                                  select a + ".(" + op + ")(" + b + ")").Or(ExpShift);
         // |  
-        static readonly Parser<string> ExpInclusiveOr = (from a in Primary
+        static readonly Parser<string> ExpInclusiveOr = (from a in ExpAnd
                                                          from op in (Parse.String("|")).Token().Text()
                                                          from b in ExpAnd
                                                          select a + ".(" + op + ")(" + b + ")").Or(ExpAnd);
         // ^ 
         static readonly Parser<string> ExpRelational = ExpInclusiveOr;
         // > >=  < <= 
-        static readonly Parser<string> ExpExclusiveOr = (from a in Primary
+        static readonly Parser<string> ExpExclusiveOr = (from a in ExpRelational
                                                          from op in (Parse.String(">=").Or(Parse.String(">")).Or(Parse.String("<=")).Or(Parse.String("<"))).Token().Text()
                                                          from b in ExpRelational
                                                          select a + ".(" + op + ")(" + b + ")").Or(ExpRelational);
         // <=> ==  === !=  =~  !~ 
-        static readonly Parser<string> ExpEquality = (from a in Primary
+        static readonly Parser<string> ExpEquality = (from a in ExpExclusiveOr
                                                       from op in (Parse.String("<=>").Or(Parse.String("===")).Or(Parse.String("==")).Or(Parse.String("!=")).Or(Parse.String("=~")).Or(Parse.String("!~"))).Token().Text()
                                                       from b in ExpExclusiveOr
                                                       select a + ".(" + op + ")(" + b + ")").Or(ExpExclusiveOr);
         // &&
-        static readonly Parser<string> ExpLogicalAnd = (from a in Primary
+        static readonly Parser<string> ExpLogicalAnd = (from a in ExpEquality
                                                         from op in (Parse.String("&&")).Token().Text()
                                                         from b in ExpEquality
                                                         select a + ".(" + op + ")(" + b + ")").Or(ExpEquality);
         // ||
-        static readonly Parser<string> ExpLogicalOr = (from a in Primary
+        static readonly Parser<string> ExpLogicalOr = (from a in ExpLogicalAnd
                                                        from op in (Parse.String("||")).Token().Text()
                                                        from b in ExpLogicalAnd
                                                        select a + ".(" + op + ")(" + b + ")").Or(ExpLogicalAnd);
         // ..  ...
-        static readonly Parser<string> ExpRange = (from a in Primary
+        static readonly Parser<string> ExpRange = (from a in ExpLogicalOr
                                                    from op in (Parse.String("...").Or(Parse.String(".."))).Token().Text()
                                                    from b in ExpLogicalOr
                                                    select a + ".(" + op + ")(" + b + ")").Or(ExpLogicalOr);
         // =(+=, -= ... )
         static readonly Parser<string> ExpAssignment = ExpRange;
         // and or
-        static readonly Parser<string> ExpAndOr = (from a in Primary
+        static readonly Parser<string> ExpAndOr = (from a in ExpAssignment
                                                    from op in (Parse.String("and").Or(Parse.String("or"))).Token().Text()
                                                    from b in ExpAssignment
                                                    select a + ".(" + op + ")(" + b + ")").Or(ExpAssignment);
