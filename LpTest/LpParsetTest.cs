@@ -237,6 +237,23 @@ namespace LpTest
             Assert.AreEqual(s, "10.(/)(5)");
         }
 
+        [Test]
+        public void ExpAdditive3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpAdditive", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 + 5 * 3" });
+            Assert.AreEqual(s, "10.(+)(5.(*)(3))");
+        }
+
+        [Test]
+        public void ExpAdditive4()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpAdditive", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 + 5 + 3" });
+            Assert.AreEqual(s, "10.(+)(5).(+)(3)");
+        }
 
         [Test]
         public void ExpMul()
@@ -247,6 +264,8 @@ namespace LpTest
             Assert.AreEqual(s, "10.(*)(5)");
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 / 5" });
             Assert.AreEqual(s, "10.(/)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 % 5" });
+            Assert.AreEqual(s, "10.(%)(5)");
         }
 
         [Test]

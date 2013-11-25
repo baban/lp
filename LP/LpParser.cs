@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Sprache;
@@ -49,15 +50,9 @@ namespace LP
         // **
         // -(単項)
         // *, /
-        static readonly Parser<string> ExpMul = (from a in ExpPostfix
-                                                 from op in (Parse.String("*").Or(Parse.String("/")).Or(Parse.String("%"))).Token().Text()
-                                                 from b in ExpPostfix
-                                                 select a + ".(" + op + ")(" + b + ")").Or(ExpPostfix);
-        // +,-,%
-        static readonly Parser<string> ExpAdditive = (from a in ExpMul
-                                                      from op in (Parse.String("+").Or(Parse.String("-"))).Token().Text()
-                                                      from b in ExpMul
-                                                      select a + ".(" + op + ")(" + b + ")").Or(ExpMul);
+        static readonly Parser<string> ExpMul = Parse.ChainOperator(Parse.Char('*').Or(Parse.Char('/')).Or(Parse.Char('%')), ExpPostfix, (op, a, b) => a + ".(" + op.ToString() + ")(" + b + ")");
+        // +,-
+        static readonly Parser<string> ExpAdditive = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')), ExpMul, (op, a, b) => a + ".(" + op.ToString() + ")(" + b + ")");
         // << >>
         static readonly Parser<string> ExpShift = (from a in ExpAdditive
                                                    from op in (Parse.String("<<").Or(Parse.String(">>"))).Token().Text()
@@ -107,6 +102,7 @@ namespace LP
                                                    from op in (Parse.String("and").Or(Parse.String("or"))).Token().Text()
                                                    from b in ExpAssignment
                                                    select a + ".(" + op + ")(" + b + ")").Or(ExpAssignment);
+        
         // 演算子一覧
         static readonly Parser<string> Expr = ExpAndOr.Or(Primary);
 
@@ -153,7 +149,6 @@ namespace LP
                                                         from tks in Stmt.Token().Many()
                                                         from b in Parse.String("end").Token()
                                                         select makeBlock(tks.ToArray());
-
 
         static Object.LpObject makeArgs( string[] os )
         {
