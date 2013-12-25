@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Sprache">
-      <HintPath>..\..\..\..\Visual Studio 2012\Projects\Questionnaire DSL Example\References\Sprache\Sprache.dll</HintPath>
+      <HintPath>..\..\..\..\..\Downloads\Sprache-master\bin\Sprache.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
