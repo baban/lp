@@ -43,10 +43,10 @@ namespace LP.Object
 
         private static void setMethods( LpObject obj )
         {
-            //methods["+"] = new MethodObj(plus);
-            //methods["-"] = new MethodObj(minus);
-            //methods["/"] = new MethodObj(times);
-            //methods["*"] = new MethodObj(div);
+            obj.methods["+"] = new BinMethod(plus);
+            obj.methods["-"] = new BinMethod(minus);
+            obj.methods["*"] = new BinMethod(mul);
+            obj.methods["/"] = new BinMethod(div);
             //methods["%"] = new MethodObj(mod);
             //methods[">"] = new MethodObj(compareTo);
             //methods["**"] = new MethodObj(pow);
@@ -71,6 +71,33 @@ namespace LP.Object
         protected static LpObject inspect(LpObject self, LpObject args)
         {
             return LpString.initialize(self.doubleValue.ToString());
+        }
+
+        private static LpObject plus(LpObject self, LpObject args) {
+            var v = args.arrayValues.First();
+            self.doubleValue += v.doubleValue;
+            return self;
+        }
+
+        private static LpObject minus(LpObject self, LpObject args)
+        {
+            var v = args.arrayValues.First();
+            self.doubleValue -= v.doubleValue;
+            return self;
+        }
+
+        private static LpObject mul(LpObject self, LpObject args)
+        {
+            var v = args.arrayValues.First();
+            self.doubleValue *= v.doubleValue;
+            return self;
+        }
+
+        private static LpObject div(LpObject self, LpObject args)
+        {
+            var v = args.arrayValues.First();
+            self.doubleValue /= v.doubleValue;
+            return self;
         }
     }
 }

@@ -190,7 +190,6 @@ namespace LpTest
             Assert.AreEqual(2, cnt);
         }
 
-
         [Test]
         public void Args3()
         {
@@ -220,6 +219,15 @@ namespace LpTest
             Assert.AreEqual(s, "true");
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"\"aaaaa\"" });
             Assert.AreEqual(s, "\"aaaaa\"");
+        }
+
+        [Test]
+        public void ExpVal3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpVal", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"(1+2)" });
+            Assert.AreEqual(s, "(1.(+)(2))");
         }
 
         [Test]
@@ -304,7 +312,6 @@ namespace LpTest
             Assert.AreEqual(s, "10.(**)(5)");
         }
 
-
         [Test]
         public void ExpShift()
         {
@@ -312,8 +319,8 @@ namespace LpTest
             var p = t.InvokeMember("ExpShift", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10>>5" });
             Assert.AreEqual(s, "10.(>>)(5)");
-            //s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 << 5" });
-            //Assert.AreEqual(s, "10.(<<)(5)");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 << 5" });
+            Assert.AreEqual(s, "10.(<<)(5)");
         }
 
         [Test]
@@ -428,8 +435,17 @@ namespace LpTest
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 or 5" });
             Assert.AreEqual(s, "10.(or)(5)");
         }
-
         /*
+        [Test]
+        public void ExpEqual()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpEqual", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"a = 5" });
+            Assert.AreEqual("a.(=)(5)", s);
+        }
+        */
+
         [Test]
         public void Expr()
         {
@@ -441,7 +457,6 @@ namespace LpTest
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)" 5 * 10 " });
             Assert.AreEqual("5.(*)(10)", s);
         }
-        */
 
         [Test]
         public void Stmt()
@@ -505,10 +520,17 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("Fname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var s1 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(+)" });
-            Assert.AreEqual(s1, "(+)");
             var s2 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "fuga" });
             Assert.AreEqual(s2, "fuga");
+        }
+
+        [Test]
+        public void Fname2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Fname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s1 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(+)" });
+            Assert.AreEqual(s1, "+");
         }
 
         [Test]
@@ -523,6 +545,26 @@ namespace LpTest
             Assert.AreEqual("10.5", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
+        [Test]
+        public void FUNCALL2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10)" });
+            Assert.AreEqual(20.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+
+            p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(-)(10)" });
+            Assert.AreEqual(5.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+
+            p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(*)(10)" });
+            Assert.AreEqual(150.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+
+            p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(/)(10)" });
+            Assert.AreEqual(1.5, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
 
         [Test]
         public void BLOCK()
@@ -530,17 +572,38 @@ namespace LpTest
             Type t = initParser();
             var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var block = " do 10; end ";
-            var s = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
-        }
-        
-        /*
-        [Test]
-        public void Funcall3()
-        {
-            TestRubyParser.Object.LpObject o = TestRubyParser.LpParser.Funcall.Parse("10.(+)(15)");
-            Assert.AreEqual( o.doubleValue, 25.0 );
+            var blk = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var stmts = blk.GetType().InvokeMember("statements", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, blk, null);
+            List<string> ss = (List<string>)(stmts);
+            Assert.AreEqual("10", ss.First());
         }
 
+        [Test]
+        public void BLOCK2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var block = " do 10 + 2; end ";
+            var blk = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var stmts = blk.GetType().InvokeMember("statements", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, blk, null);
+            List<string> ss = (List<string>)(stmts);
+            Assert.AreEqual("10.(+)(2)", ss.First());
+        }
+
+        [Test]
+        public void STMT()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10" });
+            Assert.AreEqual( 10.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.to_s()" });
+            Assert.AreEqual("10", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+            //o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10)" });
+            //Assert.AreEqual(20, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+
+        /*
         [Test]
         public void Block()
         {
@@ -639,6 +702,6 @@ namespace LpTest
                 TestRubyParser.Object.LpObject o = TestRubyParser.Object.LpIndexer.get("a");
                 Assert.AreEqual( o.doubleValue, 19.0 );
             }
-             * */
+            */
     }
 }

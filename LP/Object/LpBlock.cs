@@ -52,7 +52,7 @@ namespace LP.Object
             LpObject ret = null;
             self.statements.ForEach(delegate(string stmt)
             {
-                ret = LpParser.PRIMARY.Parse(stmt);
+                ret = LpParser.STMT.Parse(stmt);
             });
             return ret;
         }
