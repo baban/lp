@@ -13,6 +13,7 @@ namespace LP.Object
             // TODO: display
             // TODO: inspect
             // TODO: to_s
+            // TODO: +
         }
         
         public static LpObject initialize( string s )
