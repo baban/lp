@@ -18,6 +18,9 @@ namespace LP.Object
             obj.class_name = "method";
             obj.superclass = LpObject.initialize();
             obj.method = method;
+            // TODO: display
+            // TODO: inspect
+            // TODO: to_s
             return obj;
         }
 

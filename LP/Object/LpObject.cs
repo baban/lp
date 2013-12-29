@@ -30,16 +30,6 @@ namespace LP.Object
 
         private void setMethods()
         {
-            //methods["+"] = new MethodObj(plus);
-            //methods["-"] = new MethodObj(minus);
-            //methods["/"] = new MethodObj(times);
-            //methods["*"] = new MethodObj(div);
-            //methods["%"] = new MethodObj(mod);
-            //methods[">"] = new MethodObj(compareTo);
-            //methods["**"] = new MethodObj(pow);
-            //methods["=="] = new MethodObj(equal);
-            //methods["==="] = new MethodObj(eq);
-
             methods["inspect"] = new BinMethod(inspect);
             methods["display"] = new BinMethod(display);
             methods["to_s"] = new BinMethod(to_s);

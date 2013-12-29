@@ -10,6 +10,9 @@ namespace LP.Object
     {
         public static LpObject initialize() {
             return init( "" );
+            // TODO: display
+            // TODO: inspect
+            // TODO: to_s
         }
         
         public static LpObject initialize( string s )

@@ -36,11 +36,10 @@ namespace LP
         static readonly Parser<string[]> Args = from ags in SepArg.Many()
                                                 select ags.ToArray();
 
-        /*
-        string[][] operands = new string[][] {
+        string[][] operandTable = new string[][] {
             new string[]{ "**" },
             new string[]{ "*","/" },
-            new string[]{ "+","-" },
+            new string[]{ "+","-", "%" },
             new string[]{ "<<",">>" },
             new string[]{ "&" },
             new string[]{ "|" },
@@ -50,10 +49,8 @@ namespace LP
             new string[]{ "||" },
             new string[]{ "and", "or" }
         };
-        */
         static readonly Parser<string> Operands = from a in Parse.String("(")
-                                                  from v in Parse.String("**").Or(Parse.String("+")).Or(Parse.String("-")).Or(Parse.String("*"))
-                                                             .Or(Parse.String("/")).Or(Parse.String("|")).Or(Parse.String("&")).Text()
+                                                  from v in new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or" }.Select(op => Parse.String(op)).Aggregate( (op1, op2) => op1.Or(op2) ).Text()
                                                   from b in Parse.String(")")
                                                   select v;
         static readonly Parser<string> Fname = Operands.Or(Identifier);

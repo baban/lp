@@ -47,13 +47,19 @@ namespace LP.Object
             obj.methods["-"] = new BinMethod(minus);
             obj.methods["*"] = new BinMethod(mul);
             obj.methods["/"] = new BinMethod(div);
-            //methods["%"] = new MethodObj(mod);
+            obj.methods["%"] = new BinMethod(mod);
+            obj.methods["**"] = new BinMethod(pow);
             //methods[">"] = new MethodObj(compareTo);
-            //methods["**"] = new MethodObj(pow);
+            //methods[">="] = new MethodObj(compareTo);
+            //methods["<"] = new MethodObj(compareTo);
+            //methods["<="] = new MethodObj(compareTo);
             //methods["=="] = new MethodObj(equal);
             //methods["==="] = new MethodObj(eq);
+            //methods["between?"] = new MethodObj(eq);
 
             obj.methods["to_s"] = new BinMethod(to_s);
+            // TODO: display
+            // TODO: inspect
         }
 
 
@@ -97,6 +103,20 @@ namespace LP.Object
         {
             var v = args.arrayValues.First();
             self.doubleValue /= v.doubleValue;
+            return self;
+        }
+
+        private static LpObject mod(LpObject self, LpObject args)
+        {
+            var v = args.arrayValues.First();
+            self.doubleValue %= v.doubleValue;
+            return self;
+        }
+
+        private static LpObject pow(LpObject self, LpObject args)
+        {
+            var v = args.arrayValues.First();
+            self.doubleValue = Math.Pow( (double)self.doubleValue, (double)v.doubleValue );
             return self;
         }
     }

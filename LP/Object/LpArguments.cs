@@ -23,6 +23,9 @@ namespace LP.Object
         {
             obj.methods["push"] = new BinMethod(push);
             obj.methods["first"] = new BinMethod(first);
+            // TODO: display
+            // TODO: inspect
+            // TODO: to_s
         }
 
         static LpObject first(LpObject self, LpObject args)
