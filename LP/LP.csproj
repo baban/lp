@@ -46,12 +46,14 @@
   <ItemGroup>
     <Compile Include="LpParser.cs" />
     <Compile Include="Object\LpArguments.cs" />
+    <Compile Include="Object\LpArray.cs" />
     <Compile Include="Object\LpBlock.cs" />
     <Compile Include="Object\LpBool.cs" />
     <Compile Include="Object\LpMethod.cs" />
     <Compile Include="Object\LpNumeric.cs" />
     <Compile Include="Object\LpObject.cs" />
     <Compile Include="Object\LpString.cs" />
+    <Compile Include="Object\LpSymbol.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

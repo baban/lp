@@ -43,23 +43,24 @@ namespace LP.Object
 
         private static void setMethods( LpObject obj )
         {
-            obj.methods["+"] = new BinMethod(plus);
-            obj.methods["-"] = new BinMethod(minus);
-            obj.methods["*"] = new BinMethod(mul);
-            obj.methods["/"] = new BinMethod(div);
-            obj.methods["%"] = new BinMethod(mod);
+            obj.methods["+"]  = new BinMethod(plus);
+            obj.methods["-"]  = new BinMethod(minus);
+            obj.methods["*"]  = new BinMethod(mul);
+            obj.methods["/"]  = new BinMethod(div);
+            obj.methods["%"]  = new BinMethod(mod);
             obj.methods["**"] = new BinMethod(pow);
-            //methods[">"] = new MethodObj(compareTo);
-            //methods[">="] = new MethodObj(compareTo);
-            //methods["<"] = new MethodObj(compareTo);
-            //methods["<="] = new MethodObj(compareTo);
-            //methods["=="] = new MethodObj(equal);
-            //methods["==="] = new MethodObj(eq);
-            //methods["between?"] = new MethodObj(eq);
+
+            obj.methods[">"]        = new BinMethod(compareToGreater);
+            obj.methods[">="]       = new BinMethod(compareToGreaterEqual);
+            obj.methods["<"]        = new BinMethod(compareToLower);
+            obj.methods["<="]       = new BinMethod(compareToLowerEqual);
+            obj.methods["=="]       = new BinMethod(equal);
+            obj.methods["==="]      = new BinMethod(eq);
+            obj.methods["between?"] = new BinMethod(between);
 
             obj.methods["to_s"] = new BinMethod(to_s);
-            // TODO: display
-            // TODO: inspect
+            obj.methods["display"] = new BinMethod(display);
+            obj.methods["inspect"] = new BinMethod(inspect);
         }
 
 
@@ -118,6 +119,51 @@ namespace LP.Object
             var v = args.arrayValues.First();
             self.doubleValue = Math.Pow( (double)self.doubleValue, (double)v.doubleValue );
             return self;
+        }
+
+        private static LpObject compareToGreater(LpObject self, LpObject args) {
+            var o = args.arrayValues.ElementAt(0);
+            return LpBool.initialize(self.doubleValue > o.doubleValue);
+        }
+
+        private static LpObject compareToGreaterEqual(LpObject self, LpObject args)
+        {
+            var o = args.arrayValues.ElementAt(0);
+            return LpBool.initialize(self.doubleValue >= o.doubleValue);
+        }
+
+        private static LpObject compareToLower(LpObject self, LpObject args)
+        {
+            var o = args.arrayValues.ElementAt(0);
+            return LpBool.initialize(self.doubleValue < o.doubleValue);
+        }
+
+        private static LpObject compareToLowerEqual(LpObject self, LpObject args)
+        {
+            var o = args.arrayValues.ElementAt(0);
+            return LpBool.initialize(self.doubleValue <= o.doubleValue);
+        }
+
+        private static LpObject equal(LpObject self, LpObject args)
+        {
+            var o = args.arrayValues.ElementAt(0);
+            return LpBool.initialize(self.doubleValue == o.doubleValue);
+        }
+
+        private static LpObject eq(LpObject self, LpObject args)
+        {
+            var o = args.arrayValues.ElementAt(0);
+            return LpBool.initialize(self.doubleValue == o.doubleValue);
+        }
+
+        private static LpObject between(LpObject self, LpObject args)
+        {
+            var v1  = args.arrayValues.ElementAt(0).doubleValue;
+            var v2 = args.arrayValues.ElementAt(1).doubleValue;
+            var v = self.doubleValue;
+            var max = (v1 < v2) ? v2 : v1;
+            var min = (v1 < v2) ? v1 : v2;
+            return LpBool.initialize( min <= v && v<= max );
         }
     }
 }
