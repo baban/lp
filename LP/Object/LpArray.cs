@@ -19,6 +19,7 @@ namespace LP.Object
     // TODO: map
     // TODO: join
     // TODO: concat
+    // TODO: size
     class LpArray
     {
     }

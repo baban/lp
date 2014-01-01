@@ -26,6 +26,7 @@ namespace LP.Object
             // TODO: display
             // TODO: inspect
             // TODO: to_s
+            // TODO: size
         }
 
         static LpObject first(LpObject self, LpObject args)

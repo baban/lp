@@ -27,6 +27,22 @@ namespace LpTest.Object
             return t;
         }
 
+        private Type initArgumentsModule()
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.Object.LpArguments");
+            return t;
+        }
+
+        private Type initNumericModule()
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.Object.LpNumeric");
+            return t;
+        }
+
         [Test]
         public void initialize0() {
             Type ot = initModule();
@@ -74,9 +90,100 @@ namespace LpTest.Object
             Type st = initStringModule();
             var types = new Type[] { typeof(string) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
+
             var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
             Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
+        [Test]
+        public void size()
+        {
+            Type ot = initModule();
+            Type st = initStringModule();
+            Type at = initArgumentsModule();
+            var types = new Type[] { typeof(string) };
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+
+            // 引数なし
+            var atypes = new Type[] { };
+            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, atypes, null).Invoke(null, null);
+            var prms = new object[] { "size", args };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual(4.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void add()
+        {
+            Type ot = initModule();
+            Type st = initStringModule();
+            Type at = initArgumentsModule();
+            var types = new Type[] { typeof(string) };
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            var arg = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"bbbb" });
+
+            // 引数なし
+            var atypes = new Type[] { };
+            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, atypes, null).Invoke(null, null);
+            args = at.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { args, arg });
+            var prms = new object[] { "<<", args };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual("aaaabbbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void plus()
+        {
+            Type ot = initModule();
+            Type st = initStringModule();
+            Type at = initArgumentsModule();
+            var types = new Type[] { typeof(string) };
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            var arg = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"bbbb" });
+
+            // 引数なし
+            var atypes = new Type[] { };
+            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, atypes, null).Invoke(null, null);
+            args = at.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { args, arg });
+            var prms = new object[] { "+", args };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual("aaaabbbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void eq()
+        {
+            Type ot = initModule();
+            Type st = initStringModule();
+            Type at = initArgumentsModule();
+            var types = new Type[] { typeof(string) };
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            var arg1 = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            // 引数なし
+            var atypes = new Type[] { };
+            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, atypes, null).Invoke(null, null);
+            args = at.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { args, arg1 });
+            var prms = new object[] { "===", args };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void equal()
+        {
+            Type ot = initModule();
+            Type st = initStringModule();
+            Type at = initArgumentsModule();
+            var types = new Type[] { typeof(string) };
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            var arg1 = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            // 引数なし
+            var atypes = new Type[] { };
+            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, atypes, null).Invoke(null, null);
+            args = at.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { args, arg1 });
+            var prms = new object[] { "==", args };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
     }
 }

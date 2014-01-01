@@ -25,11 +25,8 @@ namespace LP.Object
 
         public static LpObject initialize(string s)
         {
-            Console.WriteLine("numeric#init");
-            Console.WriteLine(s);
             return init( double.Parse(s) );
         }
-
 
         private static LpObject init(double i)
         {

@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    // TODO: =
+    // TODO: ==
+    // TODO: ===
+    // TODO: display
+    // TODO: inspect
+    // TODO: to_s
     class LpSymbol
     {
     }

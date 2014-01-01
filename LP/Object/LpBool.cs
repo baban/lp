@@ -16,6 +16,8 @@ namespace LP.Object
             // TODO: to_s
             // TODO: ||
             // TODO: &&
+            // TODO: ==
+            // TODO: ===
         }
 
         public static LpObject initialize( string b )
