@@ -60,7 +60,6 @@ namespace LP.Object
             obj.methods["inspect"] = new BinMethod(inspect);
         }
 
-
         protected static LpObject display(LpObject self, LpObject args)
         {
             Console.WriteLine(self.doubleValue.ToString());
