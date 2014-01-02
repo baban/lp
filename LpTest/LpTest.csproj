@@ -59,6 +59,7 @@
     <Compile Include="Object\LpNumericTest.cs" />
     <Compile Include="Object\LpObjectTest.cs" />
     <Compile Include="Object\LpStringTest.cs" />
+    <Compile Include="Object\LpSymbolTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
