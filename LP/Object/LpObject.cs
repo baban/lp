@@ -13,18 +13,19 @@ namespace LP.Object
         public BinMethod method = null;
         public delegate LpObject BinMethod(LpObject self, LpObject args);
         public Hashtable methods = new Hashtable();
-        protected Hashtable variables = new Hashtable();
+        public Hashtable variables = new Hashtable();
 
         public bool? boolValue = null;
         public double? doubleValue = null;
         public string stringValue = null;
         public List<LpObject> arrayValues = null;
+        public HashSet<LpObject> hashValues = null;
         public List<string> statements = null;
 
         public string class_name = null;
 
         public LpObject() {
-            class_name = "object";
+            class_name = "Object";
             setMethods();
         }
 

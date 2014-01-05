@@ -126,6 +126,21 @@ namespace LpTest.Object
         }
 
         [Test]
+        public void to_i()
+        {
+            Type ot = initModule();
+            Type st = initNumericModule();
+            Type at = initArgumentsModule();
+            var types = new Type[] { typeof(double) };
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)10.5 });
+
+            // 引数なし
+            var prms = new object[] { "to_i", null };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
         public void plus()
         {
             Type ot = initModule();

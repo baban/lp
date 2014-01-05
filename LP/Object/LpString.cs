@@ -23,7 +23,7 @@ namespace LP.Object
             setMethods(obj);
             obj.superclass = LpObject.initialize();
             obj.stringValue = s;
-            obj.class_name = "string";
+            obj.class_name = "String";
             return obj;
         }
 

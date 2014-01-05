@@ -28,14 +28,15 @@ namespace LP.Object
 
         static LpObject init()
         {
-            LpObject iobj = new LpObject();
-            iobj.superclass = new LpObject();
-            iobj.methods["to_s"] = new BinMethod(to_s);
-            iobj.methods["display"] = new BinMethod(display);
-            iobj.methods["execute"] = new BinMethod(execute);
-            iobj.statements = new List<string>();
+            LpObject obj = new LpObject();
+            obj.superclass = new LpObject();
+            obj.methods["to_s"] = new BinMethod(to_s);
+            obj.methods["display"] = new BinMethod(display);
+            obj.methods["execute"] = new BinMethod(execute);
+            obj.statements = new List<string>();
+            obj.class_name = "Block";
 
-            return iobj;
+            return obj;
         }
 
         static LpObject to_s(LpObject self, LpObject args)

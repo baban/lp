@@ -31,7 +31,7 @@ namespace LP.Object
         private static LpObject init(double i)
         {
             LpObject obj = LpObject.initialize();
-            obj.class_name = "numeric";
+            obj.class_name = "Numeric";
             obj.superclass = LpObject.initialize();
             setMethods(obj);
             obj.doubleValue = i;
@@ -55,6 +55,7 @@ namespace LP.Object
             obj.methods["==="]      = new BinMethod(eq);
             obj.methods["between?"] = new BinMethod(between);
 
+            obj.methods["to_i"] = new BinMethod(to_i);
             obj.methods["to_s"] = new BinMethod(to_s);
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
@@ -76,7 +77,14 @@ namespace LP.Object
             return LpString.initialize(self.doubleValue.ToString());
         }
 
-        private static LpObject plus(LpObject self, LpObject args) {
+        protected static LpObject to_i(LpObject self, LpObject args)
+        {
+            self.doubleValue = (int)self.doubleValue;
+            return self;
+        }
+
+        private static LpObject plus(LpObject self, LpObject args)
+        {
             var v = args.arrayValues.First();
             self.doubleValue += v.doubleValue;
             return self;

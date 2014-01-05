@@ -23,12 +23,24 @@ namespace LP
         static readonly Parser<string> Bool = Parse.String("true").Or( Parse.String("false") ).Text().Token();
         static readonly Parser<string> Int = Parse.Digit.AtLeastOnce().Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
+        static readonly Parser<string> Symbol = from mark in Parse.String(":").Text()
+                                                from idf in Identifier
+                                                select mark+idf;
         static readonly Parser<string> String = from a in Parse.Char('"')
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
                                                 select '"' + string.Join("", s.ToArray() ) + '"';
 
         static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String);
+
+        static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
+                                                 from s in Primary
+                                                 select s).Or(Primary);
+        static readonly Parser<string> Array = from a in Parse.String("[").Text().Token()
+                                               from elms in SepElm.Many()
+                                               from b in Parse.String("]").Text().Token()
+                                               select a + string.Join(",", elms) + b;
+
         static readonly Parser<string> Arg = Primary;
         static readonly Parser<string> SepArg = (from sep in Parse.Char(',').Token()
                                                  from s in Arg
@@ -49,6 +61,7 @@ namespace LP
             new string[]{ "||" },
             new string[]{ "and", "or" }
         };
+
         static readonly Parser<string> Operands = from a in Parse.String("(")
                                                   from v in new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or" }.Select(op => Parse.String(op)).Aggregate( (op1, op2) => op1.Or(op2) ).Text()
                                                   from b in Parse.String(")")
@@ -167,7 +180,17 @@ namespace LP
                                                          from b in Parse.Char('"')
                                                          select Object.LpString.initialize(s);
 
-        public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC.Or(BOOL).Or(STRING);
+        static readonly Parser<Object.LpObject> SYMBOL = from m in Parse.String(":").Text()
+                                                         from s in Identifier
+                                                         select Object.LpSymbol.initialize(s);
+
+        static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
+                                                        from elms in SepElm.Many()
+                                                        from b in Parse.String("]").Text().Token()
+                                                        select makeArray(elms.ToArray());
+
+        public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC.Or(BOOL).Or(STRING).Or(SYMBOL).Or(ARRAY);
+
         static readonly Parser<Object.LpObject> ARG = PRIMARY;
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select makeArgs( gs );
@@ -192,8 +215,18 @@ namespace LP
         {
             return Parse.String(operand).Token().Text();
         }
-        
-        static Object.LpObject makeArgs( string[] os )
+
+        static Object.LpObject makeArray(string[] os)
+        {
+            Object.LpObject args = Object.LpArray.initialize();
+            foreach (var v in os)
+            {
+                args.funcall("push", ARG.Parse(v));
+            }
+            return args;
+        }
+
+        static Object.LpObject makeArgs(string[] os)
         {
             Object.LpObject args = Object.LpArguments.initialize();
             foreach (var v in os) {

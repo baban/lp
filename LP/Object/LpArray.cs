@@ -17,9 +17,9 @@ namespace LP.Object
         {
             LpObject obj = LpObject.initialize();
             setMethods(obj);
-            obj.superclass = LpObject.initialize();
-            obj.class_name = "array";
-            obj.arrayValues= new List<LpObject>();
+            obj.superclass  = LpObject.initialize();
+            obj.class_name  = "Array";
+            obj.arrayValues = new List<LpObject>();
             return obj;
         }
 

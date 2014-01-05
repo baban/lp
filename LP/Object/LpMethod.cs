@@ -15,7 +15,7 @@ namespace LP.Object
         public static LpObject initialize(BinMethod method)
         {
             var obj = LpObject.initialize();
-            obj.class_name = "method";
+            obj.class_name = "Method";
             obj.superclass = LpObject.initialize();
             obj.method = method;
             // TODO: display

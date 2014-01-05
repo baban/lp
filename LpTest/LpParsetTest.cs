@@ -101,6 +101,14 @@ namespace LpTest
             Assert.AreEqual("\"\\\"\\\"\\\"\"", pm);
         }
 
+        [Test]
+        public void Symbol()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Symbol", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, ":aaaa" });
+            Assert.AreEqual(":aaaa", pm);
+        }
 
         [Test]
         public void Bool()
@@ -112,6 +120,36 @@ namespace LpTest
 
             pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "false" });
             Assert.AreEqual("false", pm);
+        }
+
+        [Test]
+        public void Array0()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Array", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[]" });
+            Assert.AreEqual("[]", pm);
+
+            pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[ ]" });
+            Assert.AreEqual("[]", pm);
+        }
+
+        [Test]
+        public void Array1()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Array", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[ 10 ]" });
+            Assert.AreEqual("[10]", pm);
+        }
+
+        [Test]
+        public void ArrayN()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Array", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[ 10, 10 ]" });
+            Assert.AreEqual("[10,10]", pm);
         }
 
         [Test]
@@ -506,6 +544,47 @@ namespace LpTest
         }
 
         [Test]
+        public void SYMBOL()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("SYMBOL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, ":aaa" });
+            var str = o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
+            Assert.AreEqual("aaa", str);
+        }
+
+        [Test]
+        public void ARRAY0()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ARRAY", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[]" });
+            var vs = o.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
+            Assert.NotNull(vs);
+        }
+
+        [Test]
+        public void ARRAY1()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ARRAY", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10]" });
+            var vs = o.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
+            Assert.NotNull(vs);
+        }
+
+        [Test]
+        public void ARRAY_N()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ARRAY", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10,5]" });
+            var vs = o.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
+            Assert.NotNull(vs);
+        }
+
+
+        [Test]
         public void ARGS()
         {
             Type t = initParser();
@@ -605,6 +684,25 @@ namespace LpTest
 
         [Test]
         public void STMT()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10" });
+            Assert.AreEqual(10.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "\"aaa\"" });
+            Assert.AreEqual("aaa", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, ":aaa" });
+            Assert.AreEqual("aaa", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10,5]" });
+            Assert.NotNull( o.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+
+        [Test]
+        public void STMT2()
         {
             Type t = initParser();
             var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);

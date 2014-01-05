@@ -9,7 +9,7 @@ using System.Reflection;
 namespace LpTest
 {
     [TestFixture]
-    public class Class1
+    public class TestTest
     {
         [Test]
         public void test()

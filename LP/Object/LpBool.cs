@@ -23,7 +23,7 @@ namespace LP.Object
             LpObject obj = LpObject.initialize();
             setMethods(obj);
             obj.superclass = LpObject.initialize();
-            obj.class_name = "bool";
+            obj.class_name = "Bool";
             obj.boolValue = b;
             return obj;
         }
