@@ -8,6 +8,11 @@ using Sprache;
 
 namespace LP
 {
+    // TODO: シンボル、ハッシュ作成
+    // TODO: メソッド呼び出し
+    // TODO: if文, case文
+    // TODO: メソッド定義
+    // TODO: class定義、module定義
     class LpParser
     {
         static readonly Parser<string> Identifier =
@@ -189,6 +194,11 @@ namespace LP
                                                         from b in Parse.String("]").Text().Token()
                                                         select makeArray(elms.ToArray());
 
+        static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
+                                                       from elms in SepElm.Many()
+                                                       from b in Parse.String("}").Text().Token()
+                                                       select makeHash(elms.ToArray());
+
         public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC.Or(BOOL).Or(STRING).Or(SYMBOL).Or(ARRAY);
 
         static readonly Parser<Object.LpObject> ARG = PRIMARY;
@@ -214,6 +224,12 @@ namespace LP
         static Parser<string> Operator(string operand)
         {
             return Parse.String(operand).Token().Text();
+        }
+
+        static Object.LpObject makeHash(string[] os)
+        {
+            Object.LpObject args = Object.LpHash.initialize();
+            return args;
         }
 
         static Object.LpObject makeArray(string[] os)

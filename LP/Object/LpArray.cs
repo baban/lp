@@ -47,10 +47,10 @@ namespace LP.Object
             obj.methods["=="] = new BinMethod(equal);
             obj.methods["==="] = new BinMethod(eq);
 
-            obj.methods["to_s"] = new BinMethod(to_s);
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
              */
+            obj.methods["to_s"] = new BinMethod(to_s);
         }
 
         private static LpObject at( LpObject self, LpObject args )
@@ -69,6 +69,13 @@ namespace LP.Object
         {
             self.arrayValues.Add(args);
             return self;
+        }
+
+        static LpObject to_s(LpObject self, LpObject args)
+        {
+            var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue );
+            var s = string.Concat(",",vs);
+            return LpString.initialize( "["+s+"]" );
         }
     }
 }

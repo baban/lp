@@ -49,8 +49,11 @@
     <Compile Include="Object\LpArray.cs" />
     <Compile Include="Object\LpBlock.cs" />
     <Compile Include="Object\LpBool.cs" />
+    <Compile Include="Object\LpClass.cs" />
     <Compile Include="Object\LpHash.cs" />
+    <Compile Include="Object\LpKernel.cs" />
     <Compile Include="Object\LpMethod.cs" />
+    <Compile Include="Object\LpModule.cs" />
     <Compile Include="Object\LpNumeric.cs" />
     <Compile Include="Object\LpObject.cs" />
     <Compile Include="Object\LpString.cs" />

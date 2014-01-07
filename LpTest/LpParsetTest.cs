@@ -583,6 +583,15 @@ namespace LpTest
             Assert.NotNull(vs);
         }
 
+        [Test]
+        public void HASH0()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("HASH", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "{}" });
+            var vs = o.GetType().InvokeMember("hashValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
+            Assert.NotNull(vs);
+        }
 
         [Test]
         public void ARGS()
@@ -710,8 +719,11 @@ namespace LpTest
             Assert.AreEqual( 10.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
             o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.to_s()" });
             Assert.AreEqual("10", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
-            //o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10)" });
-            //Assert.AreEqual(20, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10)" });
+            Assert.AreEqual(20, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+
+            //o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10,5].to_s()" });
+            //Assert.AreEqual("[10,5]", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
         /*
@@ -766,45 +778,6 @@ namespace LpTest
                 string token = TestRubyParser.LpParser.Varname.Parse("abcd");
                 Assert.AreEqual(token, "abcd");
             }
-
-            [Test]
-            public void Numeric()
-            {
-                TestRubyParser.Object.LpObject o = TestRubyParser.LpParser.Numeric.Parse("19");
-                Assert.AreEqual(o.doubleValue, 19.0);
-            }
-
-            [Test]
-            public void NumericS()
-            {
-                string s = TestRubyParser.LpParser.NumericS.Parse("19");
-                Assert.AreEqual(s, "19.0");
-            }
-            */
-            /*
-            [Test]
-            public void ExpAdditive()
-            {
-                TestRubyParser.Object.LpObject o;
-                o = TestRubyParser.LpParser.ExpAdditive.Parse("19");
-                Assert.AreEqual(o.doubleValue, 19.0);
-                o = TestRubyParser.LpParser.ExpAdditive.Parse("19 + 2");
-                Assert.AreEqual(o.doubleValue, 21.0);
-            }
-            [Test]
-            public void ExpMult()
-            {
-                TestRubyParser.Object.LpObject o;
-                o = TestRubyParser.LpParser.ExpAdditive.Parse("19");
-                Assert.AreEqual(o.doubleValue, 19.0);
-                o = TestRubyParser.LpParser.ExpAdditive.Parse("19 + 2");
-                Assert.AreEqual(o.doubleValue, 21.0);
-                o = TestRubyParser.LpParser.ExpAdditive.Parse("19 * 2");
-                Assert.AreEqual(o.doubleValue, 38.0);
-                o = TestRubyParser.LpParser.ExpAdditive.Parse("4 + 19 * 2");
-                Assert.AreEqual(o.doubleValue, 42.0);
-            }
-
             [Test]
             public void ExpValue()
             {
