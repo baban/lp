@@ -48,6 +48,32 @@ namespace LpTest.Object
         }
 
         [Test]
+        public void initializeSymbols()
+        {
+            Type ot = initModule();
+            Type t = initSymbolModule();
+            var types = new Type[] { typeof(string) };
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
+            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+            Assert.AreEqual("bbb", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+            //var symbols = new Dictionary<string, string>();
+            //symbols["hoge"] = "sss";
+            var symbols = t.GetField("symbols", BindingFlags.NonPublic | BindingFlags.Static);
+            Console.WriteLine(symbols);
+            //var ret = symbols.GetType().GetMethod("ContainsKey", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            //Console.WriteLine( ret.Invoke(symbols,new string[]{ "hoge" }) );
+            //Console.WriteLine( ret.Invoke(symbols, new string[] { "aaa" }));
+            //var ret = symbols;
+            //var ret = symbols.GetType().GetMethod("ContainsKey");
+            //var ret = symbols.GetType();
+            //Console.WriteLine(ret.GetType().GetMethod("ContainsKey",BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            //var ret = symbols.GetType().GetMethod("ContainsKey").Invoke(symbols, new string[] { "bbb" });
+            //Assert.AreEqual( true, ret );
+            //t.InvokeMember("symbols", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField);
+        }
+
+
+        [Test]
         public void to_s()
         {
             Type st = initSymbolModule();

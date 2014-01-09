@@ -9,10 +9,6 @@ namespace LP.Object
 {
     class LpSymbol : LpObject
     {
-        // HashSetとHashtableどちらがいいか研究の必要あり
-        //protected static HashSet<string,string> symbolTable = null;
-        //protected static Hashtable symbolTable = null;
-
         public static LpObject initialize(string s)
         {
             return init(s);
@@ -20,17 +16,20 @@ namespace LP.Object
 
         private static LpObject init(string s)
         {
+            if (symbols.ContainsKey(s)) return symbols[s];
+
             LpObject obj = LpObject.initialize();
             setMethods(obj);
             obj.superclass = LpObject.initialize();
             obj.stringValue = s;
             obj.class_name = "Symbol";
+            symbols[s] = obj;
+            obj.doubleValue = symbols[s].GetHashCode();
             return obj;
         }
         
         private static void setMethods(LpObject obj)
         {
-            // TODO: display
             obj.methods["inspect"] = new BinMethod(inspect);
             obj.methods["to_s"] = new BinMethod(to_s);
             obj.methods["display"] = new BinMethod(display);
@@ -56,28 +55,25 @@ namespace LP.Object
             return null;
         }
 
-        // TODO: ==
+        // TODO: =
         private static LpObject setOp(LpObject self, LpObject args)
         {
             var o = args.arrayValues.ElementAt(0);
             return LpBool.initialize(self.stringValue == o.stringValue);
         }
 
-        // TODO: ==
         private static LpObject equal(LpObject self, LpObject args)
         {
             var o = args.arrayValues.ElementAt(0);
-            return LpBool.initialize(self.stringValue == o.stringValue);
+            var sym = symbols[o.stringValue];
+            return LpBool.initialize(self.doubleValue != null && self.doubleValue == sym.doubleValue);
         }
 
-        // TODO: This method must comare to memory address!!
-        // TODO: ===
         private static LpObject eq(LpObject self, LpObject args)
         {
             var o = args.arrayValues.ElementAt(0);
-            //var a = symbolTable[self.stringValue].GetHashCode();
-            //var b = symbolTable[o.stringValue].GetHashCode();
-            return LpBool.initialize(self.stringValue == o.stringValue);
+            var sym = symbols[o.stringValue];
+            return LpBool.initialize( self.doubleValue!=null && self.doubleValue == sym.doubleValue );
         }
     }
 }
