@@ -88,5 +88,16 @@ namespace LP.Object
             }
             return null;
         }
+
+        public LpObject setVariable(String name, LpObject obj)
+        {
+            this.variables[name] = obj;
+            return obj;
+        }
+
+        public LpObject getVariable(String name)
+        {
+            return (LpObject)this.variables[name];
+        }
     }
 }

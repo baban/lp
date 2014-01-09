@@ -64,16 +64,14 @@ namespace LP.Object
 
         private static LpObject equal(LpObject self, LpObject args)
         {
-            var o = args.arrayValues.ElementAt(0);
-            var sym = symbols[o.stringValue];
-            return LpBool.initialize(self.doubleValue != null && self.doubleValue == sym.doubleValue);
+            return eq( self, args );
         }
 
         private static LpObject eq(LpObject self, LpObject args)
         {
             var o = args.arrayValues.ElementAt(0);
             var sym = symbols[o.stringValue];
-            return LpBool.initialize( self.doubleValue!=null && self.doubleValue == sym.doubleValue );
+            return LpBool.initialize( self == sym );
         }
     }
 }
