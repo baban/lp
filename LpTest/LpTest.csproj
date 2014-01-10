@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Object\LpIndexTest.cs" />
+    <Compile Include="Object\LpKernelTest.cs" />
     <Compile Include="TestTest.cs" />
     <Compile Include="Object\LpArrayTest.cs" />
     <Compile Include="Object\LpBlockTest.cs" />

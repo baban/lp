@@ -9,6 +9,8 @@ namespace LP.Object
 {
     class LpSymbol : LpObject
     {
+        protected static Dictionary<string, LpObject> symbols = new Dictionary<string, LpObject>();
+
         public static LpObject initialize(string s)
         {
             return init(s);
@@ -58,8 +60,10 @@ namespace LP.Object
         // TODO: =
         private static LpObject setOp(LpObject self, LpObject args)
         {
-            var o = args.arrayValues.ElementAt(0);
-            return LpBool.initialize(self.stringValue == o.stringValue);
+            var v = args.arrayValues.First();
+            var env = LpIndexer.last();
+            var o = env.setVariable(self.stringValue, v);
+            return o;
         }
 
         private static LpObject equal(LpObject self, LpObject args)

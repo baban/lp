@@ -33,6 +33,7 @@ namespace LP.Object
             obj.methods["to_s"] = new BinMethod(to_s);
             obj.methods["display"] = new BinMethod(display);
             obj.methods["execute"] = new BinMethod(execute);
+            obj.methods["call"] = new BinMethod(execute);
             obj.statements = new List<string>();
             obj.class_name = "Block";
 

@@ -38,5 +38,10 @@ namespace LP.Object
         {
             return contextStack.Dequeue();
         }
+
+        public static LpObject last()
+        {
+            return contextStack.Last();
+        }
     }
 }

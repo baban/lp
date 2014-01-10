@@ -36,6 +36,22 @@ namespace LpTest.Object
             return t;
         }
 
+        private Type initNumericModule()
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.Object.LpNumeric");
+            return t;
+        }
+
+        private Type initIndexerModule()
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.Object.LpIndexer");
+            return t;
+        }
+
         [Test]
         public void initialize1()
         {
@@ -56,20 +72,8 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
             Assert.AreEqual("bbb", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
-            //var symbols = new Dictionary<string, string>();
-            //symbols["hoge"] = "sss";
             var symbols = t.GetField("symbols", BindingFlags.NonPublic | BindingFlags.Static);
             Console.WriteLine(symbols);
-            //var ret = symbols.GetType().GetMethod("ContainsKey", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            //Console.WriteLine( ret.Invoke(symbols,new string[]{ "hoge" }) );
-            //Console.WriteLine( ret.Invoke(symbols, new string[] { "aaa" }));
-            //var ret = symbols;
-            //var ret = symbols.GetType().GetMethod("ContainsKey");
-            //var ret = symbols.GetType();
-            //Console.WriteLine(ret.GetType().GetMethod("ContainsKey",BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
-            //var ret = symbols.GetType().GetMethod("ContainsKey").Invoke(symbols, new string[] { "bbb" });
-            //Assert.AreEqual( true, ret );
-            //t.InvokeMember("symbols", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField);
         }
 
 
@@ -93,6 +97,34 @@ namespace LpTest.Object
 
             var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
             Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+
+        [Test]
+        public void setOp()
+        {
+            Type ot = initModule();
+            Type nt = initNumericModule();
+            Type it = initIndexerModule();
+            Type st = initSymbolModule();
+
+            var types = new Type[] { typeof(double) };
+            var v = nt.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.0 });
+
+            var indexer = it.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+            /*
+            var prms = new object[] { (string)"hoge", v };
+            it.GetMethod("set", BindingFlags.Static | BindingFlags.Public).Invoke(null, prms);
+            var prms2 = new string[] { (string)"hoge" };
+            var o = it.GetMethod("get", BindingFlags.Static | BindingFlags.Public).Invoke(null, prms2);
+            */
+            var types2 = new Type[] { typeof(string) };
+            var sym = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types2, null).Invoke(null, new string[] { "bbb" });
+
+            //var so = sym.GetType().GetMethod("setOp", BindingFlags.Static | BindingFlags.NonPublic).Invoke(sym, new object[] { sym, v });
+            /*
+            var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+             */
         }
 
         [Test]
