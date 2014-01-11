@@ -103,7 +103,34 @@ namespace LpTest.Object
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual("1.5", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
-        
+
+        [Test]
+        public void class_funcall()
+        {
+            Type ot = initModule();
+            Type nt = initNumericModule(); 
+            var types = new Type[] { typeof(double) };
+            var o = nt.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.5 });
+
+            var prms = new object[] { "class", null };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual("Numeric", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void hash_funcall()
+        {
+            Type ot = initModule();
+            Type nt = initNumericModule();
+            var types = new Type[] { typeof(double) };
+            var o = nt.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.5 });
+
+            var prms = new object[] { "hash", null };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            var v = so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
+            Assert.NotNull(v);
+        }
+
         [Test]
         public void display()
         {

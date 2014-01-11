@@ -31,9 +31,17 @@ namespace LP.Object
 
         private void setMethods()
         {
+            // TODO: send
+            // TODO: copy
+            // TODO: is_a?
+            // TODO: tap
+            // TODO: methods
+            // TODO: hash
             methods["inspect"] = new BinMethod(inspect);
             methods["display"] = new BinMethod(display);
             methods["to_s"] = new BinMethod(to_s);
+            methods["class"] = new BinMethod(_class);
+            methods["hash"] = new BinMethod(hash);
         }
 
         public override string ToString()
@@ -70,6 +78,16 @@ namespace LP.Object
         protected static LpObject inspect(LpObject self, LpObject args)
         {
             return to_s( self, args );
+        }
+
+        protected static LpObject _class(LpObject self, LpObject args)
+        {
+            return LpString.initialize(self.class_name);
+        }
+
+        protected static LpObject hash(LpObject self, LpObject args)
+        {
+            return LpNumeric.initialize( self.GetHashCode() );
         }
 
         protected static LpObject className(LpObject self, LpObject args)
