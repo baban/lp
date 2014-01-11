@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Object\LpErrorTest.cs" />
+    <Compile Include="Object\LpFileTest.cs" />
     <Compile Include="Object\LpIndexTest.cs" />
     <Compile Include="Object\LpKernelTest.cs" />
     <Compile Include="TestTest.cs" />

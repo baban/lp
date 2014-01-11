@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace LpTest.Object
 {
+    [TestFixture]
     class LpKernelTest
     {
         private Type initParser()

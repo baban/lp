@@ -50,6 +50,8 @@
     <Compile Include="Object\LpBlock.cs" />
     <Compile Include="Object\LpBool.cs" />
     <Compile Include="Object\LpClass.cs" />
+    <Compile Include="Object\LpError.cs" />
+    <Compile Include="Object\LpFile.cs" />
     <Compile Include="Object\LpHash.cs" />
     <Compile Include="Object\LpIndexer.cs" />
     <Compile Include="Object\LpKernel.cs" />

@@ -148,14 +148,10 @@ namespace LP
             ExpAssignment,
             (op, a, b) => a + ".(" + op + ")(" + b + ")");
         // =
-        /*
         static readonly Parser<string> ExpEqual = Parse.ChainOperator(
             Operator("="),
             ExpAndOr,
             (op, a, b) => a + ".(" + op + ")(" + b + ")");
-        */
-        static readonly Parser<string> ExpEqual = ExpAndOr;
-
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
 
@@ -164,7 +160,7 @@ namespace LP
                                                  from b in Parse.String(")").Token()
                                                  from stmts1 in Stmt.Many()
                                                  from c in Parse.String("end").Token()
-                                                 select "if(" + expr + ",do " + string.Join(";", stmts1.ToArray()) + " end)";
+                                                 select "if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end)";
         static readonly Parser<string> IfExpr2 = from a in Parse.String("if(").Token()
                                                  from expr in Expr
                                                  from b in Parse.String(")").Token()
@@ -172,7 +168,7 @@ namespace LP
                                                  from els in Parse.String("else").Token()
                                                  from stmts2 in Stmt.Many()
                                                  from c in Parse.String("end").Token()
-                                                 select "if(" + expr + ",do " + string.Join(";", stmts1.ToArray()) + " end,do " + string.Join(",", stmts2.ToArray()) + " end)";
+                                                 select "if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end,do " + string.Join("; ", stmts2.ToArray()) + " end)";
         static readonly Parser<string> IfExpr = IfExpr2.Or(IfExpr1);
 
         static readonly Parser<string> Stmt = (from s in Expr

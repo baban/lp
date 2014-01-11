@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace LpTest.Object
 {
+    [TestFixture]
     class LpArrayTest
     {
         private Type initModule()

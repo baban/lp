@@ -8,6 +8,7 @@ using System.Reflection;
 
 namespace LpTest.Object
 {
+    [TestFixture]
     class LpArgumentsTest
     {
         private Type initModule()
