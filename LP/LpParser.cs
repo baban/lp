@@ -8,7 +8,7 @@ using Sprache;
 
 namespace LP
 {
-    // TODO: シンボル、ハッシュ作成
+    // TODO: ハッシュ作成
     // TODO: メソッド呼び出し
     // TODO: if文, case文
     // TODO: メソッド定義
@@ -158,6 +158,22 @@ namespace LP
 
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
+
+        static readonly Parser<string> IfExpr1 = from a in Parse.String("if(").Token()
+                                                 from expr in Expr
+                                                 from b in Parse.String(")").Token()
+                                                 from stmts1 in Stmt.Many()
+                                                 from c in Parse.String("end").Token()
+                                                 select "if(" + expr + ",do " + string.Join(";", stmts1.ToArray()) + " end)";
+        static readonly Parser<string> IfExpr2 = from a in Parse.String("if(").Token()
+                                                 from expr in Expr
+                                                 from b in Parse.String(")").Token()
+                                                 from stmts1 in Stmt.Many()
+                                                 from els in Parse.String("else").Token()
+                                                 from stmts2 in Stmt.Many()
+                                                 from c in Parse.String("end").Token()
+                                                 select "if(" + expr + ",do " + string.Join(";", stmts1.ToArray()) + " end,do " + string.Join(",", stmts2.ToArray()) + " end)";
+        static readonly Parser<string> IfExpr = IfExpr2.Or(IfExpr1);
 
         static readonly Parser<string> Stmt = (from s in Expr
                                               from t in Parse.Char(';').Or( Parse.Char('\n') )

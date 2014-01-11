@@ -18,13 +18,10 @@ namespace LP.Object
         private static LpObject _if(LpObject self, LpObject args)
         {
             var o1 = args.arrayValues.ElementAt(0);
-            var o2 = args.arrayValues.ElementAt(1);
-            var o3 = args.arrayValues.ElementAt(2);
-
             if( o1!=null ){
-                return o2.funcall("call", null);
+                return args.arrayValues.ElementAt(1).funcall("call", null);
             } else {
-                return o3.funcall("call", null);
+                return args.arrayValues.ElementAt(2).funcall("call", null);
             }
         }
     }
