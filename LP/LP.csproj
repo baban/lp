@@ -55,6 +55,7 @@
     <Compile Include="Object\LpHash.cs" />
     <Compile Include="Object\LpIndexer.cs" />
     <Compile Include="Object\LpKernel.cs" />
+    <Compile Include="Object\LpLambda.cs" />
     <Compile Include="Object\LpMethod.cs" />
     <Compile Include="Object\LpModule.cs" />
     <Compile Include="Object\LpNumeric.cs" />

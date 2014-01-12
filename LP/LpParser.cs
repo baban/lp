@@ -9,8 +9,7 @@ using Sprache;
 namespace LP
 {
     // TODO: ハッシュ作成
-    // TODO: メソッド呼び出し
-    // TODO: if文, case文
+    // TODO: case文
     // TODO: メソッド定義
     // TODO: class定義、module定義
     class LpParser
@@ -35,6 +34,14 @@ namespace LP
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
                                                 select '"' + string.Join("", s.ToArray() ) + '"';
+        static readonly Parser<string> Function = from a in Parse.String("def").Token()
+                                                  from fname in Identifier
+                                                  from b in Parse.String(";").Or(Parse.String("\n"))
+                                                  from stmts in Stmts
+                                                  from c in Parse.String("end")
+                                                  select "(:" + fname + ").(=)" + "(^do " + 
+                                                         string.Join( "; ", stmts.ToArray()) + 
+                                                         " end)";
 
         static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String);
 
@@ -235,6 +242,11 @@ namespace LP
                                                         from stmts in Stmt.Token().Many()
                                                         from b in Parse.String("end").Token()
                                                         select makeBlock(stmts.ToArray());
+
+        static readonly Parser<Object.LpObject> LAMBDA = from a in Parse.String("^do").Token()
+                                                         from stmts in Stmt.Token().Many()
+                                                         from b in Parse.String("end").Token()
+                                                         select makeBlock(stmts.ToArray());
 
         static readonly Parser<Object.LpObject> EXPR = FUNCALL.Or(PRIMARY);
         public static readonly Parser<Object.LpObject> STMT = EXPR;
