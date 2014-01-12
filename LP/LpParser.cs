@@ -186,7 +186,8 @@ namespace LP
         static readonly Parser<string[]> Stmts = from stmts in Stmt.Many()
                                                  select stmts.ToArray();
 
-        static readonly Parser<string[]> Program = Stmts;
+        static readonly Parser<string> Program = from stmts in Stmts
+                                                 select string.Join( "; ", stmts.ToArray() );
 
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
@@ -315,8 +316,11 @@ namespace LP
 
         public static Object.LpObject execute(string ctx)
         {
-            var psr = PROGRAM;
-            return psr.Parse(ctx);
+            Parser<string> expander = Program;
+            var expanded_code = expander.Parse(ctx);
+
+            var parser = PROGRAM;
+            return parser.Parse(expanded_code);
         }
     }
 }
