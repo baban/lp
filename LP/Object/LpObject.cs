@@ -90,11 +90,6 @@ namespace LP.Object
             return LpNumeric.initialize( self.GetHashCode() );
         }
 
-        protected static LpObject className(LpObject self, LpObject args)
-        {
-            return LpString.initialize(self.class_name);
-        }
-
         public LpObject funcall( string name, LpObject args )
         {
             if (null != methods[name])

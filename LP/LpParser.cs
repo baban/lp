@@ -183,6 +183,11 @@ namespace LP
                                                     from idf in Stmt
                                                     select idf;
 
+        static readonly Parser<string[]> Stmts = from stmts in Stmt.Many()
+                                                 select stmts.ToArray();
+
+        static readonly Parser<string[]> Program = Stmts;
+
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
 
@@ -232,6 +237,8 @@ namespace LP
 
         static readonly Parser<Object.LpObject> EXPR = FUNCALL.Or(PRIMARY);
         public static readonly Parser<Object.LpObject> STMT = EXPR;
+        static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
+                                                          select doStmts( stmts.ToArray() );
 
         static Parser<string> Operator(string operand)
         {
@@ -273,6 +280,16 @@ namespace LP
             return o;
         }
 
+        static Object.LpObject doStmts(string[] stmts)
+        {
+            Object.LpObject ret=null;
+            foreach (var stmt in stmts)
+            {
+                ret = STMT.Parse(stmt);
+            }
+            return ret;
+        }
+
         // 単体テスト時にアクセスしやすいように
         static string parseString( Parser<string> psr, string ctx ) {
             return psr.Parse( ctx );
@@ -293,6 +310,12 @@ namespace LP
         static Object.LpObject parseArrObject(Parser<Object.LpObject> psr, string ctx)
         {
             Console.WriteLine(ctx);
+            return psr.Parse(ctx);
+        }
+
+        public static Object.LpObject execute(string ctx)
+        {
+            var psr = PROGRAM;
             return psr.Parse(ctx);
         }
     }

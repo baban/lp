@@ -10,6 +10,7 @@ namespace LP
     {
         static void Main(string[] args)
         {
+            LpParser.execute("");
         }
     }
 }
