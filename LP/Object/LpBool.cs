@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpBool : LpObject
+    class LpBool : LpBase
     {
         public static LpObject initialize( bool b )
         {
@@ -30,6 +30,8 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
+            // TODO: &
+            // TODO: |
             obj.methods["||"] = new BinMethod(andOp);
             obj.methods["&&"] = new BinMethod(orOp);
 

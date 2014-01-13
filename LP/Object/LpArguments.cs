@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpArguments : LpObject
+    class LpArguments : LpBase
     {
         public static LpObject initialize()
         {
             LpObject obj = new LpObject();
             LpObject iobj = new LpObject();
-            iobj.class_name = "arguments";
+            iobj.class_name = "Arguments";
             iobj.superclass = obj;
             iobj.arrayValues = new List<LpObject>();
             setMethods(iobj);

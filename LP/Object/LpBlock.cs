@@ -7,7 +7,7 @@ using Sprache;
 
 namespace LP.Object
 {
-    class LpBlock : LpObject
+    class LpBlock : LpBase
     {
         public static LpObject initialize()
         {

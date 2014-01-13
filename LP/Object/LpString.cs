@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpString : LpObject
+    class LpString : LpBase
     {
         public static LpObject initialize() {
             return init( "" );
@@ -33,6 +33,7 @@ namespace LP.Object
             obj.methods["to_s"]    = new BinMethod(to_s);
             obj.methods["display"] = new BinMethod(display);
             obj.methods["size"] = new BinMethod(size);
+            obj.methods["len"] = new BinMethod(size);
 
             obj.methods["<<"] = new BinMethod(add);
             obj.methods["+"]  = new BinMethod(plus);

@@ -7,22 +7,8 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpObject
+    class LpObject : LpBase
     {
-        public LpObject superclass = null;
-        public BinMethod method = null;
-        public delegate LpObject BinMethod(LpObject self, LpObject args);
-        public Hashtable methods = new Hashtable();
-        public Hashtable variables = new Hashtable();
-
-        public bool? boolValue = null;
-        public double? doubleValue = null;
-        public string stringValue = null;
-        public List<LpObject> arrayValues = null;
-        public HashSet<LpObject> hashValues = null;
-        public List<string> statements = null;
-
-        public string class_name = null;
 
         public LpObject() {
             class_name = "Object";
@@ -31,12 +17,23 @@ namespace LP.Object
 
         private void setMethods()
         {
-            // TODO: send
+            // TODO: send, __send__
             // TODO: copy
             // TODO: is_a?
             // TODO: tap
             // TODO: methods
             // TODO: hash
+            // TODO: ==
+            // TODO: ===
+            // TODO: blank?
+            // TODO: copy
+            // TODO: eq?
+            // TODO: equal?
+            // TODO: instance_eval, do
+            // TODO: is_a?, kind_of?
+            // TODO: nil?
+            // TODO: method_missing
+            // TODO: extend
             methods["inspect"] = new BinMethod(inspect);
             methods["display"] = new BinMethod(display);
             methods["to_s"] = new BinMethod(to_s);

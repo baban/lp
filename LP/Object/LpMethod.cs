@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpMethod : LpObject
+    class LpMethod : LpBase
     {
         public LpMethod(BinMethod m) {
             method = m;

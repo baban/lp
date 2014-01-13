@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpSymbol : LpObject
+    class LpSymbol : LpBase
     {
         protected static Dictionary<string, LpObject> symbols = new Dictionary<string, LpObject>();
 

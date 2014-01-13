@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpFile : LpObject
+    class LpFile : LpBase
     {
         public static LpObject initialize()
         {
@@ -24,7 +24,10 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            //obj.methods["to_s"] = new BinMethod(to_s);
+            // TODO: new, open
+            // TODO: read
+            // TODO: <<
+            // TODO: write
         }
     }
 }

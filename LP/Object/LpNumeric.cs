@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpNumeric : LpObject
+    class LpNumeric : LpBase
     {
         public static LpObject initialize()
         {
@@ -56,6 +56,7 @@ namespace LP.Object
             obj.methods["between?"] = new BinMethod(between);
 
             obj.methods["to_i"] = new BinMethod(to_i);
+            obj.methods["to_f"] = new BinMethod(to_f);
             obj.methods["to_s"] = new BinMethod(to_s);
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
@@ -77,6 +78,12 @@ namespace LP.Object
             return LpString.initialize(self.doubleValue.ToString());
         }
 
+        protected static LpObject to_f(LpObject self, LpObject args)
+        {
+            self.doubleValue = self.doubleValue;
+            return self;
+        }
+
         protected static LpObject to_i(LpObject self, LpObject args)
         {
             self.doubleValue = (int)self.doubleValue;
@@ -86,14 +93,33 @@ namespace LP.Object
         private static LpObject plus(LpObject self, LpObject args)
         {
             var v = args.arrayValues.First();
-            self.doubleValue += v.doubleValue;
+            try
+            {
+                checked
+                {
+                    self.doubleValue += v.doubleValue;
+                }
+            }
+            catch (OverflowException ex)
+            {
+                // TODO: return raised value
+            }
             return self;
         }
 
         private static LpObject minus(LpObject self, LpObject args)
         {
             var v = args.arrayValues.First();
-            self.doubleValue -= v.doubleValue;
+            try
+            {
+                checked
+                {
+                    self.doubleValue -= v.doubleValue;
+                }
+            }
+            catch (OverflowException ex) {
+                // TODO: return raised value
+            }
             return self;
         }
 

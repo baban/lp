@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpArray : LpObject
+    class LpArray : LpBase
     {
         public static LpObject initialize()
         {
