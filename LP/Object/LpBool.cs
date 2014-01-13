@@ -61,7 +61,6 @@ namespace LP.Object
             return LpBool.initialize(self.boolValue == o.boolValue);
         }
 
-        // TODO: This method must comare to memory address!!
         private static LpObject eq(LpObject self, LpObject args)
         {
             var o = args.arrayValues.ElementAt(0);

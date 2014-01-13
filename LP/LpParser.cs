@@ -330,7 +330,6 @@ namespace LP
         {
             Parser<string> expander = Program;
             var expanded_code = expander.Parse(ctx);
-
             var parser = PROGRAM;
             return parser.Parse(expanded_code);
         }
