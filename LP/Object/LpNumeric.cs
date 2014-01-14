@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LP.Object
 {
@@ -75,6 +76,7 @@ namespace LP.Object
 
         protected static LpObject inspect(LpObject self, LpObject args)
         {
+            Debug.WriteLine(self.doubleValue.ToString());
             return LpString.initialize(self.doubleValue.ToString());
         }
 

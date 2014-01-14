@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Sprache;
+using System.Diagnostics;
 
 namespace LP
 {
@@ -71,6 +72,7 @@ namespace LP
             new string[]{ "<=>", "===", "==", "!=", "=~", "!~" },
             new string[]{ "&&" },
             new string[]{ "||" },
+            new string[]{ "..", "^..", "..^", "^..^" },
             new string[]{ "and", "or" }
         };
 
@@ -226,11 +228,12 @@ namespace LP
 
         public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC.Or(BOOL).Or(STRING).Or(SYMBOL).Or(ARRAY);
 
-        static readonly Parser<Object.LpObject> ARG = PRIMARY;
+        static readonly Parser<Object.LpObject> ARG = from a in PRIMARY
+                                                      select a;
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select makeArgs( gs );
-         
-        static readonly Parser<Object.LpObject> FUNCALL = from obj in NUMERIC
+
+        static readonly Parser<Object.LpObject> FUNCALL = from obj in PRIMARY
                                                           from dot in Parse.Char('.').Once()
                                                           from fname in Fname
                                                           from brace1 in Parse.Char('(').Once()
@@ -330,6 +333,7 @@ namespace LP
         {
             Parser<string> expander = Program;
             var expanded_code = expander.Parse(ctx);
+            Console.WriteLine(expanded_code);
             var parser = PROGRAM;
             return parser.Parse(expanded_code);
         }
