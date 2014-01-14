@@ -44,7 +44,7 @@ namespace LP
                                                          string.Join( "; ", stmts.ToArray()) + 
                                                          " end)";
 
-        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String);
+        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol);
 
         static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
                                                  from s in Primary
@@ -92,75 +92,40 @@ namespace LP
         // +(単項)  !  ~
         // not
         // **
-        static readonly Parser<string> ExpSquare = Parse.ChainOperator(
-            Operator("**"),
-            ExpPostfix,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpSquare = makeExpr( new string[]{ "**" }, ExpPostfix );
         // -(単項)
         // *, /
-        static readonly Parser<string> ExpMul = Parse.ChainOperator(
-            Operator("*").Or(Operator("/")).Or(Operator("%")),
-            ExpSquare,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpMul = makeExpr( new string[]{ "*", "/","%" }, ExpSquare );
         // +,-
-        static readonly Parser<string> ExpAdditive = Parse.ChainOperator(
-            Operator("+").Or(Operator("-")),
-            ExpMul,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpAdditive = makeExpr( new string[]{ "+", "-" }, ExpMul );
         // << >>
-        static readonly Parser<string> ExpShift = Parse.ChainOperator(
-            Operator("<<").Or(Operator(">>")),
-            ExpAdditive,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")"); 
+        static readonly Parser<string> ExpShift = makeExpr( new string[]{ "<<", ">>" }, ExpAdditive );
         // & 
-        static readonly Parser<string> ExpAnd = Parse.ChainOperator(
-            Operator("&"),
-            ExpShift,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpAnd = makeExpr( new string[]{ "&" }, ExpShift );
         // |
-        static readonly Parser<string> ExpInclusiveOr = Parse.ChainOperator(
-            Operator("|"),
-            ExpAnd,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpInclusiveOr = makeExpr( new string[]{ "|" }, ExpAnd );
         // ^ 
         static readonly Parser<string> ExpRelational = ExpInclusiveOr;
         // > >=  < <= 
-        static readonly Parser<string> ExpExclusiveOr = Parse.ChainOperator(
-            Operator(">=").Or(Operator(">")).Or(Operator("<=")).Or(Operator("<")),
-            ExpRelational,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpExclusiveOr = makeExpr( new string[]{ ">=", ">", "<=", "<" }, ExpRelational );
         // <=> ==  === !=  =~  !~ 
-        static readonly Parser<string> ExpEquality = Parse.ChainOperator(
-            Operator("<=>").Or(Operator("===")).Or(Operator("==")).Or(Operator("!=")).Or(Operator("=~")).Or(Operator("!~")),
-            ExpExclusiveOr,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpEquality = makeExpr( new string[]{ "<=>", "===", "==", "!=", "=~", "!~" }, ExpExclusiveOr );
         // &&
-        static readonly Parser<string> ExpLogicalAnd = Parse.ChainOperator(
-            Operator("&&"),
-            ExpEquality,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpLogicalAnd = makeExpr( new string[]{ "&&" }, ExpEquality );
         // ||
-        static readonly Parser<string> ExpLogicalOr = Parse.ChainOperator(
-            Operator("||"),
-            ExpLogicalAnd,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
-        // ..  ...
-        static readonly Parser<string> ExpRange = Parse.ChainOperator(
-            Parse.String("...").Or(Parse.String("..")),
-            ExpLogicalOr,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpLogicalOr = makeExpr( new string[]{ "||" }, ExpLogicalAnd );
+        // ..
+        static readonly Parser<string> ExpRange = makeExpr( new string[]{ ".." }, ExpLogicalOr );
         // =(+=, -= ... )
         static readonly Parser<string> ExpAssignment = ExpRange;
         // and or
-        static readonly Parser<string> ExpAndOr = Parse.ChainOperator(
-            Operator("and").Or(Operator("or")),
-            ExpAssignment,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        static readonly Parser<string> ExpAndOr = makeExpr( new string[]{ "and","or" }, ExpAssignment );
         // =
         static readonly Parser<string> ExpEqual = Parse.ChainOperator(
             Operator("="),
             ExpAndOr,
             (op, a, b) => a + ".(" + op + ")(" + b + ")");
+
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
 
@@ -197,6 +162,8 @@ namespace LP
 
         static readonly Parser<string> Program = from stmts in Stmts
                                                  select string.Join( "; ", stmts.ToArray() );
+
+
 
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
@@ -255,6 +222,14 @@ namespace LP
         public static readonly Parser<Object.LpObject> STMT = EXPR;
         static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
                                                           select doStmts( stmts.ToArray() );
+
+        static Parser<string> makeExpr(string[] operators, Parser<string> beforeExpr)
+        {
+            return Parse.ChainOperator(
+                operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2)),
+                beforeExpr,
+                (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        }
 
         static Parser<string> Operator(string operand)
         {

@@ -1,0 +1,55 @@
+10;   // Numeric
+10.0; // Numeric
+"string"; // String
+:hoge; // SYmbol
+
+[1,2,3]; // Array
+{ 1 => 2, 3 => 4 }; // Hash
+
+// Block
+do |x,y|
+  10;  
+end
+
+(x,y)do
+  10;  
+end
+
+// lambda
+^do |x,y|
+  10;   
+end
+
+// これもLambda
+^(x,y)do
+  10;   
+end
+
+// メソッド呼び出し
+10.to_s()
+
+// if文
+if true
+else
+end
+
+// case文
+case 1
+when 1
+  print "1"
+when 2
+  print "2"
+end
+
+// メソッド定義
+def hoge
+end
+
+// クラス定義
+class A < B
+end
+
+// モジュール定義
+module A < B
+end
+
