@@ -81,9 +81,9 @@ namespace LP
                                                   from b in Parse.String(")")
                                                   select v;
         static readonly Parser<string> Fname = Operands.Or(Identifier);
-        static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
+        static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
-                                                 from b in Parse.Char(')')
+                                                 from b in Parse.Char(')').Token()
                                                  select a+v+b).Or(Primary);
         // ::
         // .
@@ -163,8 +163,6 @@ namespace LP
         static readonly Parser<string> Program = from stmts in Stmts
                                                  select string.Join( "; ", stmts.ToArray() );
 
-
-
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
 
@@ -186,7 +184,7 @@ namespace LP
         static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
                                                         from elms in SepElm.Many()
                                                         from b in Parse.String("]").Text().Token()
-                                                        select makeArray(elms.ToArray());
+                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", ARG.Parse(s)));
 
         static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
                                                        from elms in SepElm.Many()
@@ -198,7 +196,7 @@ namespace LP
         static readonly Parser<Object.LpObject> ARG = from a in PRIMARY
                                                       select a;
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
-                                                       select makeArgs( gs );
+                                                       select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", ARG.Parse(s)); return args; });
 
         static readonly Parser<Object.LpObject> FUNCALL = from obj in PRIMARY
                                                           from dot in Parse.Char('.').Once()
@@ -211,19 +209,20 @@ namespace LP
         static readonly Parser<Object.LpObject> BLOCK = from a in Parse.String("do").Token()
                                                         from stmts in Stmt.Token().Many()
                                                         from b in Parse.String("end").Token()
-                                                        select makeBlock(stmts.ToArray());
+                                                        select stmts.ToArray().Aggregate(Object.LpBlock.initialize(), (o, s) => { o.statements.Add(s); return o; });
 
         static readonly Parser<Object.LpObject> LAMBDA = from a in Parse.String("^do").Token()
                                                          from stmts in Stmt.Token().Many()
                                                          from b in Parse.String("end").Token()
-                                                         select makeBlock(stmts.ToArray());
+                                                         select stmts.ToArray().Aggregate(Object.LpBlock.initialize(), (o, s) => { o.statements.Add(s); return o; });
 
         static readonly Parser<Object.LpObject> EXPR = FUNCALL.Or(PRIMARY);
         public static readonly Parser<Object.LpObject> STMT = EXPR;
+
         static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
                                                           select doStmts( stmts.ToArray() );
 
-        static Parser<string> makeExpr(string[] operators, Parser<string> beforeExpr)
+        static Parser<string> makeExpr(string[] operators, Parser<string> beforeExpr )
         {
             return Parse.ChainOperator(
                 operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2)),
@@ -240,35 +239,6 @@ namespace LP
         {
             Object.LpObject args = Object.LpHash.initialize();
             return args;
-        }
-
-        static Object.LpObject makeArray(string[] os)
-        {
-            Object.LpObject args = Object.LpArray.initialize();
-            foreach (var v in os)
-            {
-                args.funcall("push", ARG.Parse(v));
-            }
-            return args;
-        }
-
-        static Object.LpObject makeArgs(string[] os)
-        {
-            Object.LpObject args = Object.LpArguments.initialize();
-            foreach (var v in os) {
-                args.funcall("push", ARG.Parse(v) );
-            }
-            return args;
-        }
-
-        static Object.LpObject makeBlock(string[] os)
-        {
-            Object.LpObject o = Object.LpBlock.initialize();
-            foreach (var v in os)
-            {
-                o.statements.Add(v);
-            }
-            return o;
         }
 
         static Object.LpObject doStmts(string[] stmts)
