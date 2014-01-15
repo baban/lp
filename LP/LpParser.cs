@@ -15,11 +15,12 @@ namespace LP
     // TODO: class定義、module定義
     class LpParser
     {
+        static readonly Parser<char> Term = Parse.Char(';').Or(Parse.Char('\n'));
+
         // Primary Values
-        static readonly Parser<string> Identifier =
-                                            from first in Parse.Letter.Or(Parse.Char('_')).Once()
-                                            from rest in Parse.LetterOrDigit.Or(Parse.Char('_')).Many()
-                                            select new string(first.Concat(rest).ToArray());
+        static readonly Parser<string> Identifier = (from first in Parse.Letter.Or(Parse.Char('_')).Once()
+                                                     from rest in Parse.LetterOrDigit.Or(Parse.Char('_')).Many()
+                                                     select new string(first.Concat(rest).ToArray()));
 
         static readonly Parser<string> Decimal = from a in Parse.Digit.AtLeastOnce().Text()
                                                  from dot in Parse.Char('.').Once().Text()
@@ -36,16 +37,24 @@ namespace LP
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
                                                 select '"' + string.Join("", s.ToArray() ) + '"';
+        static readonly Parser<string> Block = from a in Parse.String("do").Token()
+                                               from stmts in Parse.Ref( ()=> Stmts )
+                                               from c in Parse.String("end").Token()
+                                               select "do " + string.Join("; ", stmts.ToArray() ) + " end";
+        static readonly Parser<string> Lambda = from a in Parse.String("^do").Token()
+                                                from stmts in Parse.Ref(() => Stmts)
+                                                from c in Parse.String("end")
+                                                select "^do " + string.Join("; ", stmts.ToArray()) + " end";
         static readonly Parser<string> Function = from a in Parse.String("def").Token()
                                                   from fname in Identifier
-                                                  from b in Parse.String(";").Or(Parse.String("\n"))
+                                                  from b in Term
                                                   from stmts in Stmts
                                                   from c in Parse.String("end")
                                                   select "(:" + fname + ").(=)" + "(^do " + 
                                                          string.Join( "; ", stmts.ToArray()) + 
                                                          " end)";
 
-        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol);
+        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol).Or(Lambda).Or(Block);
 
         // Expressions
         string[][] operandTable = new string[][] {
@@ -169,8 +178,6 @@ namespace LP
 
         static readonly Parser<string> StatCollection = IfStmt;
         static readonly Parser<string> StatList = StatCollection.Or(Expr);
-
-        static readonly Parser<char> Term = Parse.Char(';').Or(Parse.Char('\n'));
 
         static readonly Parser<string> Stmt = (from s in StatList
                                                from t in Term

@@ -153,6 +153,24 @@ namespace LpTest
         }
 
         [Test]
+        public void Block()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Block", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "do 10 end" });
+            Assert.AreEqual("do 10 end", pm);
+        }
+
+        [Test]
+        public void Lambda()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Lambda", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "^do 10 end" });
+            Assert.AreEqual("^do 10 end", pm);
+        }
+
+        [Test]
         public void BOOL()
         {
             Type t = initParser();
@@ -559,19 +577,31 @@ namespace LpTest
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"true;" });
             Assert.AreEqual(s, "true");
         }
-        /*
+
         [Test]
         public void Stmt2()
         {
+            /*
             Type t = initParser();
             var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"[1,2,3];" });
             Assert.AreEqual(s, "[1,2,3]");
-
-            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"{ 1 => 2, 3 => 4 };" });
-            Assert.AreEqual(s, "{ 1 => 2, 3 => 4 }");
+             */
+            // TODO: Hash
         }
-        */
+
+        [Test]
+        public void Stmt3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"do 10 end" });
+            Assert.AreEqual(s, "do 10 end");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"^do 10 end" });
+            Assert.AreEqual(s, "^do 10 end");
+        }
+
         [Test]
         public void NUMERIC()
         {
