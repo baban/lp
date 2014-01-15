@@ -37,6 +37,15 @@ namespace LP
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
                                                 select '"' + string.Join("", s.ToArray() ) + '"';
+        // Complex Data Values
+        static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
+                                                 from s in Parse.Ref(() => Stmt)
+                                                 select s).Or(Parse.Ref(() => Stmt));
+        static readonly Parser<string> Array = from a in Parse.String("[").Text().Token()
+                                               from elms in SepElm.Many()
+                                               from b in Parse.String("]").Text().Token()
+                                               select a + string.Join(",", elms) + b;
+
         static readonly Parser<string> Block = from a in Parse.String("do").Token()
                                                from stmts in Parse.Ref( ()=> Stmts )
                                                from c in Parse.String("end").Token()
@@ -54,7 +63,7 @@ namespace LP
                                                          string.Join( "; ", stmts.ToArray()) + 
                                                          " end)";
 
-        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol).Or(Lambda).Or(Block);
+        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol).Or(Array).Or(Lambda).Or(Block);
 
         // Expressions
         string[][] operandTable = new string[][] {
@@ -133,15 +142,6 @@ namespace LP
 
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
-
-        // Complex Data Values
-        static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
-                                                 from s in Parse.Ref(() => Stmt)
-                                                 select s).Or(Primary);
-        static readonly Parser<string> Array = from a in Parse.String("[").Text().Token()
-                                               from elms in SepElm.Many()
-                                               from b in Parse.String("]").Text().Token()
-                                               select a + string.Join(",", elms) + b;
 
         static readonly Parser<string> Arg = Parse.Ref(() => Stmt);
         static readonly Parser<string[]> Args = from ags in

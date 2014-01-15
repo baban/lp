@@ -581,12 +581,10 @@ namespace LpTest
         [Test]
         public void Stmt2()
         {
-            /*
             Type t = initParser();
             var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"[1,2,3];" });
             Assert.AreEqual(s, "[1,2,3]");
-             */
             // TODO: Hash
         }
 
