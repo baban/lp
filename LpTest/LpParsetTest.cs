@@ -527,7 +527,7 @@ namespace LpTest
         public void IfExpr()
         {
             Type t = initParser();
-            var p = t.InvokeMember("IfExpr", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var p = t.InvokeMember("IfStmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10)end" });
             Assert.AreEqual("if(10,do  end)", s);
 
@@ -542,7 +542,7 @@ namespace LpTest
         public void IfExprElse()
         {
             Type t = initParser();
-            var p = t.InvokeMember("IfExpr", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var p = t.InvokeMember("IfStmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10) 10; else 10; end" });
             Assert.AreEqual("if(10,do 10 end,do 10 end)", s);
         }

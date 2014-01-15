@@ -15,6 +15,22 @@ namespace LP.Object
             return null;
         }
 
+        // TODO: yield
+        // TODO: return
+        // TODO: super
+        // TODO: while
+        // TODO: until
+        // TODO: if
+        // TODO: until
+        // TODO: alias
+        // TODO: break
+        // TODO: next
+        // TODO: retry
+
+        // 構文
+        // TODO: self
+
+
         private static LpObject _if(LpObject self, LpObject args)
         {
             var o1 = args.arrayValues.ElementAt(0);
