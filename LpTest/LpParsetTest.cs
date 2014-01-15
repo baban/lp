@@ -176,16 +176,6 @@ namespace LpTest
         }
 
         [Test]
-        public void ARGdouble()
-        {
-            Type t = initParser();
-            var p = t.InvokeMember("ARG", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.1" });
-            var str = o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
-            Assert.AreEqual(10.1, str);
-        }
-
-        [Test]
         public void SepArg()
         {
             Type t = initParser();
@@ -204,7 +194,6 @@ namespace LpTest
             var cnt = ss.GetType().InvokeMember("Length", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty, null, ss, null);
             Assert.AreEqual(0, cnt);
         }
-
 
         [Test]
         public void Args1()
