@@ -76,15 +76,18 @@ namespace LP
         // ::
         static readonly Parser<string> ExpClasscall = ExpVal;
         // .
+        //static readonly Parser<string> ExpFuncall = Parse.ChainOperator(Parse.Char('.'), ExpClasscall,(op, a, b) => a + ".(" + op + ")(" + b + ")").Or(ExpClasscall);
         static readonly Parser<string> ExpFuncall = ExpClasscall;
         // []
-        static readonly Parser<string> ExpPostfix = ExpFuncall;
+        static readonly Parser<string> ExpArrayAt = ExpFuncall;
+        // ++, --
+        static readonly Parser<string> ExpUnary = ExpArrayAt;
         // +(単項)  !  ~
-        static readonly Parser<string> ExpUnaryPlus = ExpPostfix;
+        static readonly Parser<string> ExpUnaryPlus = ExpUnary;
         // not
         static readonly Parser<string> ExpNot = ExpUnaryPlus;
         // **
-        static readonly Parser<string> ExpSquare = makeExpr(new string[] { "**" }, ExpPostfix);
+        static readonly Parser<string> ExpSquare = makeExpr(new string[] { "**" }, ExpNot);
         // -(単項)
         static readonly Parser<string> ExpUnaryMinus = ExpSquare;
         // *, /
