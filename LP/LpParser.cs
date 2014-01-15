@@ -74,16 +74,21 @@ namespace LP
                                                  from b in Parse.Char(')').Token()
                                                  select a + v + b).Or(Primary);
         // ::
+        static readonly Parser<string> ExpClasscall = ExpVal;
         // .
+        static readonly Parser<string> ExpFuncall = ExpClasscall;
         // []
-        static readonly Parser<string> ExpPostfix = ExpVal;
+        static readonly Parser<string> ExpPostfix = ExpFuncall;
         // +(単項)  !  ~
+        static readonly Parser<string> ExpUnaryPlus = ExpPostfix;
         // not
+        static readonly Parser<string> ExpNot = ExpUnaryPlus;
         // **
         static readonly Parser<string> ExpSquare = makeExpr(new string[] { "**" }, ExpPostfix);
         // -(単項)
+        static readonly Parser<string> ExpUnaryMinus = ExpSquare;
         // *, /
-        static readonly Parser<string> ExpMul = makeExpr(new string[] { "*", "/", "%" }, ExpSquare);
+        static readonly Parser<string> ExpMul = makeExpr(new string[] { "*", "/", "%" }, ExpUnaryMinus);
         // +,-
         static readonly Parser<string> ExpAdditive = makeExpr(new string[] { "+", "-" }, ExpMul);
         // << >>
@@ -126,12 +131,11 @@ namespace LP
                                                from b in Parse.String("]").Text().Token()
                                                select a + string.Join(",", elms) + b;
 
-        static readonly Parser<string> Arg = from s in Parse.Ref(() => Stmt)
-                                             select s;
-        static readonly Parser<string> SepArg = (from sep in Parse.Char(',').Token()
-                                                 from s in Arg
-                                                 select s).Or(Arg);
-        static readonly Parser<string[]> Args = from ags in SepArg.Many()
+        static readonly Parser<string> Arg = Parse.Ref(() => Stmt);
+        static readonly Parser<string[]> Args = from ags in
+                                                    (from sep in Parse.Char(',').Token()
+                                                     from s in Arg
+                                                     select s).Or(Arg).Many()
                                                 select ags.ToArray();
 
         // Macro Values
@@ -175,6 +179,7 @@ namespace LP
         static readonly Parser<string> Program = from stmts in Stmts
                                                  select string.Join( "; ", stmts.ToArray() );
 
+        // Primary Values
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
 
@@ -196,7 +201,7 @@ namespace LP
         static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
                                                         from elms in SepElm.Many()
                                                         from b in Parse.String("]").Text().Token()
-                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", ARG.Parse(s)));
+                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", STMT.Parse(s)));
 
         static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
                                                        from elms in SepElm.Many()
@@ -205,7 +210,6 @@ namespace LP
 
         public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC.Or(BOOL).Or(STRING).Or(SYMBOL).Or(ARRAY);
 
-        static readonly Parser<Object.LpObject> ARG = PRIMARY;
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
 

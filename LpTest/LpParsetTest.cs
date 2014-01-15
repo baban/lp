@@ -176,15 +176,6 @@ namespace LpTest
         }
 
         [Test]
-        public void SepArg()
-        {
-            Type t = initParser();
-            var p = t.InvokeMember("SepArg", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var str = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, ",10" });
-            Assert.AreEqual("10", str);
-        }
-
-        [Test]
         public void Args0()
         {
             Type t = initParser();
@@ -839,26 +830,6 @@ namespace LpTest
             //Assert.AreEqual("[10,5]", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
-        /*
-        [Test]
-        public void Block()
-        {
-            TestRubyParser.Object.LpObject o;
-            o = TestRubyParser.LpParser.Block.Parse("do end");
-            Assert.AreEqual(o.stmts.Count, 0);
-            o = o.funcall("execute", null);
-            o = TestRubyParser.LpParser.Block.Parse("do 10; end");
-            Assert.AreEqual(o.stmts.Count, 1);
-            Assert.AreEqual(o.stmts[0], "10");
-            o = o.funcall("execute", null);
-            Assert.AreEqual(o.doubleValue, 10.0);
-            o = TestRubyParser.LpParser.Block.Parse("do 10; 5; end");
-            Assert.AreEqual(o.stmts.Count, 2);
-            o = o.funcall("execute", null);
-            Assert.AreEqual(o.doubleValue, 5.0);
-        }
-        */
-
         [Test]
         public void Quote()
         {
@@ -888,29 +859,5 @@ namespace LpTest
             o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10; 20" });
             Assert.AreEqual(20.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
-
-        /*
-            [Test]
-            public void Identifier()
-            {
-                string token = TestRubyParser.LpParser.Identifier.Parse("abcd");
-                Assert.AreEqual( token, "abcd" );
-            }
-
-            [Test]
-            public void Varname()
-            {
-                string token = TestRubyParser.LpParser.Varname.Parse("abcd");
-                Assert.AreEqual(token, "abcd");
-            }
-            [Test]
-            public void ExpValue()
-            {
-                TestRubyParser.Object.LpIndexer.init();
-                TestRubyParser.LpParser.ExpValue.Parse(" a = 19 ");
-                TestRubyParser.Object.LpObject o = TestRubyParser.Object.LpIndexer.get("a");
-                Assert.AreEqual( o.doubleValue, 19.0 );
-            }
-            */
     }
 }
