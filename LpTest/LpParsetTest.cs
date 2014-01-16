@@ -238,6 +238,17 @@ namespace LpTest
         }
 
         [Test]
+        public void ArgsSet()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ArgsSet", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var ss = t.GetMethod("parseArrString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(10,10,10)" });
+            Assert.AreEqual("System.String[]", ss.GetType().ToString());
+            var cnt = ss.GetType().InvokeMember("Length", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty, null, ss, null);
+            Assert.AreEqual(3, cnt);
+        }
+
+        [Test]
         public void ExpVal()
         {
             Type t = initParser();
@@ -264,6 +275,39 @@ namespace LpTest
             var p = t.InvokeMember("ExpVal", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"(1+2)" });
             Assert.AreEqual(s, "(1.(+)(2))");
+        }
+
+        [Test]
+        public void ExpFuncall()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpFuncall", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.to_s" });
+            Assert.AreEqual(s, "10.to_s()");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.to_s()" });
+            Assert.AreEqual(s, "10.to_s()");
+        }
+
+        [Test]
+        public void ExpFuncall2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpFuncall", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.to_s(1)" });
+            Assert.AreEqual(s, "10.to_s(1)");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.to_s(1,2)" });
+            Assert.AreEqual(s, "10.to_s(1, 2)");
+        }
+
+        [Test]
+        public void ExpFuncall3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpFuncall", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            //var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.to_s().to_s()" });
+            //Assert.AreEqual(s, "10.to_s().to_s()");
         }
 
         [Test]
