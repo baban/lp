@@ -69,6 +69,14 @@ namespace LP
                                                          string.Join( "; ", stmts.ToArray()) + 
                                                          " end)";
 
+        static readonly Parser<string> Funcall = (from idf in Fname
+                                                  from c in Parse.Char('(').Once().Text()
+                                                  from args in Args
+                                                  from d in Parse.Char(')').Once().Text()
+                                                  select idf + c + string.Join(", ", args.ToArray()) + d).Or(
+                                                  from idf in Fname
+                                                  select idf+"()");
+
         static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol).Or(Array).Or(Lambda).Or(Block);
 
         // Expressions
@@ -93,19 +101,15 @@ namespace LP
                                                  select a + v + b).Or(Primary);
         // ::
         static readonly Parser<string> ExpClasscall = ExpVal;
+
+        // method call
+        static readonly Parser<string> MethodCall = from a in ExpClasscall
+                                                    from funcalls in (from dot in Parse.Char('.').Once().Text()
+                                                                      from funcall in Funcall
+                                                                      select dot + funcall).AtLeastOnce()
+                                                    select a + string.Join( "", funcalls.ToArray() );
         // .
-        static readonly Parser<string> ExpFuncall = (from a in ExpClasscall
-                                                     from dot in Parse.Char('.').Once().Text()
-                                                     from idf in Fname
-                                                     from c in Parse.Char('(')
-                                                     from args in Args.Token()
-                                                     from d in Parse.Char(')')
-                                                     select a + "." + idf + "(" + string.Join(", ", args.ToArray()) + ")").Or(
-                                                     from a in ExpClasscall
-                                                     from dot in Parse.Char('.').Once().Text()
-                                                     from idf in Fname
-                                                     select a + "." + idf + "()")
-                                                     .Or(ExpClasscall);
+        static readonly Parser<string> ExpFuncall = MethodCall.Or(ExpClasscall);
         // []
         static readonly Parser<string> ExpArrayAt = ExpFuncall;
         // ++, --

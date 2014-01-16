@@ -306,8 +306,8 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("ExpFuncall", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            //var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.to_s().to_s()" });
-            //Assert.AreEqual(s, "10.to_s().to_s()");
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.to_s().to_s()" });
+            Assert.AreEqual(s, "10.to_s().to_s()");
         }
 
         [Test]
