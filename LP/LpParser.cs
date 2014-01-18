@@ -108,6 +108,24 @@ namespace LP
                                                                       from funcall in Funcall
                                                                       select dot + funcall).AtLeastOnce()
                                                     select a + string.Join( "", funcalls.ToArray() );
+
+
+        static Parser<T> MethodCallRest<T, TOp>(
+            T firstOperand,
+            Parser<TOp> op,
+            Parser<T> operand,
+            Func<TOp, T, T, T> apply,
+            Func<Parser<T>, Parser<T>, Parser<T>> or)
+        {
+            //var op = Parse.String(".");
+            return Parse.Or(op.Then(opvalue =>
+                          operand.Then(operandValue =>
+                              MethodCallRest(apply(opvalue, firstOperand, operandValue), op, operand, apply, or))),
+                      Parse.Return(firstOperand));
+        }
+
+
+
         // .
         static readonly Parser<string> ExpFuncall = MethodCall.Or(ExpClasscall);
         // []
@@ -229,7 +247,7 @@ namespace LP
         static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
                                                         from elms in SepElm.Many()
                                                         from b in Parse.String("]").Text().Token()
-                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", STMT.Parse(s)));
+                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", PRIMARY.Parse(s)));
 
         static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
                                                        from elms in SepElm.Many()
@@ -239,13 +257,13 @@ namespace LP
         public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC.Or(BOOL).Or(STRING).Or(SYMBOL).Or(ARRAY);
 
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
-                                                       select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
+                                                       select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", PRIMARY.Parse(s)); return args; });
 
         static readonly Parser<Object.LpObject> TYPE_ARGS = from brace1 in Parse.Char('(')
                                                             from args in ARGS.Token()
                                                             from brace2 in Parse.Char(')')
                                                             select args;
-        static readonly Parser<Object.LpObject> FUNCALL = from obj in PRIMARY
+        static readonly Parser<Object.LpObject> FUNCALL = from obj in Parse.Ref( () => PRIMARY )
                                                           from op in Parse.Char('.')
                                                           from fname in Fname
                                                           from args in TYPE_ARGS
@@ -323,8 +341,10 @@ namespace LP
         {
             Parser<string> expander = Program;
             var expanded_code = expander.Parse(ctx);
+            Console.WriteLine("Expanded Code:");
             Console.WriteLine(expanded_code);
             var parser = PROGRAM;
+            Console.WriteLine("Exec Program:");
             return parser.Parse(expanded_code);
         }
     }

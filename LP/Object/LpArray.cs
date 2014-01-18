@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sprache;
 
 namespace LP.Object
 {
@@ -11,6 +12,17 @@ namespace LP.Object
         public static LpObject initialize()
         {
             return init();
+        }
+
+        public static LpObject initialize( string[] args )
+        {
+            return args.Aggregate(
+                init(),
+                (o, stmt) => {
+                    var v = LpParser.STMT.Parse(stmt);
+                    o.funcall("push", v);
+                    return o;
+                });
         }
 
         private static LpObject init()
@@ -27,22 +39,20 @@ namespace LP.Object
         {
             // TODO: new
             // TODO: []
-            // TODO: +
-            // TODO: <<
-            // TODO: push
-            // TODO: car, first
             // TODO: cdr
-            // TODO: last
             // TODO: each
             // TODO: map
             // TODO: join
-            // TODO: concat
-            // TODO: size
+            obj.methods["+"] = new BinMethod(concat);
+            obj.methods["concat"] = new BinMethod(concat);
+            obj.methods["last"] = new BinMethod(last);
             obj.methods["push"] = new BinMethod(push);
             obj.methods["<<"] = new BinMethod(push);
             obj.methods["at"] = new BinMethod(at);
             obj.methods["car"] = new BinMethod(first);
             obj.methods["first"] = new BinMethod(first);
+            obj.methods["size"] = new BinMethod(len);
+            obj.methods["len"] = new BinMethod(len);
             /*
             obj.methods["=="] = new BinMethod(equal);
             obj.methods["==="] = new BinMethod(eq);
@@ -74,8 +84,27 @@ namespace LP.Object
         static LpObject to_s(LpObject self, LpObject args)
         {
             var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue );
-            var s = string.Concat(",",vs);
+            var s = string.Concat(", ",vs);
             return LpString.initialize( "["+s+"]" );
+        }
+
+        static LpObject len(LpObject self, LpObject args)
+        {
+            return LpNumeric.initialize( self.arrayValues.Count );
+        }
+
+        static LpObject last(LpObject self, LpObject args)
+        {
+            return self.arrayValues.Last();
+        }
+
+        static LpObject concat(LpObject self, LpObject args)
+        {
+            var v = args.arrayValues.First();
+            Console.WriteLine(self.arrayValues.Count);
+            self.arrayValues.AddRange( v.arrayValues );
+            Console.WriteLine( self.arrayValues.Count );
+            return self;
         }
     }
 }

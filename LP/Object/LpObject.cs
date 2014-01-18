@@ -35,6 +35,8 @@ namespace LP.Object
             // TODO: nil?
             // TODO: method_missing
             // TODO: extend
+            // TODO: desine_method
+            // TODO: define_operand
             methods["inspect"] = new BinMethod(inspect);
             methods["display"] = new BinMethod(display);
             methods["to_s"] = new BinMethod(to_s);

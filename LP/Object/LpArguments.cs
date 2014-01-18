@@ -3,12 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sprache;
 
 namespace LP.Object
 {
     class LpArguments : LpBase
     {
         public static LpObject initialize()
+        {
+            return init();
+        }
+
+        public static LpObject initialize(string[] args)
+        {
+            return args.Aggregate(
+                init(),
+                (o, stmt) =>
+                {
+                    var v = LpParser.STMT.Parse(stmt);
+                    o.funcall("push", v);
+                    return o;
+                });
+        }
+
+        public static LpObject init()
         {
             LpObject obj = new LpObject();
             LpObject iobj = new LpObject();
