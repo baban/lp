@@ -8,6 +8,8 @@ namespace LP.Object
 {
     class LpBool : LpBase
     {
+        static string className = "Bool";
+
         public static LpObject initialize( bool b )
         {
             return init(b);
@@ -20,13 +22,27 @@ namespace LP.Object
 
         private static LpObject init( bool b )
         {
-            LpObject obj = LpObject.initialize();
-            setMethods(obj);
-            obj.superclass = LpObject.initialize();
-            obj.class_name = "Bool";
+            var obj = createTemplate();
             obj.boolValue = b;
             return obj;
         }
+
+        private static LpObject createTemplate() {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = LpObject.initialize();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
+        }
+
 
         private static void setMethods(LpObject obj)
         {

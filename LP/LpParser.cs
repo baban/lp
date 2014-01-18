@@ -241,21 +241,23 @@ namespace LP
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
 
+        static readonly Parser<Object.LpObject> TYPE_ARGS = from brace1 in Parse.Char('(')
+                                                            from args in ARGS.Token()
+                                                            from brace2 in Parse.Char(')')
+                                                            select args;
         static readonly Parser<Object.LpObject> FUNCALL = from obj in PRIMARY
-                                                          from dot in Parse.Char('.')
+                                                          from op in Parse.Char('.')
                                                           from fname in Fname
-                                                          from brace1 in Parse.Char('(')
-                                                          from args in ARGS.Token()
-                                                          from brace2 in Parse.Char(')')
+                                                          from args in TYPE_ARGS
                                                           select obj.funcall(fname, args);
 
         static readonly Parser<Object.LpObject> BLOCK = from a in Parse.String("do").Token()
-                                                        from stmts in Stmt.Token().Many()
+                                                        from stmts in Stmts
                                                         from b in Parse.String("end").Token()
                                                         select stmts.ToArray().Aggregate(Object.LpBlock.initialize(), (o, s) => { o.statements.Add(s); return o; });
 
         static readonly Parser<Object.LpObject> LAMBDA = from a in Parse.String("^do").Token()
-                                                         from stmts in Stmt.Token().Many()
+                                                         from stmts in Stmts
                                                          from b in Parse.String("end").Token()
                                                          select stmts.ToArray().Aggregate(Object.LpBlock.initialize(), (o, s) => { o.statements.Add(s); return o; });
 

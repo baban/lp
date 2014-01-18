@@ -9,6 +9,8 @@ namespace LP.Object
 {
     class LpBase
     {
+        protected static Dictionary<string, LpObject> classes = new Dictionary<string, LpObject>();
+
         public LpObject superclass = null;
         public BinMethod method = null;
         public delegate LpObject BinMethod(LpObject self, LpObject args);

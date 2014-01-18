@@ -10,6 +10,7 @@ namespace LP.Object
     class LpObject : LpBase
     {
 
+
         public LpObject() {
             class_name = "Object";
             setMethods();
@@ -106,6 +107,10 @@ namespace LP.Object
         public LpObject getVariable(String name)
         {
             return (LpObject)this.variables[name];
+        }
+
+        public LpObject Clone() {
+            return (LpObject)this.MemberwiseClone();
         }
     }
 }
