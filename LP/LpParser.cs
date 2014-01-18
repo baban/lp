@@ -103,36 +103,7 @@ namespace LP
         static readonly Parser<string> ExpClasscall = ExpVal;
 
         // method call
-        /*
-        static readonly Parser<string> MethodCall = from a in ExpClasscall
-                                                    from funcalls in (from dot in Parse.Char('.').Once().Text()
-                                                                      from funcall in Funcall
-                                                                      select dot + funcall).AtLeastOnce()
-                                                    select a + string.Join( "", funcalls.ToArray() );
-        */
-        static readonly Parser<string> MethodCall = MethodCallStart( Parse.Char('.').Once().Text(), ExpClasscall, Funcall );
-
-        static Parser<string> MethodCallStart(
-          Parser<string> op,
-          Parser<string> operand,
-          Parser<string> operand2)
-        {
-            Func<string, string, string, string> apply = (opr, a, b) => a +opr+ b;
-            return operand.Then(first => MethodCallRest(first, op, operand, operand2, apply ));
-        }
-
-        static Parser<string> MethodCallRest(
-            string firstOperand,
-            Parser<string> op,
-            Parser<string> operand,
-            Parser<string> operand2,
-            Func<string, string, string, string> apply)
-        {
-            return Parse.Or(op.Then(opvalue =>
-                          operand2.Then(operandValue => MethodCallRest(apply(opvalue, firstOperand, operandValue), op, operand, operand2, apply))),
-                      Parse.Return(firstOperand));
-        }
-
+        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.Char('.').Once().Text(), ExpClasscall, Funcall, (opr, a, b) => a + opr + b);
         // .
         static readonly Parser<string> ExpFuncall = MethodCall.Or(ExpClasscall);
         // []
@@ -292,7 +263,28 @@ namespace LP
         static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
                                                           select doStmts( stmts.ToArray() );
 
-        static Parser<string> makeExpr(string[] operators, Parser<string> beforeExpr )
+        static Parser<T> OperandsChainCallStart<T, TOp>(
+          Parser<TOp> op,
+          Parser<T> operand,
+          Parser<T> operand2,
+          Func<TOp, T, T, T> apply)
+        {
+            return operand.Then(first => OperandsChainCallRest(first, op, operand, operand2, apply));
+        }
+
+        static Parser<T> OperandsChainCallRest<T, TOp>(
+            T firstOperand,
+            Parser<TOp> op,
+            Parser<T> operand,
+            Parser<T> operand2,
+            Func<TOp, T, T, T> apply)
+        {
+            return Parse.Or(op.Then(opvalue =>
+                          operand2.Then(operandValue => OperandsChainCallRest(apply(opvalue, firstOperand, operandValue), op, operand, operand2, apply))),
+                      Parse.Return(firstOperand));
+        }
+
+        static Parser<string> makeExpr(string[] operators, Parser<string> beforeExpr)
         {
             return Parse.ChainOperator(
                 operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2)),
