@@ -240,7 +240,7 @@ namespace LP
         static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
                                                         from elms in SepElm.Many()
                                                         from b in Parse.String("]").Text().Token()
-                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", PRIMARY.Parse(s)));
+                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", STMT.Parse(s)));
 
         static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
                                                        from elms in SepElm.Many()
@@ -250,10 +250,10 @@ namespace LP
         public static readonly Parser<Object.LpObject> PRIMARY = NUMERIC.Or(BOOL).Or(STRING).Or(SYMBOL).Or(ARRAY);
 
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
-                                                       select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", PRIMARY.Parse(s)); return args; });
+                                                       select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
 
         static readonly Parser<Object.LpObject> TYPE_ARGS = from brace1 in Parse.Char('(')
-                                                            from args in ARGS.Token()
+                                                            from args in ARGS
                                                             from brace2 in Parse.Char(')')
                                                             select args;
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallRestVStart( PRIMARY );

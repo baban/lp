@@ -163,5 +163,21 @@ namespace LpTest.Object
 
             Assert.AreEqual(6.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
+
+        [Test]
+        public void to_s()
+        {
+            Type ot = initModule();
+            Type nt = initNumericModule();
+            Type at = initArgumentsModule();
+            Type t = initArrayModule();
+
+            // 配列作成
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { "1", "2", "3" } });
+
+            o = t.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+
+            Assert.AreEqual("[1, 2, 3]", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
     }
 }

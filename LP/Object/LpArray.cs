@@ -83,8 +83,8 @@ namespace LP.Object
 
         static LpObject to_s(LpObject self, LpObject args)
         {
-            var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue );
-            var s = string.Concat(", ",vs);
+            var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue.ToString() ).ToArray();
+            var s = string.Join(", ",vs);
             return LpString.initialize( "["+s+"]" );
         }
 
