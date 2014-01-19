@@ -9,6 +9,8 @@ namespace LP.Object
 {
     class LpArray : LpBase
     {
+        static string className = "Array";
+
         public static LpObject initialize()
         {
             return init();
@@ -27,12 +29,27 @@ namespace LP.Object
 
         private static LpObject init()
         {
-            LpObject obj = LpObject.initialize();
-            setMethods(obj);
+            var obj = createClassTemplate();
             obj.superclass  = LpObject.initialize();
-            obj.class_name  = "Array";
             obj.arrayValues = new List<LpObject>();
             return obj;
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = LpObject.initialize();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
 
         private static void setMethods(LpObject obj)

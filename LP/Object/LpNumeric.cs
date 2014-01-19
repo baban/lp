@@ -9,6 +9,8 @@ namespace LP.Object
 {
     class LpNumeric : LpBase
     {
+        static string className = "Numeric";
+
         public static LpObject initialize()
         {
             return init(0);
@@ -31,12 +33,26 @@ namespace LP.Object
 
         private static LpObject init(double i)
         {
-            LpObject obj = LpObject.initialize();
-            obj.class_name = "Numeric";
-            obj.superclass = LpObject.initialize();
-            setMethods(obj);
+            var obj = createClassTemplate();
             obj.doubleValue = i;
             return obj;
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = LpObject.initialize();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
 
         private static void setMethods( LpObject obj )

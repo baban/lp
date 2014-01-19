@@ -32,7 +32,7 @@ namespace LP.Object
             setMethods(obj);
             obj.superclass = new LpObject();
             obj.statements = new List<string>();
-            obj.class_name = "Block";
+            obj.class_name = "Lambda";
 
             return obj;
         }

@@ -256,6 +256,11 @@ namespace LP
                                                             from args in ARGS
                                                             from brace2 in Parse.Char(')')
                                                             select args;
+
+        static readonly Parser<Object.LpObject> FUNCTION = from fname in Fname
+                                                           from args in TYPE_ARGS
+                                                           select args;
+
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallRestVStart( PRIMARY );
         static readonly Parser<Object.LpObject> BLOCK = from a in Parse.String("do").Token()
                                                         from stmts in Stmts

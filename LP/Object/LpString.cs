@@ -8,7 +8,10 @@ namespace LP.Object
 {
     class LpString : LpBase
     {
-        public static LpObject initialize() {
+        static string className = "String";
+
+        public static LpObject initialize()
+        {
             return init( "" );
         }
         
@@ -19,12 +22,26 @@ namespace LP.Object
         
         private static LpObject init(string s)
         {
-            LpObject obj = LpObject.initialize();
-            setMethods(obj);
-            obj.superclass = LpObject.initialize();
+            var obj = createClassTemplate();
             obj.stringValue = s;
-            obj.class_name = "String";
             return obj;
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = LpObject.initialize();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
 
         private static void setMethods(LpObject obj)

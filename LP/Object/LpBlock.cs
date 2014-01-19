@@ -9,36 +9,47 @@ namespace LP.Object
 {
     class LpBlock : LpBase
     {
+        static string className = "Block";
+
         public static LpObject initialize()
         {
             return init();
-            // TODO: display
-            // TODO: inspect
-            // TODO: to_s
-            // TODO: call
         }
 
         public static LpObject initialize(string s)
         {
-            LpObject iobj = init();
-            iobj.statements.Add(s);
-
-            return iobj;
+            LpObject obj = init();
+            obj.statements.Add(s);
+            return obj;
         }
 
         static LpObject init()
         {
-            LpObject obj = new LpObject();
-            setMethods(obj);
-            obj.superclass = new LpObject();
+            var obj = createClassTemplate();
             obj.statements = new List<string>();
-            obj.class_name = "Block";
-
             return obj;
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = LpObject.initialize();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
 
         private static void setMethods(LpObject obj)
         {
+            // TODO: inspect
             obj.methods["to_s"] = new BinMethod(to_s);
             obj.methods["display"] = new BinMethod(display);
             obj.methods["execute"] = new BinMethod(execute);

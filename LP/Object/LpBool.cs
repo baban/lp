@@ -22,12 +22,13 @@ namespace LP.Object
 
         private static LpObject init( bool b )
         {
-            var obj = createTemplate();
+            var obj = createClassTemplate();
             obj.boolValue = b;
             return obj;
         }
 
-        private static LpObject createTemplate() {
+        private static LpObject createClassTemplate()
+        {
             if (classes.ContainsKey(className))
             {
                 return classes[className].Clone();

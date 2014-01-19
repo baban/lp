@@ -10,6 +10,7 @@ namespace LP.Object
     class LpSymbol : LpBase
     {
         protected static Dictionary<string, LpObject> symbols = new Dictionary<string, LpObject>();
+        static string className = "Symbol";
 
         public static LpObject initialize(string s)
         {
@@ -19,17 +20,30 @@ namespace LP.Object
         private static LpObject init(string s)
         {
             if (symbols.ContainsKey(s)) return symbols[s];
-
-            LpObject obj = LpObject.initialize();
-            setMethods(obj);
-            obj.superclass = LpObject.initialize();
+            var obj = createClassTemplate();
             obj.stringValue = s;
-            obj.class_name = "Symbol";
             symbols[s] = obj;
             obj.doubleValue = symbols[s].GetHashCode();
             return obj;
         }
-        
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = LpObject.initialize();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
+        }
+
         private static void setMethods(LpObject obj)
         {
             obj.methods["inspect"] = new BinMethod(inspect);

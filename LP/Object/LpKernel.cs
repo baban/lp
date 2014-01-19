@@ -30,7 +30,6 @@ namespace LP.Object
         // 構文
         // TODO: self
 
-
         private static LpObject _if(LpObject self, LpObject args)
         {
             var o1 = args.arrayValues.ElementAt(0);
