@@ -311,6 +311,15 @@ namespace LpTest
         }
 
         [Test]
+        public void ExpFuncall4()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpFuncall", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10.(+)(10)" });
+            Assert.AreEqual(s, "10.(+)(10)");
+        }
+
+        [Test]
         public void ExpSquare()
         {
             Type t = initParser();
@@ -756,6 +765,24 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("Fname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s1 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(+)" });
+            Assert.AreEqual(s1, "(+)");
+        }
+
+        [Test]
+        public void FCallname()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("FCallname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s2 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "fuga" });
+            Assert.AreEqual(s2, "fuga");
+        }
+
+        [Test]
+        public void FCallname2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("FCallname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s1 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(+)" });
             Assert.AreEqual(s1, "+");
         }

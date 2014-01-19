@@ -92,6 +92,8 @@ namespace LP.Object
 
         public LpObject funcall( string name, LpObject args )
         {
+            Console.WriteLine("name:");
+            Console.WriteLine(name);
             if (null != methods[name])
             {
                 var m = new LpMethod((BinMethod)methods[name]);
