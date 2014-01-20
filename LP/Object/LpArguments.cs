@@ -29,12 +29,11 @@ namespace LP.Object
         public static LpObject init()
         {
             LpObject obj = new LpObject();
-            LpObject iobj = new LpObject();
-            iobj.class_name = "Arguments";
-            iobj.superclass = obj;
-            iobj.arrayValues = new List<LpObject>();
-            setMethods(iobj);
-            return iobj;
+            obj.class_name = "Arguments";
+            obj.superclass = LpObject.initialize();
+            obj.arrayValues = new List<LpObject>();
+            setMethods(obj);
+            return obj;
         }
 
         static void setMethods(LpObject obj)

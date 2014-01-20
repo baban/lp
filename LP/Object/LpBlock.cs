@@ -38,7 +38,7 @@ namespace LP.Object
             }
             else
             {
-                LpObject obj = LpObject.initialize();
+                LpObject obj = new LpObject();
                 setMethods(obj);
                 obj.superclass = LpObject.initialize();
                 obj.class_name = className;

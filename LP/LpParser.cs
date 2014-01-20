@@ -259,7 +259,7 @@ namespace LP
 
         static readonly Parser<Object.LpObject> FUNCTION = from fname in Fname
                                                            from args in TYPE_ARGS
-                                                           select args;
+                                                           select Object.LpIndexer.last().funcall( fname, args );
 
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallRestVStart( PRIMARY );
         static readonly Parser<Object.LpObject> BLOCK = from a in Parse.String("do").Token()

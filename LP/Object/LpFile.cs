@@ -8,6 +8,8 @@ namespace LP.Object
 {
     class LpFile : LpBase
     {
+        static string className = "File";
+
         public static LpObject initialize()
         {
             return init();
@@ -15,10 +17,7 @@ namespace LP.Object
 
         private static LpObject init()
         {
-            LpObject obj = LpObject.initialize();
-            setMethods(obj);
-            obj.superclass = LpObject.initialize();
-            obj.class_name = "File";
+            LpObject obj = createClassTemplate();
             return obj;
         }
 
@@ -28,6 +27,23 @@ namespace LP.Object
             // TODO: read
             // TODO: <<
             // TODO: write
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = new LpObject();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ namespace LP.Object
             }
             else
             {
-                LpObject obj = LpObject.initialize();
+                LpObject obj = new LpObject();
                 setMethods(obj);
                 obj.superclass = LpObject.initialize();
                 obj.class_name = className;
@@ -43,7 +43,6 @@ namespace LP.Object
                 return obj.Clone();
             }
         }
-
 
         private static void setMethods(LpObject obj)
         {

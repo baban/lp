@@ -15,7 +15,7 @@ namespace LP.Object
 
         private static LpObject init()
         {
-            LpObject obj = LpObject.initialize();
+            LpObject obj = new LpObject();
             setMethods(obj);
             obj.superclass = LpObject.initialize();
             obj.class_name = "Module";

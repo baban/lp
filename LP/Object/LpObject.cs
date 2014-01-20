@@ -9,14 +9,34 @@ namespace LP.Object
 {
     class LpObject : LpBase
     {
-
+        static string className = "Object";
 
         public LpObject() {
             class_name = "Object";
-            setMethods();
         }
 
-        private void setMethods()
+        public static LpObject initialize() {
+            return createClassTemplate();
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = new LpObject();
+                setMethods(obj);
+                obj.superclass = null;
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
+        }
+
+        static private LpObject setMethods( LpObject obj )
         {
             // TODO: send, __send__
             // TODO: copy
@@ -37,11 +57,12 @@ namespace LP.Object
             // TODO: extend
             // TODO: desine_method
             // TODO: define_operand
-            methods["inspect"] = new BinMethod(inspect);
-            methods["display"] = new BinMethod(display);
-            methods["to_s"] = new BinMethod(to_s);
-            methods["class"] = new BinMethod(_class);
-            methods["hash"] = new BinMethod(hash);
+            obj.methods["inspect"] = new BinMethod(inspect);
+            obj.methods["display"] = new BinMethod(display);
+            obj.methods["to_s"] = new BinMethod(to_s);
+            obj.methods["class"] = new BinMethod(_class);
+            obj.methods["hash"] = new BinMethod(hash);
+            return obj;
         }
 
         public override string ToString()
@@ -59,8 +80,34 @@ namespace LP.Object
             return obj == this;
         }
 
-        public static LpObject initialize() {
-            return new LpObject();
+        public LpObject funcall(string name, LpObject args)
+        {
+            if (null != methods[name])
+            {
+                var m = new LpMethod((BinMethod)methods[name]);
+                return m.funcall(this, args);
+            }
+            if (null != superclass)
+            {
+                return superclass.funcall(name, args);
+            }
+            return null;
+        }
+
+        public LpObject setVariable(String name, LpObject obj)
+        {
+            this.variables[name] = obj;
+            return obj;
+        }
+
+        public LpObject getVariable(String name)
+        {
+            return (LpObject)this.variables[name];
+        }
+
+        public LpObject Clone()
+        {
+            return (LpObject)this.MemberwiseClone();
         }
 
         protected static LpObject to_s(LpObject self, LpObject args)
@@ -90,29 +137,5 @@ namespace LP.Object
             return LpNumeric.initialize( self.GetHashCode() );
         }
 
-        public LpObject funcall( string name, LpObject args )
-        {
-            if (null != methods[name])
-            {
-                var m = new LpMethod((BinMethod)methods[name]);
-                return m.funcall(this,args);
-            }
-            return null;
-        }
-
-        public LpObject setVariable(String name, LpObject obj)
-        {
-            this.variables[name] = obj;
-            return obj;
-        }
-
-        public LpObject getVariable(String name)
-        {
-            return (LpObject)this.variables[name];
-        }
-
-        public LpObject Clone() {
-            return (LpObject)this.MemberwiseClone();
-        }
     }
 }

@@ -8,6 +8,7 @@ namespace LP.Object
 {
     class LpKernel
     {
+
         private static LpObject print(LpObject self, LpObject args)
         {
             var o = args.arrayValues.First();

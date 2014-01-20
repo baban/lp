@@ -8,6 +8,8 @@ namespace LP.Object
 {
     class LpClass : LpBase
     {
+        static string className = "Class";
+
         public static LpObject initialize()
         {
             return init();
@@ -15,10 +17,8 @@ namespace LP.Object
 
         private static LpObject init()
         {
-            LpObject obj = LpObject.initialize();
-            setMethods(obj);
-            obj.superclass = LpObject.initialize();
-            obj.class_name = "Class";
+            LpObject obj = createClassTemplate();
+            obj.class_name = className;
             return obj;
         }
 
@@ -36,6 +36,23 @@ namespace LP.Object
             obj.methods["=="] = new BinMethod(equal);
             obj.methods["==="] = new BinMethod(eq);
              */
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = new LpObject();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
     }
 }

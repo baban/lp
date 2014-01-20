@@ -8,6 +8,8 @@ namespace LP.Object
 {
     class LpHash : LpBase
     {
+        static string className = "Hash";
+
         public static LpObject initialize()
         {
             return init();
@@ -15,10 +17,7 @@ namespace LP.Object
 
         private static LpObject init()
         {
-            LpObject obj = LpObject.initialize();
-            setMethods(obj);
-            obj.superclass = LpObject.initialize();
-            obj.class_name = "Hash";
+            LpObject obj = createClassTemplate();
             obj.hashValues = new HashSet<LpObject>();
             return obj;
         }
@@ -56,6 +55,23 @@ namespace LP.Object
             //var v = args.arrayValues[1];
             self.hashValues.Add(k);
             return self;
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = new LpObject();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
     }
 }

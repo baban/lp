@@ -804,7 +804,17 @@ namespace LpTest
             var s1 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(+)" });
             Assert.AreEqual(s1, "+");
         }
+        /*
+        [Test]
+        public void FUNCTION()
+        {
+            Type t = initParser();
 
+            var p = t.InvokeMember("FUNCTION", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "print(10)" });
+            Assert.AreEqual("10", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+        */
         [Test]
         public void FUNCALL()
         {
