@@ -89,7 +89,21 @@ namespace LP.Object
             }
             if (null != superclass)
             {
-                return superclass.funcall(name, args);
+                return superclass.funcall(name, this, args);
+            }
+            return null;
+        }
+
+        public LpObject funcall(string name, LpObject self, LpObject args)
+        {
+            if (null != methods[name])
+            {
+                var m = new LpMethod((BinMethod)methods[name]);
+                return m.funcall(self, args);
+            }
+            if (null != superclass)
+            {
+                return superclass.funcall(name, self, args);
             }
             return null;
         }
