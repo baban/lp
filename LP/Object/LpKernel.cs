@@ -6,30 +6,59 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpKernel
+    class LpKernel : LpBase
     {
+        static string className = "Kernel";
+
+        public static LpObject initialize()
+        {
+            return createClassTemplate();
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = new LpObject();
+                setMethods(obj);
+                obj.superclass = null;
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj;
+            }
+        }
+
+        static private LpObject setMethods(LpObject obj)
+        {
+            // TODO: yield
+            // TODO: return
+            // TODO: super
+            // TODO: while
+            // TODO: until
+            // TODO: until
+            // TODO: alias
+            // TODO: break
+            // TODO: next
+            // TODO: retry
+
+            // 構文
+            // TODO: self
+
+            obj.methods["print"] = new BinMethod(print);
+            obj.methods["if"] = new BinMethod(_if);
+            return obj;
+        }
 
         private static LpObject print(LpObject self, LpObject args)
         {
             var o = args.arrayValues.First();
-            Console.WriteLine(o.funcall("to_s",null));
+            o.funcall("display",null);
             return null;
         }
-
-        // TODO: yield
-        // TODO: return
-        // TODO: super
-        // TODO: while
-        // TODO: until
-        // TODO: if
-        // TODO: until
-        // TODO: alias
-        // TODO: break
-        // TODO: next
-        // TODO: retry
-
-        // 構文
-        // TODO: self
 
         private static LpObject _if(LpObject self, LpObject args)
         {

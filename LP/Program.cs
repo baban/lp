@@ -42,5 +42,10 @@ namespace LP
 
             return txt;
         }
+
+        static void initEnv(){
+            Object.LpKernel.initialize();
+            return;
+        }
     }
 }

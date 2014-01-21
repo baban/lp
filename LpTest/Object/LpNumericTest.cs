@@ -307,6 +307,7 @@ namespace LpTest.Object
             Type ot = initModule();
             Type st = initNumericModule();
             Type at = initArgumentsModule();
+
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)11.0 });
             var arg1 = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)10.0 });
@@ -345,13 +346,13 @@ namespace LpTest.Object
             Type ot = initModule();
             Type st = initNumericModule();
             Type at = initArgumentsModule();
+
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)10.0 });
             var arg1 = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)11.0 });
 
             // 引数なし
-            var atypes = new Type[] { };
-            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, atypes, null).Invoke(null, null);
+            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, null);
             args = at.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { args, arg1 });
             var prms = new object[] { "<=", args };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
@@ -366,6 +367,7 @@ namespace LpTest.Object
             Type at = initArgumentsModule();
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)10.0 });
+        
             var arg1 = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)10.0 });
 
             // 引数なし
