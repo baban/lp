@@ -611,11 +611,17 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("Function", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa\nend" });
-            Assert.AreEqual("(:aaa).(=)(^do  end)", s);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa()\nend" });
+            Assert.AreEqual("def aaa(); end", s);
 
-            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa\n10\n20\n end" });
-            Assert.AreEqual("(:aaa).(=)(^do 10; 20 end)", s);
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa()\n10\n20\n end" });
+            Assert.AreEqual("def aaa();10; 20 end", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa(a)\n10\n end" });
+            Assert.AreEqual("def aaa(a);10 end", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa(a,b,c)\n10\n end" });
+            Assert.AreEqual("def aaa(a, b, c);10 end", s);
         }
 
         [Test]
@@ -668,6 +674,15 @@ namespace LpTest
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"^do 10 end" });
             Assert.AreEqual(s, "^do 10 end");
+        }
+
+        [Test]
+        public void Stmt4()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa()\nend" });
+            Assert.AreEqual(s, "def aaa(); end");
         }
 
         [Test]

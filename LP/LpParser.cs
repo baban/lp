@@ -69,14 +69,23 @@ namespace LP
                                                 from c in Parse.String("end")
                                                 select "^do " + string.Join("; ", stmts.ToArray()) + " end";
 
+        static readonly Parser<string[]> ArgVars = from ags in
+                                                       (from sep in Parse.Char(',').Token()
+                                                        from s in Identifier
+                                                        select s).Or(Identifier).Many()
+                                                   select ags.ToArray();
+
         static readonly Parser<string> Function = from a in Parse.String("def").Token()
                                                   from fname in Identifier
+                                                  from sc in Parse.String("(")
+                                                  from args in ArgVars 
+                                                  from ec in Parse.String(")")
                                                   from b in Term
                                                   from stmts in Stmts
                                                   from c in Parse.String("end")
-                                                  select "(:" + fname + ").(=)" + "(^do " + 
+                                                  select "def " + fname + "(" + string.Join(", ", args.ToArray()) + ");" + 
                                                          string.Join( "; ", stmts.ToArray()) + 
-                                                         " end)";
+                                                         " end";
 
         static readonly Parser<string> Funcall = (from idf in Fname
                                                   from c in Parse.Char('(').Once().Text()
@@ -212,7 +221,7 @@ namespace LP
                                                  select "if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end,do " + string.Join("; ", stmts2.ToArray()) + " end)";
         static readonly Parser<string> IfStmt = IfStmt2.Or(IfStmt1);
 
-        static readonly Parser<string> StatCollection = IfStmt.Or(FunctionCall);
+        static readonly Parser<string> StatCollection = Function.Or(IfStmt).Or(FunctionCall);
         static readonly Parser<string> StatList = StatCollection.Or(Expr);
 
         static readonly Parser<string> Stmt = (from s in StatList
@@ -268,6 +277,21 @@ namespace LP
 
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
+
+        static readonly Parser<Object.LpObject> FUNCTION = from a in Parse.String("def").Token()
+                                                  from fname in Identifier
+                                                  from sc in Parse.String("(")
+                                                  from args in ArgVars
+                                                  from ec in Parse.String(")")
+                                                  from b in Term
+                                                  from stmts in Stmts
+                                                  from c in Parse.String("end")
+                                                  select defunction( fname, args, stmts );
+
+        static Object.LpObject defunction( string fname, string[] argnames, string[] stmts ) {
+
+            return null;
+        }
 
         static readonly Parser<Object.LpObject> TYPE_ARGS = from brace1 in Parse.Char('(')
                                                             from args in ARGS
