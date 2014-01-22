@@ -62,11 +62,12 @@ namespace LP.Object
 
         private static LpObject _if(LpObject self, LpObject args)
         {
-            var o1 = args.arrayValues.ElementAt(0);
-            if( o1!=null ){
-                return args.arrayValues.ElementAt(1).funcall("call", null);
+            var expr = args.arrayValues.ElementAt(0);
+            Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
+            if( expr != null && expr.boolValue != false ){
+                return fun( args.arrayValues.ElementAt(1) );
             } else {
-                return args.arrayValues.ElementAt(2).funcall("call", null);
+                return fun( args.arrayValues.ElementAt(2) );
             }
         }
     }
