@@ -288,8 +288,9 @@ namespace LP
                                                   from c in Parse.String("end")
                                                   select defunction( fname, args, stmts );
 
-        static Object.LpObject defunction( string fname, string[] argnames, string[] stmts ) {
-
+        static Object.LpObject defunction( string fname, string[] args, string[] stmts ) {
+            var o = Object.LpKernel.initialize();
+            o.methods[fname] = Object.LpMethod.initialize(args, stmts);
             return null;
         }
 

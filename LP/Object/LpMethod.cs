@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sprache;
 
 namespace LP.Object
 {
@@ -19,6 +20,13 @@ namespace LP.Object
         {
             var obj = createClassTemplate();
             obj.method = method;
+            return obj;
+        }
+
+        public static LpObject initialize( string[] args, string[] stmts )
+        {
+            var obj = createClassTemplate();
+            obj.statements = stmts.ToList();
             return obj;
         }
 
@@ -45,11 +53,26 @@ namespace LP.Object
 
         public LpObject funcall(LpObject self, LpObject args)
         {
+            if ( null != method ){
+                return method(self, args);
+            }
+            else
+            {
+                return execute( self, args );
+            }
             // TODO: display
             // TODO: inspect
             // TODO: to_s
-            return method(self, args);
         }
-        
+
+        static LpObject execute(LpObject self, LpObject args)
+        {
+            LpObject ret = null;
+            self.statements.ForEach(delegate(string stmt)
+            {
+                ret = LpParser.STMT.Parse(stmt);
+            });
+            return ret;
+        }
     }
 }
