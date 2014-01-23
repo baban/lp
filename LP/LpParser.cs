@@ -15,6 +15,7 @@ namespace LP
     // TODO: class定義、module定義
     class LpParser
     {
+        // 基本文字一覧
         static readonly Parser<char> Term = Parse.Char(';').Or(Parse.Char('\n'));
 
         // Primary Values

@@ -48,15 +48,15 @@ namespace LP.Object
         {
             // TODO: &
             // TODO: |
-            obj.methods["||"] = new BinMethod(andOp);
-            obj.methods["&&"] = new BinMethod(orOp);
+            obj.methods["||"] = new LpMethod( new BinMethod(andOp) );
+            obj.methods["&&"] = new LpMethod( new BinMethod(orOp) );
 
-            obj.methods["=="] = new BinMethod(equal);
-            obj.methods["==="] = new BinMethod(eq);
+            obj.methods["=="] = new LpMethod( new BinMethod(equal) );
+            obj.methods["==="] = new LpMethod( new BinMethod(eq) );
 
-            obj.methods["to_s"] = new BinMethod(to_s);
-            obj.methods["display"] = new BinMethod(display);
-            obj.methods["inspect"] = new BinMethod(inspect);
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
+            obj.methods["display"] = new LpMethod( new BinMethod(display) );
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
         }
 
         private static LpObject andOp(LpObject self, LpObject args)

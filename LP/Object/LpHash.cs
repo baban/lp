@@ -31,8 +31,8 @@ namespace LP.Object
             // TODO: keys
             // TODO: values
             // TODO: size
-            obj.methods["update"] = new BinMethod(update);
-            obj.methods["size"] = new BinMethod(size);
+            obj.methods["update"] = new LpMethod( new BinMethod(update) );
+            obj.methods["size"] = new LpMethod( new BinMethod(size));
             // TODO: to_a
             /*
             obj.methods["=="] = new BinMethod(equal);

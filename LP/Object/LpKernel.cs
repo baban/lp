@@ -48,8 +48,8 @@ namespace LP.Object
             // 構文
             // TODO: self
 
-            obj.methods["print"] = new BinMethod(print);
-            obj.methods["if"] = new BinMethod(_if);
+            obj.methods["print"] = new LpMethod( new BinMethod(print) );
+            obj.methods["if"] = new LpMethod( new BinMethod(_if) );
             return obj;
         }
 

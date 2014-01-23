@@ -59,16 +59,16 @@ namespace LP.Object
             // TODO: each
             // TODO: map
             // TODO: join
-            obj.methods["+"] = new BinMethod(concat);
-            obj.methods["concat"] = new BinMethod(concat);
-            obj.methods["last"] = new BinMethod(last);
-            obj.methods["push"] = new BinMethod(push);
-            obj.methods["<<"] = new BinMethod(push);
-            obj.methods["at"] = new BinMethod(at);
-            obj.methods["car"] = new BinMethod(first);
-            obj.methods["first"] = new BinMethod(first);
-            obj.methods["size"] = new BinMethod(len);
-            obj.methods["len"] = new BinMethod(len);
+            obj.methods["+"] = new LpMethod( new  BinMethod(concat) );
+            obj.methods["concat"] = new LpMethod(new BinMethod(concat));
+            obj.methods["last"] = new LpMethod( new BinMethod(last) );
+            obj.methods["push"] = new LpMethod(new BinMethod(push));
+            obj.methods["<<"] = new LpMethod( new BinMethod(push) );
+            obj.methods["at"] = new LpMethod( new BinMethod(at) );
+            obj.methods["car"] = new LpMethod(new BinMethod(first));
+            obj.methods["first"] = new LpMethod( new BinMethod(first) );
+            obj.methods["size"] = new LpMethod( new BinMethod(len) );
+            obj.methods["len"] = new LpMethod( new BinMethod(len) );
             /*
             obj.methods["=="] = new BinMethod(equal);
             obj.methods["==="] = new BinMethod(eq);
@@ -76,7 +76,7 @@ namespace LP.Object
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
              */
-            obj.methods["to_s"] = new BinMethod(to_s);
+            obj.methods["to_s"] = new LpMethod(new BinMethod(to_s));
         }
 
         private static LpObject at( LpObject self, LpObject args )
