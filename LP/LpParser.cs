@@ -279,14 +279,14 @@ namespace LP
                                                        select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
 
         static readonly Parser<Object.LpObject> FUNCTION = from a in Parse.String("def").Token()
-                                                  from fname in Identifier
-                                                  from sc in Parse.String("(")
-                                                  from args in ArgVars
-                                                  from ec in Parse.String(")")
-                                                  from b in Term
-                                                  from stmts in Stmts
-                                                  from c in Parse.String("end")
-                                                  select defunction( fname, args, stmts );
+                                                           from fname in Identifier.Text()
+                                                           from sc in Parse.String("(")
+                                                           from args in ArgVars
+                                                           from ec in Parse.String(")")
+                                                           from b in Term
+                                                           from stmts in Stmts
+                                                           from c in Parse.String("end").Token()
+                                                           select defunction(fname, args, stmts);
 
         static Object.LpObject defunction( string fname, string[] args, string[] stmts ) {
             var o = Object.LpKernel.initialize();

@@ -681,8 +681,23 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa()\nend" });
-            Assert.AreEqual(s, "def aaa(); end");
+            //var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge(); end" });
+            //Assert.AreEqual(s, "def hoge(); end");
+        }
+
+        [Test]
+        public void FUNCTION()
+        {
+            Type t = initParser();
+
+            Type kernel = initKernelModule();
+            kernel.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            var p = t.InvokeMember("FUNCTION", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "def hoge(); 10; end" });
+
+            p = t.InvokeMember("FUNCTION_CALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "hoge()" });
         }
 
         [Test]

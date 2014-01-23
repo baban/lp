@@ -57,26 +57,26 @@ namespace LP.Object
 
         private static void setMethods( LpObject obj )
         {
-            obj.methods["+"]  = new BinMethod(plus);
-            obj.methods["-"]  = new BinMethod(minus);
-            obj.methods["*"]  = new BinMethod(mul);
-            obj.methods["/"]  = new BinMethod(div);
-            obj.methods["%"]  = new BinMethod(mod);
-            obj.methods["**"] = new BinMethod(pow);
+            obj.methods["+"]  = new LpMethod( new BinMethod(plus) );
+            obj.methods["-"]  = new LpMethod( new BinMethod(minus) );
+            obj.methods["*"]  = new LpMethod( new BinMethod(mul) );
+            obj.methods["/"]  = new LpMethod( new BinMethod(div) );
+            obj.methods["%"]  = new LpMethod( new BinMethod(mod) );
+            obj.methods["**"] = new LpMethod( new BinMethod(pow) );
 
-            obj.methods[">"]        = new BinMethod(compareToGreater);
-            obj.methods[">="]       = new BinMethod(compareToGreaterEqual);
-            obj.methods["<"]        = new BinMethod(compareToLower);
-            obj.methods["<="]       = new BinMethod(compareToLowerEqual);
-            obj.methods["=="]       = new BinMethod(equal);
-            obj.methods["==="]      = new BinMethod(eq);
-            obj.methods["between?"] = new BinMethod(between);
+            obj.methods[">"]        = new LpMethod( new BinMethod(compareToGreater) );
+            obj.methods[">="]       = new LpMethod( new BinMethod(compareToGreaterEqual) );
+            obj.methods["<"]        = new LpMethod( new BinMethod(compareToLower) );
+            obj.methods["<="]       = new LpMethod( new BinMethod(compareToLowerEqual) );
+            obj.methods["=="]       = new LpMethod( new BinMethod(equal) );
+            obj.methods["==="]      = new LpMethod( new BinMethod(eq) );
+            obj.methods["between?"] = new LpMethod( new BinMethod(between) );
 
-            obj.methods["to_i"] = new BinMethod(to_i);
-            obj.methods["to_f"] = new BinMethod(to_f);
-            obj.methods["to_s"] = new BinMethod(to_s);
-            obj.methods["display"] = new BinMethod(display);
-            obj.methods["inspect"] = new BinMethod(inspect);
+            obj.methods["to_i"] = new LpMethod( new BinMethod(to_i) );
+            obj.methods["to_f"] = new LpMethod( new BinMethod(to_f) );
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
+            obj.methods["display"] = new LpMethod( new BinMethod(display) );
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
         }
 
         protected static LpObject display(LpObject self, LpObject args)
