@@ -13,6 +13,10 @@ namespace LP
     // TODO: case文
     // TODO: メソッド定義
     // TODO: class定義、module定義
+    // TODO: 後部エラー処理
+    // TODO: エラー処理
+    // TODO: nil
+    // TODO: コメント
     class LpParser
     {
         // 基本文字一覧
@@ -35,7 +39,6 @@ namespace LP
 
         static readonly Parser<string> Fname = Operands.Or(Identifier);
         static readonly Parser<string> FCallname = CallOperands.Or(Identifier);
-
 
         static readonly Parser<string> Decimal = from a in Parse.Digit.AtLeastOnce().Text()
                                                  from dot in Parse.Char('.').Once().Text()
@@ -289,9 +292,24 @@ namespace LP
                                                            from c in Parse.String("end").Token()
                                                            select defunction(fname, args, stmts);
 
-        static Object.LpObject defunction( string fname, string[] args, string[] stmts ) {
+        static readonly Parser<Object.LpObject> DEF_CLASS = from a in Parse.String("class").Token()
+                                                            from fname in Identifier.Text()
+                                                            from b in Term
+                                                            from stmts in Stmts
+                                                            from c in Parse.String("end").Token()
+                                                            select def_class(fname, stmts);
+
+        static Object.LpObject defunction(string fname, string[] args, string[] stmts)
+        {
             var o = Object.LpKernel.initialize();
             o.methods[fname] = Object.LpMethod.initialize(args, stmts);
+            return null;
+        }
+
+        static Object.LpObject def_class(string fname, string[] stmts)
+        {
+            var o = Object.LpKernel.initialize();
+            o.methods[fname] = Object.LpClass.initialize(stmts);
             return null;
         }
 
@@ -302,8 +320,7 @@ namespace LP
 
         static readonly Parser<Object.LpObject> FUNCTION_CALL = from fname in Fname
                                                                 from args in TYPE_ARGS
-                                                                select Object.LpKernel.initialize().funcall( fname, args );
-                                                                //select Object.LpIndexer.last().funcall( fname, args );
+                                                                select Object.LpIndexer.last().funcall( fname, args );
 
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallRestVStart( Parse.Ref( () => EXP_VAL ) );
 

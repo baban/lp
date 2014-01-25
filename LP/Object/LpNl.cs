@@ -6,28 +6,19 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpClass : LpBase
+    class LpNl : LpBase
     {
-        static string className = "Class";
+        static string className = "Nl";
 
         public static LpObject initialize()
         {
-            return init( className, new string[]{} );
+            return init();
         }
 
-        public static LpObject initialize( string[] stmts )
-        {
-            return init( className, stmts );
-        }
-
-        private static LpObject init( string className, string[] stmts)
+        private static LpObject init()
         {
             LpObject obj = createClassTemplate();
             obj.class_name = className;
-            obj.statements = stmts.ToList();
-
-            classes[obj.class_name] = obj;
-            LpIndexer.push(obj);
 
             return obj;
         }

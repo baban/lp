@@ -12,16 +12,41 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            if (args.Length == 0) {
-                showSystemMessage();
-                return;
-            }
-
-            string code = readFile( args[0] );
-            LpParser.execute( code );
+            sysInit("", args, 0);
+            runNode(args);
         }
 
-        static void showSystemMessage() {
+        // parse command line options
+        // long argc, char **argv, struct cmdline_options *opt, int envopt
+        static long procOptions( string args, string[] argv, int enviroment ) {
+            return 0;
+        }
+
+        //  TODO: initialize system
+        static long sysInit(string args, string[] argv, int enviroment)
+        {
+            return 0;
+        }
+
+        static long init(string args, string[] argv, int enviroment)
+        {
+            return 0;
+        }
+
+        // TODO; start program
+        static long runNode(string[] argv)
+        {
+            if (argv.Length == 0) {
+                showSystemMessage();
+                return 0;
+            }
+            string code = readFile(argv[0]);
+            LpParser.execute(code);
+            return 0;
+        }
+
+        static void showSystemMessage()
+        {
             var message = " LP version 0.1 ";
             Console.WriteLine( message );
         }

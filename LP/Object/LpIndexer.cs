@@ -41,7 +41,8 @@ namespace LP.Object
 
         public static LpObject last()
         {
-            return contextStack.Last();
+            return Object.LpKernel.initialize();
+            //return contextStack.Last();
         }
     }
 }
