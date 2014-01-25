@@ -20,9 +20,14 @@ namespace LP.Object
             return init( className, stmts );
         }
 
-        private static LpObject init( string className, string[] stmts)
+        public static LpObject initialize( string className, string[] stmts)
         {
-            LpObject obj = createClassTemplate();
+            return init(className, stmts);
+        }
+
+        private static LpObject init(string className, string[] stmts)
+        {
+            LpObject obj = createClassTemplate( className );
             obj.class_name = className;
             obj.statements = stmts.ToList();
 
@@ -48,8 +53,12 @@ namespace LP.Object
              */
         }
 
-        private static LpObject createClassTemplate()
+        private static LpObject createClassTemplate(string className)
         {
+            if (className != "Class") {
+                return LpClass.initialize();
+            }
+
             if (classes.ContainsKey(className))
             {
                 return classes[className].Clone();

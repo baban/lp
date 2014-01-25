@@ -989,6 +989,16 @@ namespace LpTest
         }
 
         [Test]
+        public void DEF_CLASS()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("DEF_CLASS", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "class Hoge\n end" });
+            Assert.AreEqual("Hoge", o.GetType().InvokeMember("class_name", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+
+        [Test]
         public void STMT()
         {
             Type t = initParser();

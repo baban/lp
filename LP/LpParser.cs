@@ -290,7 +290,7 @@ namespace LP
                                                            from b in Term
                                                            from stmts in Stmts
                                                            from c in Parse.String("end").Token()
-                                                           select defunction(fname, args, stmts);
+                                                           select def_function(fname, args, stmts);
 
         static readonly Parser<Object.LpObject> DEF_CLASS = from a in Parse.String("class").Token()
                                                             from fname in Identifier.Text()
@@ -298,20 +298,6 @@ namespace LP
                                                             from stmts in Stmts
                                                             from c in Parse.String("end").Token()
                                                             select def_class(fname, stmts);
-
-        static Object.LpObject defunction(string fname, string[] args, string[] stmts)
-        {
-            var o = Object.LpKernel.initialize();
-            o.methods[fname] = Object.LpMethod.initialize(args, stmts);
-            return null;
-        }
-
-        static Object.LpObject def_class(string fname, string[] stmts)
-        {
-            var o = Object.LpKernel.initialize();
-            o.methods[fname] = Object.LpClass.initialize(stmts);
-            return null;
-        }
 
         static readonly Parser<Object.LpObject> TYPE_ARGS = from brace1 in Parse.Char('(')
                                                             from args in ARGS
@@ -388,6 +374,20 @@ namespace LP
         static Parser<string> Operator(string operand)
         {
             return Parse.String(operand).Token().Text();
+        }
+
+        static Object.LpObject def_function(string fname, string[] args, string[] stmts)
+        {
+            var o = Object.LpKernel.initialize();
+            o.methods[fname] = Object.LpMethod.initialize(args, stmts);
+            return null;
+        }
+
+        static Object.LpObject def_class(string fname, string[] stmts)
+        {
+            var o = Object.LpKernel.initialize();
+            o.methods[fname] = Object.LpClass.initialize( fname, stmts );
+            return (Object.LpObject)o.methods[fname];
         }
 
         static Object.LpObject makeHash(string[] os)
