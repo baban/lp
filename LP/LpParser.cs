@@ -26,13 +26,10 @@ namespace LP
         static readonly Parser<string> Identifier = (from first in Parse.Letter.Or(Parse.Char('_')).Once()
                                                      from rest in Parse.LetterOrDigit.Or(Parse.Char('_')).Many()
                                                      select new string(first.Concat(rest).ToArray()));
-        static readonly Parser<string> Decimal = from a in Parse.Digit.AtLeastOnce().Text()
-                                                 from dot in Parse.Char('.').Once().Text()
-                                                 from b in Parse.Digit.AtLeastOnce().Text()
-                                                 select a + dot + b;
+        static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+").Text().Token();
 
-        static readonly Parser<string> Bool = Parse.String("true").Or( Parse.String("false") ).Text().Token();
-        static readonly Parser<string> Int = Parse.Digit.AtLeastOnce().Text().Token();
+        static readonly Parser<string> Bool = Parse.Regex("true|false").Text().Token();
+        static readonly Parser<string> Int = Parse.Regex(@"\d+").Text().Token();
         static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
         static readonly Parser<string> Symbol = from mark in Parse.String(":").Text()
                                                 from idf in Identifier
@@ -42,14 +39,11 @@ namespace LP
                                                 from b in Parse.Char('"')
                                                 select '"' + string.Join("", s.ToArray() ) + '"';
         // Comment
-        static readonly Parser<string> InlineComment = from a in Parse.String("//")
-                                                       from comment in Parse.CharExcept('\n').Many()
-                                                       from b in Parse.Char('\n')
+        static readonly Parser<string> InlineComment = from a in Parse.Regex("//.*\n")
                                                        select "";
-        static readonly Parser<string> BlockComment = from a in Parse.String("/*")
-                                                      from comment in Parse.CharExcept('*').Many()
-                                                      from b in Parse.String("*/")
+        static readonly Parser<string> BlockComment = from a in Parse.Regex(@"/\*.*?\*/")
                                                       select "";
+
         static readonly Parser<string> Comment = InlineComment.Or(BlockComment);
 
         static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();

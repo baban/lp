@@ -211,6 +211,9 @@ namespace LpTest
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "/* hoge */" });
             Assert.AreEqual(s, "");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "/* *aa/aa* ** */" });
+            Assert.AreEqual(s, "");
         }
 
         [Test]
