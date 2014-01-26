@@ -26,20 +26,6 @@ namespace LP
         static readonly Parser<string> Identifier = (from first in Parse.Letter.Or(Parse.Char('_')).Once()
                                                      from rest in Parse.LetterOrDigit.Or(Parse.Char('_')).Many()
                                                      select new string(first.Concat(rest).ToArray()));
-        static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();
-
-        static readonly Parser<string> CallOperands = from a in Parse.String("(").Text()
-                                                      from v in OperandMarks
-                                                      from b in Parse.String(")").Text()
-                                                      select v;
-        static readonly Parser<string> Operands = from a in Parse.String("(").Text()
-                                                  from v in OperandMarks
-                                                  from b in Parse.String(")").Text()
-                                                  select a+v+b;
-
-        static readonly Parser<string> Fname = Operands.Or(Identifier);
-        static readonly Parser<string> FCallname = CallOperands.Or(Identifier);
-
         static readonly Parser<string> Decimal = from a in Parse.Digit.AtLeastOnce().Text()
                                                  from dot in Parse.Char('.').Once().Text()
                                                  from b in Parse.Digit.AtLeastOnce().Text()
@@ -55,6 +41,31 @@ namespace LP
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
                                                 select '"' + string.Join("", s.ToArray() ) + '"';
+        // Comment
+        static readonly Parser<string> InlineComment = from a in Parse.String("//")
+                                                       from comment in Parse.CharExcept('\n').Many()
+                                                       from b in Parse.Char('\n')
+                                                       select "";
+        static readonly Parser<string> BlockComment = from a in Parse.String("/*")
+                                                      from comment in Parse.CharExcept('*').Many()
+                                                      from b in Parse.String("*/")
+                                                      select "";
+        static readonly Parser<string> Comment = InlineComment.Or(BlockComment);
+
+        static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();
+
+        static readonly Parser<string> CallOperands = from a in Parse.String("(").Text()
+                                                      from v in OperandMarks
+                                                      from b in Parse.String(")").Text()
+                                                      select v;
+        static readonly Parser<string> Operands = from a in Parse.String("(").Text()
+                                                  from v in OperandMarks
+                                                  from b in Parse.String(")").Text()
+                                                  select a + v + b;
+
+        static readonly Parser<string> Fname = Operands.Or(Identifier);
+        static readonly Parser<string> FCallname = CallOperands.Or(Identifier);
+
         // Complex Data Values
         static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
                                                  from s in Parse.Ref(() => Stmt)
@@ -105,6 +116,7 @@ namespace LP
                                                        from d in Parse.Char(')').Once().Text()
                                                        select idf + c + string.Join(", ", args.ToArray()) + d);
 
+
         static readonly Parser<string> FCallnameCall = (from idf in FCallname
                                                         from c in Parse.Char('(').Once().Text()
                                                         from args in Args
@@ -113,7 +125,7 @@ namespace LP
                                                         from idf in FCallname
                                                         select idf + "()");
 
-        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol).Or(Array).Or(Lambda).Or(Block);
+        static readonly Parser<string> Primary = Numeric.Or(Bool).Or(String).Or(Symbol).Or(Array).Or(Lambda).Or(Block).Or(Comment);
 
         // Expressions
         string[][] operandTable = new string[][] {
@@ -319,7 +331,7 @@ namespace LP
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 
         static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
-                                                          select doStmts( stmts.ToArray() );
+                                                          select stmts.ToArray().Aggregate(Object.LpNl.initialize(), ( ret , s) => { ret = STMT.Parse(s); return ret; });
 
         static Parser<T> OperandsChainCallStart<T,T2, TOp>(
           Parser<TOp> op,

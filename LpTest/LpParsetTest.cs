@@ -193,6 +193,27 @@ namespace LpTest
         }
 
         [Test]
+        public void InlineComment()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("InlineComment", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "// hoge\n" });
+            Assert.AreEqual( s, "" );
+        }
+
+        [Test]
+        public void BlockComment()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("BlockComment", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "/**/" });
+            Assert.AreEqual(s, "");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "/* hoge */" });
+            Assert.AreEqual(s, "");
+        }
+
+        [Test]
         public void Arg()
         {
             Type t = initParser();
