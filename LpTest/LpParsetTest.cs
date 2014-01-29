@@ -270,11 +270,11 @@ namespace LpTest
         }
 
         [Test]
-        public void ArgsSet()
+        public void ArgDecl()
         {
             Type t = initParser();
-            var p = t.InvokeMember("ArgsSet", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var ss = t.GetMethod("parseArrString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(10,10,10)" });
+            var p = t.InvokeMember("ArgDecl", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var ss = t.GetMethod("parseArrString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(a,b,c)" });
             Assert.AreEqual("System.String[]", ss.GetType().ToString());
             var cnt = ss.GetType().InvokeMember("Length", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty, null, ss, null);
             Assert.AreEqual(3, cnt);
@@ -718,7 +718,7 @@ namespace LpTest
             kernel.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
 
             var p = t.InvokeMember("FUNCTION", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "def hoge(); 10; end" });
+            t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "def hoge() 10; end" });
 
             p = t.InvokeMember("FUNCTION_CALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "hoge()" });
@@ -856,15 +856,6 @@ namespace LpTest
             var p = t.InvokeMember("Fname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s1 = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(+)" });
             Assert.AreEqual(s1, "(+)");
-        }
-
-        [Test]
-        public void FunctionCall()
-        {
-            Type t = initParser();
-            var p = t.InvokeMember("FunctionCall", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "print( 10 )" });
-            Assert.AreEqual(s, "print(10)");
         }
 
         [Test]
