@@ -170,6 +170,30 @@ namespace LpTest
         }
 
         [Test]
+        public void Block2()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Block", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "() do 10 end" });
+            Assert.AreEqual("() do 10 end", pm);
+
+            pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(a,b,c) do 10 end" });
+            Assert.AreEqual("(a, b, c) do 10 end", pm);
+        }
+
+        [Test]
+        public void Block3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Block", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "do |a,b,c| 10 end" });
+            Assert.AreEqual("do |a, b, c| 10 end", pm);
+        }
+
+
+        [Test]
         public void Lambda()
         {
             Type t = initParser();
@@ -308,7 +332,16 @@ namespace LpTest
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"(1+2)" });
             Assert.AreEqual(s, "(1.(+)(2))");
         }
-
+        /*
+        [Test]
+        public void ExpClassCall()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpClasscall", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"Hoge::Mage" });
+            Assert.AreEqual(s, "Hoge::Mage");
+        }
+        */
         [Test]
         public void ExpFuncall()
         {
@@ -992,11 +1025,23 @@ namespace LpTest
         }
 
         [Test]
+        public void BLOCK3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var block = "() do 10 + 2; end ";
+            var blk = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var stmts = blk.GetType().InvokeMember("statements", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, blk, null);
+            List<string> ss = (List<string>)(stmts);
+            Assert.AreEqual("10.(+)(2)", ss.First());
+        }
+
+        [Test]
         public void LAMBDA()
         {
             Type t = initParser();
             var p = t.InvokeMember("LAMBDA", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var block = " ^do 10; end ";
+            var block = "^do 10; end ";
             var blk = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
             var stmts = blk.GetType().InvokeMember("statements", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, blk, null);
             List<string> ss = (List<string>)(stmts);

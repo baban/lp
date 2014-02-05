@@ -20,10 +20,10 @@ namespace LP
     class LpParser
     {
         // Expressions
-        string[][] operandTable = new string[][] {
+        static readonly string[][] operandTable = new string[][] {
             new string[]{ "**" },
-            new string[]{ "*","/" },
-            new string[]{ "+","-", "%" },
+            new string[]{ "*","/", "%" },
+            new string[]{ "+","-" },
             new string[]{ "<<",">>" },
             new string[]{ "&" },
             new string[]{ "|" },
@@ -82,10 +82,28 @@ namespace LP
                                                from b in Parse.String("]").Text().Token()
                                                select a + string.Join(",", elms) + b;
 
-        static readonly Parser<string> Block = from a in Parse.String("do").Token()
-                                               from stmts in Parse.Ref( ()=> Stmts )
+
+        static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
+                                                      from args in Parse.Ref(() => ArgList)
+                                                      from b in Parse.Char(')')
+                                                      select args;
+        static readonly Parser<string[]> FenceArgs = from a in Parse.Char('|')
+                                                     from args in Parse.Ref(() => ArgList)
+                                                     from b in Parse.Char('|')
+                                                     select args;
+
+        static readonly Parser<string> BlockStart1 = Parse.String("do").Token().Text();
+        static readonly Parser<string> BlockStart2 = from args in BlaketArgs.Token()
+                                                     from _do in Parse.String("do").Token()
+                                                     select "(" + string.Join(", ", args) + ") do";
+        static readonly Parser<string> BlockStart3 = from _do in Parse.String("do").Token()
+                                                     from args in FenceArgs.Token()
+                                                     select "do |" + string.Join(", ", args) + "|";
+
+        static readonly Parser<string> Block = from start in BlockStart3.Or(BlockStart2).Or(BlockStart1)
+                                               from stmts in Parse.Ref(() => Stmts)
                                                from c in Parse.String("end").Token()
-                                               select "do " + string.Join("; ", stmts.ToArray() ) + " end";
+                                               select start + " " + string.Join("; ", stmts.ToArray()) + " end";
 
         static readonly Parser<string> Lambda = from a in Parse.String("^do").Token()
                                                 from stmts in Parse.Ref(() => Stmts)
@@ -125,10 +143,11 @@ namespace LP
                                                  from b in Parse.Char(')').Token()
                                                  select a + v + b).Or(Primary);
         // ::
-        static readonly Parser<string> ExpClasscall = ExpVal;
+        static readonly Parser<string> Classcall = OperandsChainCallStart(Parse.String("::"), ExpVal, Funcall, (opr, a, b) => a + opr + b);
+        static readonly Parser<string> ExpClasscall = Classcall.Or(ExpVal);
 
-        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.Char('.').Once().Text(), ExpClasscall, Funcall, (opr, a, b) => a + opr + b);
         // .
+        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.Char('.').Once().Text(), ExpClasscall, Funcall, (opr, a, b) => a + opr + b);
         static readonly Parser<string> ExpFuncall = MethodCall.Or(ExpClasscall);
         // []
         static readonly Parser<string> ExpArrayAt = ExpFuncall;
@@ -139,35 +158,35 @@ namespace LP
         // not
         static readonly Parser<string> ExpNot = ExpUnaryPlus;
         // **
-        static readonly Parser<string> ExpSquare = makeExpr(new string[] { "**" }, ExpNot);
+        static readonly Parser<string> ExpSquare = makeExpr(operandTable[0], ExpNot);
         // -(単項)
         static readonly Parser<string> ExpUnaryMinus = ExpSquare;
         // *, /
-        static readonly Parser<string> ExpMul = makeExpr(new string[] { "*", "/", "%" }, ExpUnaryMinus);
+        static readonly Parser<string> ExpMul = makeExpr(operandTable[1], ExpUnaryMinus);
         // +,-
-        static readonly Parser<string> ExpAdditive = makeExpr(new string[] { "+", "-" }, ExpMul);
+        static readonly Parser<string> ExpAdditive = makeExpr(operandTable[2], ExpMul);
         // << >>
-        static readonly Parser<string> ExpShift = makeExpr(new string[] { "<<", ">>" }, ExpAdditive);
+        static readonly Parser<string> ExpShift = makeExpr(operandTable[3], ExpAdditive);
         // & 
-        static readonly Parser<string> ExpAnd = makeExpr(new string[] { "&" }, ExpShift);
+        static readonly Parser<string> ExpAnd = makeExpr(operandTable[4], ExpShift);
         // |
-        static readonly Parser<string> ExpInclusiveOr = makeExpr(new string[] { "|" }, ExpAnd);
+        static readonly Parser<string> ExpInclusiveOr = makeExpr(operandTable[5], ExpAnd);
         // ^ 
         static readonly Parser<string> ExpRelational = ExpInclusiveOr;
         // > >=  < <= 
-        static readonly Parser<string> ExpExclusiveOr = makeExpr(new string[] { ">=", ">", "<=", "<" }, ExpRelational);
+        static readonly Parser<string> ExpExclusiveOr = makeExpr(operandTable[6], ExpRelational);
         // <=> ==  === !=  =~  !~ 
-        static readonly Parser<string> ExpEquality = makeExpr(new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, ExpExclusiveOr);
+        static readonly Parser<string> ExpEquality = makeExpr(operandTable[7], ExpExclusiveOr);
         // &&
-        static readonly Parser<string> ExpLogicalAnd = makeExpr(new string[] { "&&" }, ExpEquality);
+        static readonly Parser<string> ExpLogicalAnd = makeExpr(operandTable[8], ExpEquality);
         // ||
-        static readonly Parser<string> ExpLogicalOr = makeExpr(new string[] { "||" }, ExpLogicalAnd);
+        static readonly Parser<string> ExpLogicalOr = makeExpr(operandTable[9], ExpLogicalAnd);
         // ..
-        static readonly Parser<string> ExpRange = makeExpr(new string[] { ".." }, ExpLogicalOr);
+        static readonly Parser<string> ExpRange = makeExpr(operandTable[10], ExpLogicalOr);
         // =(+=, -= ... )
         static readonly Parser<string> ExpAssignment = ExpRange;
         // and or
-        static readonly Parser<string> ExpAndOr = makeExpr(new string[] { "and", "or" }, ExpAssignment);
+        static readonly Parser<string> ExpAndOr = makeExpr(operandTable[11], ExpAssignment);
         // =
         static readonly Parser<string> ExpEqual = Parse.ChainOperator(
             Operator("="),
@@ -203,10 +222,10 @@ namespace LP
                                                         from astarg in AstArg
                                                         select args.Concat(new string[] { astarg })).Or(SimpleArgList).Or(ZeroArgs)
                                                    select ags.ToArray();
-        static readonly Parser<string[]> ArgDecl = (from a in Parse.Char('(').Once().Text()
-                                                    from args in ArgList
-                                                    from b in Parse.Char(')').Once().Text()
-                                                    select args).Or(ArgList);
+        static readonly Parser<string[]> ArgDecl = from a in Parse.Char('(').Once().Text()
+                                                   from args in ArgList
+                                                   from b in Parse.Char(')').Once().Text()
+                                                   select args;
 
         // Macro Values
         static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
@@ -217,20 +236,34 @@ namespace LP
                                                     from idf in Stmt
                                                     select idf;
 
-        // Statements
-        static readonly Parser<string> IfStmt1 = from a in Parse.String("if(").Token()
-                                                 from expr in Expr
-                                                 from b in Parse.String(")").Token()
+
+        // is Statements
+        static readonly Parser<string> IfExpr =  Parse.Ref( () => (from a in Parse.Char('(')
+                                                                   from stmt in Stmt
+                                                                   from b in Parse.Char(')')
+                                                                   select stmt).Or(
+                                                                   from stmt in Stmt
+                                                                   from b in Term
+                                                                   select stmt) );
+        static readonly Parser<string> IfStart = (from _if in Parse.String("if")
+                                                  from expr in IfExpr
+                                                  select expr).Token();
+        static readonly Parser<string[]> ElseStmts = from els in Parse.String("else").Token()
+                                                     from stmts in Stmts
+                                                     select stmts;
+        static readonly Parser<string[][]> ElIfStmts = from els in Parse.String("elif")
+                                                       from expr in IfExpr
+                                                       from stmts in Stmts
+                                                       select new string[][]{ new string[]{ expr }, stmts };
+        static readonly Parser<string> IfEnd = Parse.String("end").Text().Token();
+        static readonly Parser<string> IfStmt1 = from expr in IfStart
                                                  from stmts1 in Stmts
-                                                 from c in Parse.String("end").Token()
+                                                 from c in IfEnd
                                                  select "if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end)";
-        static readonly Parser<string> IfStmt2 = from a in Parse.String("if(").Token()
-                                                 from expr in Expr
-                                                 from b in Parse.String(")").Token()
+        static readonly Parser<string> IfStmt2 = from expr in IfStart
                                                  from stmts1 in Stmts
-                                                 from els in Parse.String("else").Token()
-                                                 from stmts2 in Stmts
-                                                 from c in Parse.String("end").Token()
+                                                 from stmts2 in ElseStmts
+                                                 from c in IfEnd
                                                  select "if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end,do " + string.Join("; ", stmts2.ToArray()) + " end)";
         static readonly Parser<string> IfStmt = IfStmt2.Or(IfStmt1);
 
@@ -276,17 +309,27 @@ namespace LP
                                                        from b in Parse.String("}").Text().Token()
                                                        select makeHash(elms.ToArray());
 
-        static readonly Parser<Object.LpObject> BLOCK = from a in Parse.String("do").Token()
+        static readonly Parser<object[]> BLOCK_START1 = from a in Parse.String("do").Token()
+                                                        select new object[]{ new string[]{}, false };
+        static readonly Parser<object[]> BLOCK_START2 = from _do in Parse.String("do").Token()
+                                                        from args in FenceArgs.Token()
+                                                        select new object[] { args, false };
+        static readonly Parser<object[]> BLOCK_START3 = from args in BlaketArgs.Token()
+                                                        from _do in Parse.String("do").Token()
+                                                        select new object[] { args, true };
+
+        static readonly Parser<Object.LpObject> BLOCK = from args in BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1)
                                                         from stmts in Stmts
                                                         from b in Parse.String("end").Token()
-                                                        select stmts.ToArray().Aggregate(Object.LpBlock.initialize(), (o, s) => { o.statements.Add(s); return o; });
+                                                        select Object.LpBlock.initialize( stmts, args );
 
-        static readonly Parser<Object.LpObject> LAMBDA = from a in Parse.String("^do").Token()
+        static readonly Parser<Object.LpObject> LAMBDA = from head in Parse.Char('^')
+                                                         from args in BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1)
                                                          from stmts in Stmts
                                                          from b in Parse.String("end").Token()
-                                                         select stmts.ToArray().Aggregate(Object.LpBlock.initialize(), (o, s) => { o.statements.Add(s); return o; });
+                                                         select Object.LpLambda.initialize( stmts, args );
 
-        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
+        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });

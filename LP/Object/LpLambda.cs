@@ -23,6 +23,21 @@ namespace LP.Object
             return obj;
         }
 
+        public static LpObject initialize(string[] stmts)
+        {
+            LpObject obj = init();
+            obj.statements = stmts.ToList();
+            return obj;
+        }
+
+        public static LpObject initialize(string[] stmts, object[] args)
+        {
+            LpObject obj = init();
+            obj.statements = stmts.ToList();
+            obj.arguments = new Util.LpArguments((string[])args[0], (bool)args[1]);
+            return obj;
+        }
+
         static LpObject init()
         {
             LpObject obj = createClassTemplate();

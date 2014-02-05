@@ -13,6 +13,7 @@ namespace LP.Object
 
         public LpObject superclass = null;
         public BinMethod method = null;
+        public Util.LpArguments arguments = null;
         public delegate LpObject BinMethod(LpObject self, LpObject args);
         public delegate LpObject BinMethod2(LpObject self, LpObject[] args);
         public Hashtable methods = new Hashtable();

@@ -16,6 +16,13 @@ namespace LP.Object
             return init();
         }
 
+        static LpObject init()
+        {
+            var obj = createClassTemplate();
+            obj.statements = new List<string>();
+            return obj;
+        }
+
         public static LpObject initialize(string s)
         {
             LpObject obj = init();
@@ -23,10 +30,18 @@ namespace LP.Object
             return obj;
         }
 
-        static LpObject init()
+        public static LpObject initialize(string[] stmts)
         {
-            var obj = createClassTemplate();
-            obj.statements = new List<string>();
+            LpObject obj = init();
+            obj.statements = stmts.ToList();
+            return obj;
+        }
+
+        public static LpObject initialize(string[] stmts, object[] args)
+        {
+            LpObject obj = init();
+            obj.statements = stmts.ToList();
+            obj.arguments = new Util.LpArguments( (string[])args[0], (bool)args[1] );
             return obj;
         }
 
