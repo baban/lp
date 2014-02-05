@@ -63,6 +63,17 @@ namespace LpTest.Object
         }
 
         [Test]
+        public void initialize2()
+        {
+            Type ot = initModule();
+            Type t = initHashModule();
+            var types = new Type[] { typeof(string[][]) };
+            var prms = new string[][]{  };
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke( null, new object[]{ prms } );
+            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+        }
+
+        [Test]
         public void update()
         {
             Type ot = initModule();
@@ -71,7 +82,7 @@ namespace LpTest.Object
             Type at = initArgumentsModule();
 
             var types = new Type[] { };
-            var o = t.GetMethod("initialize").Invoke(null,null);
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, null);
 
             var stypes = new Type[] { typeof(double) };
             var arg = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, stypes, null).Invoke(null, new object[] { (double)10 });

@@ -23,7 +23,7 @@ namespace LP.Object
         public double? doubleValue = null;
         public string stringValue = null;
         public List<LpObject> arrayValues = null;
-        public HashSet<LpObject> hashValues = null;
+        public Dictionary<LpObject, LpObject> hashValues = null;
         public List<string> statements = null;
 
         public string class_name = null;

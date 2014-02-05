@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sprache;
 
 namespace LP.Object
 {
@@ -15,10 +16,20 @@ namespace LP.Object
             return init();
         }
 
+        public static LpObject initialize( string[][] pairs )
+        {
+            var obj = init();
+            foreach (var pair in pairs)
+            {
+                obj.hashValues[LpParser.STMT.Parse(pair[0])] = LpParser.STMT.Parse(pair[1]);
+            }
+            return obj;
+        }
+
         private static LpObject init()
         {
             LpObject obj = createClassTemplate();
-            obj.hashValues = new HashSet<LpObject>();
+            obj.hashValues = new Dictionary<LpObject, LpObject>();
             return obj;
         }
 
@@ -53,7 +64,7 @@ namespace LP.Object
         {
             var k = args.arrayValues[0];
             //var v = args.arrayValues[1];
-            self.hashValues.Add(k);
+            //self.hashValues.Add(k);
             return self;
         }
 

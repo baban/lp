@@ -82,6 +82,19 @@ namespace LP
                                                from b in Parse.String("]").Text().Token()
                                                select a + string.Join(",", elms) + b;
 
+        static readonly Parser<string[]> AssocVal = from k in Parse.Ref(() => Stmt)
+                                                    from sps in Parse.Char(':').Token()
+                                                    from s in Parse.Ref(() => Stmt)
+                                                    select new string[]{ k, s };
+
+        static readonly Parser<string[]> Assoc = (from sep in Parse.Char(',').Token()
+                                                  from kv in AssocVal
+                                                  select kv).Or(AssocVal);
+
+        static readonly Parser<string> Hash = from a in Parse.String("{").Text().Token()
+                                              from pairs in Assoc.Many()
+                                              from b in Parse.String("}").Text().Token()
+                                              select a + string.Join(",", pairs.Select((pair) => pair[0] + " : " + pair[1])) + b;
 
         static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
                                                       from args in Parse.Ref(() => ArgList)
@@ -136,7 +149,7 @@ namespace LP
                                                         from idf in FCallname
                                                         select idf + "()");
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Lambda, Block, Comment }.Aggregate((seed, nxt) => seed.Or(nxt));
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
@@ -305,9 +318,9 @@ namespace LP
                                                         select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", STMT.Parse(s)));
 
         static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
-                                                       from elms in SepElm.Many()
+                                                       from pairs in Assoc.Many()
                                                        from b in Parse.String("}").Text().Token()
-                                                       select makeHash(elms.ToArray());
+                                                       select makeHash(pairs.ToArray() );
 
         static readonly Parser<object[]> BLOCK_START1 = from a in Parse.String("do").Token()
                                                         select new object[]{ new string[]{}, false };
@@ -329,7 +342,7 @@ namespace LP
                                                          from b in Parse.String("end").Token()
                                                          select Object.LpLambda.initialize( stmts, args );
 
-        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
+        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
@@ -439,10 +452,10 @@ namespace LP
             return (Object.LpObject)o.methods[fname];
         }
 
-        static Object.LpObject makeHash(string[] os)
+        static Object.LpObject makeHash( string[][] pairs )
         {
-            Object.LpObject args = Object.LpHash.initialize();
-            return args;
+            Object.LpObject hash = Object.LpHash.initialize();
+            return hash;
         }
 
         static Object.LpObject doStmts(string[] stmts)

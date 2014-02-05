@@ -161,6 +161,33 @@ namespace LpTest
         }
 
         [Test]
+        public void Hash0()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Hash", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "{}" });
+            Assert.AreEqual("{}", pm);
+        }
+
+        [Test]
+        public void Hash1()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Hash", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "{ 10 : 10 }" });
+            Assert.AreEqual("{10 : 10}", pm);
+        }
+
+        [Test]
+        public void HashN()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Hash", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "{ 10 : 10, 3: 5 }" });
+            Assert.AreEqual("{10 : 10,3 : 5}", pm);
+        }
+
+        [Test]
         public void Block()
         {
             Type t = initParser();
