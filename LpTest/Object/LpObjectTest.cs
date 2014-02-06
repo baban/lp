@@ -55,5 +55,16 @@ namespace LpTest.Object
             var r = new Regex(@"<obj \w+?>");
             Assert.True(r.IsMatch(str.ToString()));
         }
+
+        [Test]
+        public void funcall_no_method_raise()
+        {
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            // 引数なし
+            var prms = new object[] { "to_s_error", null };
+            Assert.Catch(delegate() { o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms); });
+        }
     }
 }

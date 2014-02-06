@@ -9,14 +9,14 @@ using System.Diagnostics;
 
 namespace LP
 {
+    // TODO: 引数の改良
     // TODO: ハッシュ作成
     // TODO: case文
     // TODO: メソッド定義
     // TODO: class定義、module定義
-    // TODO: 後部エラー処理
+    // TODO: 構文エラー処理
     // TODO: エラー処理
     // TODO: nil
-    // TODO: コメント
     class LpParser
     {
         // Expressions

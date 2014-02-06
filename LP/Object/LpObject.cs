@@ -103,7 +103,8 @@ namespace LP.Object
             {
                 return superclass.funcall(name, self, args);
             }
-            return null;
+
+            throw new Error.LpNoMethodError();
         }
 
         public LpObject setVariable(String name, LpObject obj)

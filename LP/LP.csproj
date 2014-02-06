@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Error\LpNoMethodError.cs" />
     <Compile Include="LpParser.cs" />
     <Compile Include="Object\LpArguments.cs" />
     <Compile Include="Object\LpArray.cs" />
@@ -51,7 +52,7 @@
     <Compile Include="Object\LpBlock.cs" />
     <Compile Include="Object\LpBool.cs" />
     <Compile Include="Object\LpClass.cs" />
-    <Compile Include="Object\LpError.cs" />
+    <Compile Include="Error\LpError.cs" />
     <Compile Include="Object\LpFile.cs" />
     <Compile Include="Object\LpHash.cs" />
     <Compile Include="Object\LpIndexer.cs" />
