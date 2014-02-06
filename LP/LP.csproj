@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Error\LpNoMethodError.cs" />
+    <Compile Include="Error\LpSyntaxError.cs" />
     <Compile Include="LpParser.cs" />
     <Compile Include="Object\LpArguments.cs" />
     <Compile Include="Object\LpArray.cs" />
