@@ -472,6 +472,30 @@ namespace LpTest
         }
 
         [Test]
+        public void ExpUnaryPlus()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpUnaryPlus", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"!1" });
+            Assert.AreEqual(s, "1.(!@)()");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"~1" });
+            Assert.AreEqual(s, "1.(~@)()");
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"+1" });
+            Assert.AreEqual(s, "1.(+@)()");
+        }
+
+        [Test]
+        public void ExpNot()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpNot", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"not 1" });
+            Assert.AreEqual(s, "1.(not@)()");
+        }
+
+        [Test]
         public void ExpMul()
         {
             Type t = initParser();

@@ -48,6 +48,7 @@ namespace LP
         static readonly Parser<string> Symbol = from mark in Parse.String(":").Text()
                                                 from idf in Identifier
                                                 select mark+idf;
+        // TODO: 変数展開実装
         static readonly Parser<string> String = from a in Parse.Char('"')
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                 from b in Parse.Char('"')
@@ -165,41 +166,43 @@ namespace LP
         // []
         static readonly Parser<string> ExpArrayAt = ExpFuncall;
         // ++, --
-        static readonly Parser<string> ExpUnary = ExpArrayAt;
+        static readonly Parser<string> ExpUnary = (from v in ExpArrayAt
+                                                   from t in Parse.String("++").Or(Parse.String("--"))
+                                                   select v).Or(ExpArrayAt);
         // +(単項)  !  ~
-        static readonly Parser<string> ExpUnaryPlus = ExpUnary;
+        static readonly Parser<string> ExpUnaryPlus = makeUnary(new string[] { "+", "!", "~" }, ExpUnary).Or(ExpUnary);
         // not
-        static readonly Parser<string> ExpNot = ExpUnaryPlus;
+        static readonly Parser<string> ExpNot = makeUnary(new string[] { "not" }, ExpUnaryPlus).Or(ExpUnaryPlus);
         // **
-        static readonly Parser<string> ExpSquare = makeExpr(operandTable[0], ExpNot);
+        static readonly Parser<string> ExpSquare = makeExpr(new string[] { "**" }, ExpNot);
         // -(単項)
-        static readonly Parser<string> ExpUnaryMinus = ExpSquare;
+        static readonly Parser<string> ExpUnaryMinus = makeUnary(new string[] { "-" }, ExpSquare).Or(ExpSquare);
         // *, /
-        static readonly Parser<string> ExpMul = makeExpr(operandTable[1], ExpUnaryMinus);
+        static readonly Parser<string> ExpMul = makeExpr(new string[] { "*", "/", "%" }, ExpUnaryMinus);
         // +,-
-        static readonly Parser<string> ExpAdditive = makeExpr(operandTable[2], ExpMul);
+        static readonly Parser<string> ExpAdditive = makeExpr(new string[] { "+", "-" }, ExpMul);
         // << >>
-        static readonly Parser<string> ExpShift = makeExpr(operandTable[3], ExpAdditive);
+        static readonly Parser<string> ExpShift = makeExpr(new string[] { "<<", ">>" }, ExpAdditive);
         // & 
-        static readonly Parser<string> ExpAnd = makeExpr(operandTable[4], ExpShift);
+        static readonly Parser<string> ExpAnd = makeExpr(new string[] { "&" }, ExpShift);
         // |
-        static readonly Parser<string> ExpInclusiveOr = makeExpr(operandTable[5], ExpAnd);
+        static readonly Parser<string> ExpInclusiveOr = makeExpr(new string[] { "|" }, ExpAnd);
         // ^ 
         static readonly Parser<string> ExpRelational = ExpInclusiveOr;
         // > >=  < <= 
-        static readonly Parser<string> ExpExclusiveOr = makeExpr(operandTable[6], ExpRelational);
+        static readonly Parser<string> ExpExclusiveOr = makeExpr(new string[] { ">=", ">", "<=", "<" }, ExpRelational);
         // <=> ==  === !=  =~  !~ 
-        static readonly Parser<string> ExpEquality = makeExpr(operandTable[7], ExpExclusiveOr);
+        static readonly Parser<string> ExpEquality = makeExpr(new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, ExpExclusiveOr);
         // &&
-        static readonly Parser<string> ExpLogicalAnd = makeExpr(operandTable[8], ExpEquality);
+        static readonly Parser<string> ExpLogicalAnd = makeExpr(new string[] { "&&" }, ExpEquality);
         // ||
-        static readonly Parser<string> ExpLogicalOr = makeExpr(operandTable[9], ExpLogicalAnd);
-        // ..
-        static readonly Parser<string> ExpRange = makeExpr(operandTable[10], ExpLogicalOr);
-        // =(+=, -= ... )
-        static readonly Parser<string> ExpAssignment = ExpRange;
+        static readonly Parser<string> ExpLogicalOr = makeExpr(new string[] { "||" }, ExpLogicalAnd);
+        // .. ^.. ..^ ^..^
+        static readonly Parser<string> ExpRange = makeExpr(new string[] { "..", "^..", "..^", "^..^" }, ExpLogicalOr);
         // and or
-        static readonly Parser<string> ExpAndOr = makeExpr(operandTable[11], ExpAssignment);
+        static readonly Parser<string> ExpAndOr = makeExpr(new string[] { "and", "or" }, ExpRange);
+        // =(+=, -= ... )
+        static readonly Parser<string> ExpAssignment = ExpAndOr;
         // =
         static readonly Parser<string> ExpEqual = Parse.ChainOperator(
             Operator("="),
@@ -431,6 +434,13 @@ namespace LP
                 operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2)),
                 beforeExpr,
                 (op, a, b) => a + ".(" + op + ")(" + b + ")");
+        }
+
+        static Parser<string> makeUnary(string[] operators, Parser<string> afterExpr)
+        {
+            return from h in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
+                   from v in ExpUnaryPlus
+                   select v+".("+h+"@)()";
         }
 
         static Parser<string> Operator(string operand)
