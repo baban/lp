@@ -690,6 +690,68 @@ namespace LpTest
             Assert.AreEqual("(5.(+)(10))", s);
 
         }
+
+        [Test]
+        public void Expr3()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Expr", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10++" });
+            Assert.AreEqual("10.(@++)()", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10--" });
+            Assert.AreEqual("10.(@--)()", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"!10" });
+            Assert.AreEqual("10.(!@)()", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"+10" });
+            Assert.AreEqual("10.(+@)()", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"~10" });
+            Assert.AreEqual("10.(~@)()", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"not 10" });
+            Assert.AreEqual("10.(not@)()", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 ** 10" });
+            Assert.AreEqual("10.(**)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"-10" });
+            Assert.AreEqual("10.(-@)()", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 * 10" });
+            Assert.AreEqual("10.(*)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 / 10" });
+            Assert.AreEqual("10.(/)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 % 10" });
+            Assert.AreEqual("10.(%)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 + 10" });
+            Assert.AreEqual("10.(+)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 - 10" });
+            Assert.AreEqual("10.(-)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 << 10" });
+            Assert.AreEqual("10.(<<)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 >> 10" });
+            Assert.AreEqual("10.(>>)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 & 10" });
+            Assert.AreEqual("10.(&)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 | 10" });
+            Assert.AreEqual("10.(|)(10)", s);
+
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10 | 10" });
+            Assert.AreEqual("10.(|)(10)", s);
+        }
+
+        
         [Test]
         public void IfExpr()
         {
