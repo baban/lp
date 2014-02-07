@@ -164,19 +164,23 @@ namespace LP
         static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.Char('.').Once().Text(), ExpClasscall, Funcall, (opr, a, b) => a + opr + b);
         static readonly Parser<string> ExpFuncall = MethodCall.Or(ExpClasscall);
         // []
-        static readonly Parser<string> ExpArrayAt = ExpFuncall;
+        static readonly Parser<string> ExpArrayAt = (from expr in ExpFuncall
+                                                     from a in Parse.Char('[')
+                                                     from v in Stmt
+                                                     from b in Parse.Char(']')
+                                                     select expr + ".([])(" + v + ")").Or(ExpFuncall);
+
+        static Parser<string>[] Exprs = null;
         // ++, --
-        static readonly Parser<string> ExpUnary = (from v in ExpArrayAt
-                                                   from t in Parse.String("++").Or(Parse.String("--"))
-                                                   select v).Or(ExpArrayAt);
+        static readonly Parser<string> ExpUnary = makeRightUnary(new string[] { "++", "--" }, ExpArrayAt);
         // +(単項)  !  ~
-        static readonly Parser<string> ExpUnaryPlus = makeUnary(new string[] { "+", "!", "~" }, ExpUnary).Or(ExpUnary);
+        static readonly Parser<string> ExpUnaryPlus = makeLeftUnary(new string[] { "+", "!", "~" }, ExpUnary);
         // not
-        static readonly Parser<string> ExpNot = makeUnary(new string[] { "not" }, ExpUnaryPlus).Or(ExpUnaryPlus);
+        static readonly Parser<string> ExpNot = makeLeftUnary(new string[] { "not" }, ExpUnaryPlus);
         // **
         static readonly Parser<string> ExpSquare = makeExpr(new string[] { "**" }, ExpNot);
         // -(単項)
-        static readonly Parser<string> ExpUnaryMinus = makeUnary(new string[] { "-" }, ExpSquare).Or(ExpSquare);
+        static readonly Parser<string> ExpUnaryMinus = makeLeftUnary(new string[] { "-" }, ExpSquare);
         // *, /
         static readonly Parser<string> ExpMul = makeExpr(new string[] { "*", "/", "%" }, ExpUnaryMinus);
         // +,-
@@ -436,11 +440,18 @@ namespace LP
                 (op, a, b) => a + ".(" + op + ")(" + b + ")");
         }
 
-        static Parser<string> makeUnary(string[] operators, Parser<string> afterExpr)
+        static Parser<string> makeLeftUnary(string[] operators, Parser<string> expr)
         {
-            return from h in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
-                   from v in ExpUnaryPlus
-                   select v+".("+h+"@)()";
+            return (from h in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
+                    from v in expr
+                    select v+".("+h+"@)()").Or(expr);
+        }
+
+        static Parser<string> makeRightUnary(string[] operators, Parser<string> expr)
+        {
+            return (from v in expr
+                    from t in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
+                    select v + ".(@" + t + ")()").Or(expr);
         }
 
         static Parser<string> Operator(string operand)
