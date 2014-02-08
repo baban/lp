@@ -332,9 +332,9 @@ namespace LP
 
         static readonly Parser<object[]> METHOD_CALL = from fname in Fname
                                                        from args in ARGS_CALL
-                                                       select new object[]{ fname, args };
+                                                       select new object[] { (string)fname, (Object.LpObject)args };
 
-        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallRestVStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), Fname, (obj, fname, args) => obj.funcall(fname, args));
+        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject)fvals[1]));
 
         static readonly Parser<Object.LpObject> DEF_CLASS = from a in Parse.String("class").Token()
                                                             from fname in Identifier.Text()
@@ -375,38 +375,20 @@ namespace LP
                       Parse.Return(firstOperand));
         }
 
-        static Parser<Object.LpObject> OperandsChainCallRestVStart(Parser<string> op, Parser<Object.LpObject> operand, Parser<string> operand2, Func<Object.LpObject, string, Object.LpObject, Object.LpObject> apply)
-        {
-            Parser<Object.LpObject> args_op = ARGS_CALL;
-            return operand.Then(first => OperandsChainCallRestV(first, op, operand, operand2, apply));
-        }
-
-        static Parser<Object.LpObject> OperandsChainCallRestV(Object.LpObject firstOperand, Parser<string> op, Parser<Object.LpObject> operand, Parser<string> operand2, Func<Object.LpObject, string, Object.LpObject, Object.LpObject> apply)
-        {
-            Parser<Object.LpObject> args_op = ARGS_CALL;
-            return Parse.Or(op.Then(opvalue =>
-                            operand2.Then(fname =>
-                            args_op.Then(args => OperandsChainCallRestV(apply(firstOperand, fname, args), op, operand, operand2, apply)))),
-                      Parse.Return(firstOperand));
-        }
-
         static Parser<string> makeExpressionOperand(object[] row, Parser<string> start)
         {
-            Parser<string> ret = null;
             string[] operands = (string[])(row.Last());
             switch ((int)(row.First()))
             {
                 case 1:
-                    ret = makeChainOperator(operands, start);
-                    break;
+                    return makeChainOperator(operands, start);
                 case 2:
-                    ret = makeLeftUnary(operands, start);
-                    break;
+                    return makeLeftUnary(operands, start);
                 case 3:
-                    ret = makeRightUnary(operands, start);
-                    break;
+                    return makeRightUnary(operands, start);
+                default:
+                    return null;
             }
-            return ret;
         }
 
         static Parser<string> makeExpressions(List<object[]> table, Parser<string> start)
