@@ -16,6 +16,8 @@ namespace LP.Object
 
         public static LpObject initialize(string[] args)
         {
+            return null;
+            /*
             return args.Aggregate(
                 init(),
                 (o, stmt) =>
@@ -23,7 +25,7 @@ namespace LP.Object
                     var v = LpParser.STMT.Parse(stmt);
                     o.funcall("push", v);
                     return o;
-                });
+                });*/
         }
 
         public static LpObject init()
@@ -38,8 +40,8 @@ namespace LP.Object
 
         static void setMethods(LpObject obj)
         {
-            obj.methods["push"] = new BinMethod(push);
-            obj.methods["first"] = new BinMethod(first);
+            //obj.methods["push"] = new BinMethod(push);
+            //obj.methods["first"] = new BinMethod(first);
             // TODO: display
             // TODO: inspect
             // TODO: to_s

@@ -79,135 +79,116 @@ namespace LP.Object
             obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
         }
 
-        protected static LpObject display(LpObject self, LpObject args)
+        protected static LpObject display(LpObject self, LpObject[] args)
         {
             Console.WriteLine(self.doubleValue.ToString());
             return null;
         }
 
-        protected static LpObject to_s(LpObject self, LpObject args)
+        protected static LpObject to_s(LpObject self, LpObject[] args)
         {
             return LpString.initialize(self.doubleValue.ToString());
         }
 
-        protected static LpObject inspect(LpObject self, LpObject args)
+        protected static LpObject inspect(LpObject self, LpObject[] args)
         {
             Debug.WriteLine(self.doubleValue.ToString());
             return LpString.initialize(self.doubleValue.ToString());
         }
 
-        protected static LpObject to_f(LpObject self, LpObject args)
+        protected static LpObject to_f(LpObject self, LpObject[] args)
         {
             self.doubleValue = self.doubleValue;
             return self;
         }
 
-        protected static LpObject to_i(LpObject self, LpObject args)
+        protected static LpObject to_i(LpObject self, LpObject[] args)
         {
             self.doubleValue = (int)self.doubleValue;
             return self;
         }
 
-        private static LpObject plus(LpObject self, LpObject args)
+        private static LpObject plus(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
-            try
-            {
-                checked
-                {
-                    self.doubleValue += v.doubleValue;
-                }
-            }
-            catch (OverflowException ex)
-            {
-                // TODO: return raised value
-            }
+            var v = args[0];
+            self.doubleValue += v.doubleValue;
             return self;
         }
 
-        private static LpObject minus(LpObject self, LpObject args)
+        private static LpObject minus(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
-            try
-            {
-                checked
-                {
-                    self.doubleValue -= v.doubleValue;
-                }
-            }
-            catch (OverflowException ex) {
-                // TODO: return raised value
-            }
+            var v = args[0];
+            self.doubleValue -= v.doubleValue;
             return self;
         }
 
-        private static LpObject mul(LpObject self, LpObject args)
+        private static LpObject mul(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
+            var v = args[0];
             self.doubleValue *= v.doubleValue;
             return self;
         }
 
-        private static LpObject div(LpObject self, LpObject args)
+        private static LpObject div(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
+            var v = args[0];
             self.doubleValue /= v.doubleValue;
             return self;
         }
 
-        private static LpObject mod(LpObject self, LpObject args)
+        private static LpObject mod(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
+            var v = args[0];
             self.doubleValue %= v.doubleValue;
             return self;
         }
 
-        private static LpObject pow(LpObject self, LpObject args)
+        private static LpObject pow(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
+            var v = args[0];
             self.doubleValue = Math.Pow( (double)self.doubleValue, (double)v.doubleValue );
             return self;
         }
 
-        private static LpObject compareToGreater(LpObject self, LpObject args) {
-            var o = args.arrayValues.ElementAt(0);
+        private static LpObject compareToGreater(LpObject self, LpObject[] args) {
+            var o = args[0];
             return LpBool.initialize(self.doubleValue > o.doubleValue);
         }
 
-        private static LpObject compareToGreaterEqual(LpObject self, LpObject args)
+        private static LpObject compareToGreaterEqual(LpObject self, LpObject[] args)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize(self.doubleValue >= o.doubleValue);
         }
 
-        private static LpObject compareToLower(LpObject self, LpObject args)
+        private static LpObject compareToLower(LpObject self, LpObject[] args)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize(self.doubleValue < o.doubleValue);
         }
 
-        private static LpObject compareToLowerEqual(LpObject self, LpObject args)
+        private static LpObject compareToLowerEqual(LpObject self, LpObject[] args)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize(self.doubleValue <= o.doubleValue);
         }
 
-        private static LpObject equal(LpObject self, LpObject args)
+        private static LpObject equal(LpObject self, LpObject[] args)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize(self.doubleValue == o.doubleValue);
         }
 
-        private static LpObject eq(LpObject self, LpObject args)
+        private static LpObject eq(LpObject self, LpObject[] args)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize(self.doubleValue == o.doubleValue);
         }
 
-        private static LpObject between(LpObject self, LpObject args)
+        private static LpObject between(LpObject self, LpObject[] args)
         {
-            var v1  = args.arrayValues.ElementAt(0).doubleValue;
-            var v2 = args.arrayValues.ElementAt(1).doubleValue;
+            var v1 = args[0].doubleValue;
+            var v2 = args[1].doubleValue;
             var v = self.doubleValue;
             var max = (v1 < v2) ? v2 : v1;
             var min = (v1 < v2) ? v1 : v2;

@@ -57,11 +57,13 @@ namespace LP.Object
             // TODO: extend
             // TODO: desine_method
             // TODO: define_operand
+            /*
             obj.methods["inspect"] = new BinMethod(inspect);
             obj.methods["display"] = new BinMethod(display);
             obj.methods["to_s"] = new BinMethod(to_s);
             obj.methods["class"] = new BinMethod(_class);
             obj.methods["hash"] = new BinMethod(hash);
+             */
             return obj;
         }
 
@@ -80,23 +82,18 @@ namespace LP.Object
             return obj == this;
         }
 
-        public LpObject funcall(string name, LpObject args, LpObject block = null )
+        public LpObject funcall(string name, LpObject[] args )
         {
             return funcall(name, this, args, null);
         }
 
-        public LpObject funcall(string name, LpObject self, LpObject args, LpObject block )
+        public LpObject funcall(string name, LpObject self, LpObject[] args, LpObject block )
         {
 
             name = trueFname(name);
 
             LpMethod m = null;
-            if (methods[name] is BinMethod)
-            {
-                m = new LpMethod((BinMethod)methods[name]);
-                return m.funcall(self, args);
-            }
-            else if (methods[name] is LpMethod)
+            if (methods[name] is LpMethod)
             {
                 m = (LpMethod)methods[name];
                 return m.funcall(self, args);

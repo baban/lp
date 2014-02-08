@@ -46,48 +46,50 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            obj.methods["inspect"] = new BinMethod(inspect);
-            obj.methods["to_s"] = new BinMethod(to_s);
-            obj.methods["display"] = new BinMethod(display);
+            /*
+            obj.methods["inspect"] = new BinMethod2(inspect);
+            obj.methods["to_s"] = new BinMethod2(to_s);
+            obj.methods["display"] = new BinMethod2(display);
 
-            obj.methods["="] = new BinMethod(setOp);
-            obj.methods["=="] = new BinMethod(equal);
-            obj.methods["==="] = new BinMethod(eq);
+            obj.methods["="] = new BinMethod2(setOp);
+            obj.methods["=="] = new BinMethod2(equal);
+            obj.methods["==="] = new BinMethod2(eq);
+             */
         }
 
-        protected static LpObject to_s(LpObject self, LpObject args)
+        protected static LpObject to_s(LpObject self, LpObject[] args)
         {
             return self;
         }
 
-        protected static LpObject inspect(LpObject self, LpObject args)
+        protected static LpObject inspect(LpObject self, LpObject[] args)
         {
             return self;
         }
 
-        protected static LpObject display(LpObject self, LpObject args)
+        protected static LpObject display(LpObject self, LpObject[] args)
         {
             Console.WriteLine(self.stringValue);
             return null;
         }
 
         // TODO: =
-        private static LpObject setOp(LpObject self, LpObject args)
+        private static LpObject setOp(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
+            var v = args[0];
             var env = LpIndexer.last();
             var o = env.setVariable(self.stringValue, v);
             return o;
         }
 
-        private static LpObject equal(LpObject self, LpObject args)
+        private static LpObject equal(LpObject self, LpObject[] args)
         {
             return eq( self, args );
         }
 
-        private static LpObject eq(LpObject self, LpObject args)
+        private static LpObject eq(LpObject self, LpObject[] args)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             var sym = symbols[o.stringValue];
             return LpBool.initialize( self == sym );
         }

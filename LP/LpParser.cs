@@ -290,7 +290,7 @@ namespace LP
         static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
                                                         from elms in SepElm.Many()
                                                         from b in Parse.String("]").Text().Token()
-                                                        select elms.Aggregate(Object.LpArray.initialize(), (args, s) => args.funcall("push", STMT.Parse(s)));
+                                                        select Object.LpArray.initialize( elms.ToArray() );
 
         static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
                                                        from pairs in Assoc.Many()
@@ -318,14 +318,17 @@ namespace LP
                                                          select Object.LpLambda.initialize( stmts, args );
 
         public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
-
+        /*
         static readonly Parser<Object.LpObject> ARGS = from gs in Args
                                                        select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
+        */
+        static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
+                                                          select gs.Select( (s) => STMT.Parse(s) ).ToArray();
 
-        static readonly Parser<Object.LpObject> ARGS_CALL = (from a in Parse.Char('(')
-                                                             from args in ARGS
-                                                             from b in Parse.Char(')')
-                                                             select args).Or(ARGS);
+        static readonly Parser<Object.LpObject[]> ARGS_CALL = (from a in Parse.Char('(')
+                                                              from args in ARGS
+                                                              from b in Parse.Char(')')
+                                                              select args).Or(ARGS);
 
         static readonly Parser<Object.LpObject> FUNCTION = from a in Parse.String("def").Token()
                                                            from fname in Fname.Text()
@@ -344,12 +347,12 @@ namespace LP
         */
         static readonly Parser<object[]> METHOD_CALL = from fname in Fname
                                                        from args in ARGS_CALL
-                                                       select new object[] { (string)fname, (Object.LpObject)args, null };
+                                                       select new object[] { (string)fname, (Object.LpObject[])args, null };
 
         static readonly Parser<Object.LpObject> FUNCTION_CALL = from fvals in METHOD_CALL
-                                                                select Object.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject)fvals[1] );
+                                                                select Object.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1] );
 
-        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject)fvals[1]));
+        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1]));
 
         static readonly Parser<Object.LpObject> DEF_CLASS = from a in Parse.String("class").Token()
                                                             from fname in Identifier.Text()
@@ -494,6 +497,12 @@ namespace LP
         {
             Console.WriteLine(ctx);
             return psr.Parse(ctx);
+        }
+
+        static Object.LpObject[] parseArgsObject(string ctx)
+        {
+            Console.WriteLine(ctx);
+            return ARGS.Parse(ctx);
         }
 
         public static Object.LpObject execute(string ctx)

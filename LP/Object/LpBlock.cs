@@ -65,10 +65,12 @@ namespace LP.Object
         private static void setMethods(LpObject obj)
         {
             // TODO: inspect
+            /*
             obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
             obj.methods["display"] = new LpMethod( new BinMethod(display));
             obj.methods["execute"] = new LpMethod( new BinMethod(execute) );
             obj.methods["call"] = new LpMethod( new BinMethod(execute));
+             */
         }
 
         static LpObject to_s(LpObject self, LpObject args)

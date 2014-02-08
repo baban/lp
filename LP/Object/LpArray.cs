@@ -18,13 +18,9 @@ namespace LP.Object
 
         public static LpObject initialize( string[] args )
         {
-            return args.Aggregate(
-                init(),
-                (o, stmt) => {
-                    var v = LpParser.STMT.Parse(stmt);
-                    o.funcall("push", v);
-                    return o;
-                });
+            var o = init();
+            o.arrayValues = args.Select((stmt) => LpParser.STMT.Parse(stmt)).ToList();
+            return o;
         }
 
         private static LpObject init()
@@ -59,6 +55,7 @@ namespace LP.Object
             // TODO: each
             // TODO: map
             // TODO: join
+            /*
             obj.methods["+"] = new LpMethod( new  BinMethod(concat) );
             obj.methods["concat"] = new LpMethod(new BinMethod(concat));
             obj.methods["last"] = new LpMethod( new BinMethod(last) );
@@ -69,6 +66,7 @@ namespace LP.Object
             obj.methods["first"] = new LpMethod( new BinMethod(first) );
             obj.methods["size"] = new LpMethod( new BinMethod(len) );
             obj.methods["len"] = new LpMethod( new BinMethod(len) );
+             */
             /*
             obj.methods["=="] = new BinMethod(equal);
             obj.methods["==="] = new BinMethod(eq);
@@ -76,7 +74,7 @@ namespace LP.Object
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
              */
-            obj.methods["to_s"] = new LpMethod(new BinMethod(to_s));
+            //obj.methods["to_s"] = new LpMethod(new BinMethod(to_s));
         }
 
         private static LpObject at( LpObject self, LpObject args )
@@ -86,18 +84,18 @@ namespace LP.Object
             return v;
         }
 
-        static LpObject first(LpObject self, LpObject args)
+        static LpObject first(LpObject self, LpObject[] args)
         {
             return self.arrayValues.First();
         }
 
-        static LpObject push(LpObject self, LpObject args)
+        static LpObject push(LpObject self, LpObject[] args)
         {
-            self.arrayValues.Add(args);
+            self.arrayValues.Add(args[0]);
             return self;
         }
 
-        static LpObject to_s(LpObject self, LpObject args)
+        static LpObject to_s(LpObject self, LpObject[] args)
         {
             var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue.ToString() ).ToArray();
             var s = string.Join(", ",vs);

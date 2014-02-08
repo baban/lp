@@ -12,8 +12,7 @@ namespace LP.Object
     {
         static string className = "Method";
 
-        public LpMethod(BinMethod m)
-        {
+        public LpMethod(BinMethod m) {
             method = m;
         }
 
@@ -52,18 +51,13 @@ namespace LP.Object
             return obj;
         }
 
-        public LpObject funcall(LpObject self, LpObject args)
+        public LpObject funcall(LpObject self, LpObject[] args)
         {
-            if ( null != method ){
+            if (null != method)
+            {
                 return method(self, args);
             }
-            else
-            {
-                return execute( self, args );
-            }
-            // TODO: display
-            // TODO: inspect
-            // TODO: to_s
+            return null;
         }
 
         static LpObject execute(LpObject self, LpObject args)
