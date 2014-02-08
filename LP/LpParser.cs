@@ -137,33 +137,39 @@ namespace LP
                                                          string.Join( "; ", stmts.ToArray()) + 
                                                          " end";
 
-        static readonly Parser<string> Funcall = (from idf in Fname
-                                                       from c in Parse.Char('(').Once().Text()
-                                                       from args in Args
-                                                       from d in Parse.Char(')').Once().Text()
-                                                       select idf + c + string.Join(", ", args.ToArray()) + d).Or(
-                                                       from idf in Fname
-                                                       select idf+"()");
+        static readonly Parser<string> Funcall0 = from idf in Fname
+                                                  select idf + "()";
+        static readonly Parser<string> FuncallArg = from idf in Fname
+                                                    from c in Parse.Char('(').Once().Text()
+                                                    from args in Args
+                                                    from d in Parse.Char(')').Once().Text()
+                                                    select idf + "(" + string.Join(", ", args.ToArray()) + ")";
+
+        static readonly Parser<string> FuncallBlk = from fcall in FuncallArg
+                                                    from blk in Block.Token()
+                                                    select fcall+" "+blk;
+
+        static readonly Parser<string> Funcall = FuncallBlk.Or(FuncallArg);
 
         static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
                                                  from b in Parse.Char(')').Token()
-                                                 select a + v + b).Or(Primary);
+                                                 select a + v + b).Or(Primary).Or(Funcall);
         // ::
-        static readonly Parser<string> Classcall = OperandsChainCallStart(Parse.String("::"), ExpVal, Funcall, (opr, a, b) => a + opr + b);
+        static readonly Parser<string> Classcall = OperandsChainCallStart(Parse.String("::"), ExpVal, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
         static readonly Parser<string> ExpClasscall = Classcall.Or(ExpVal);
 
         // .
-        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.String(".").Text(), ExpClasscall, Funcall, (opr, a, b) => a + opr + b);
-        static readonly Parser<string> ExpFuncall = MethodCall.Or(ExpClasscall);
+        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.String(".").Text(), ExpClasscall, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
+        static readonly Parser<string> ExpMethodcall = MethodCall.Or(ExpClasscall);
         // []
-        static readonly Parser<string> ExpArrayAt = (from expr in ExpFuncall
+        static readonly Parser<string> ExpArrayAt = (from expr in ExpMethodcall
                                                      from a in Parse.Char('[')
                                                      from v in Stmt
                                                      from b in Parse.Char(']')
-                                                     select expr + ".([])(" + v + ")").Or(ExpFuncall);
+                                                     select expr + ".([])(" + v + ")").Or(ExpMethodcall);
         // ２項演算子一覧
         static readonly Parser<string> ChainExprs = makeExpressions(operandTable, ExpArrayAt);
         // =(+=, -= ... )
@@ -254,7 +260,7 @@ namespace LP
 
         static readonly Parser<string> Stmt = (from s in StatList
                                                from t in Term
-                                               select s).Or(StatList);
+                                               select s).Or(StatList).Token();
 
         static readonly Parser<string[]> Stmts = from stmts in Stmt.Many()
                                                  select stmts.ToArray();
@@ -326,15 +332,22 @@ namespace LP
                                                            from args in ArgDecl
                                                            from stmts in Stmts
                                                            from c in Parse.String("end").Token()
-                                                           select def_function(fname, args, stmts);
-
-        static readonly Parser<Object.LpObject> FUNCTION_CALL = from fname in Fname
-                                                                from args in ARGS_CALL
-                                                                select Object.LpIndexer.last().funcall( fname, args );
-
+                                                           select defFunction(fname, args, stmts);
+        /*
+        static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
+                                                        from args in ARGS_CALL
+                                                        from blk in BLOCK
+                                                        select new object[] { (string)fname, (Object.LpObject)args, blk }).Or(
+                                                        from fname in Fname
+                                                        from args in ARGS_CALL
+                                                        select new object[] { (string)fname, (Object.LpObject)args, null });
+        */
         static readonly Parser<object[]> METHOD_CALL = from fname in Fname
                                                        from args in ARGS_CALL
-                                                       select new object[] { (string)fname, (Object.LpObject)args };
+                                                       select new object[] { (string)fname, (Object.LpObject)args, null };
+
+        static readonly Parser<Object.LpObject> FUNCTION_CALL = from fvals in METHOD_CALL
+                                                                select Object.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject)fvals[1] );
 
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject)fvals[1]));
 
@@ -343,18 +356,19 @@ namespace LP
                                                             from b in Term
                                                             from stmts in Stmts
                                                             from c in Parse.String("end").Token()
-                                                            select def_class(fname, stmts);
+                                                            select defClass(fname, stmts);
 
         static readonly Parser<Object.LpObject> EXP_VAL = (from a in Parse.Char('(').Token()
                                                            from v in STMT
                                                            from b in Parse.Char(')').Token()
                                                            select v).Or(PRIMARY);
 
-        static readonly Parser<Object.LpObject> EXPR = FUNCALL.Or(FUNCTION_CALL).Or(EXP_VAL);
+        static readonly Parser<Object.LpObject> EXPR = new Parser <Object.LpObject>[]{ FUNCALL, FUNCTION_CALL, EXP_VAL }.Aggregate( (seed,nxt) => seed.Or(nxt) ).Token();
+
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 
         static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
-                                                          select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => { Console.WriteLine(s); ret = STMT.Parse(s); return ret; });
+                                                          select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => { ret = STMT.Parse(s); return ret; });
 
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
@@ -429,14 +443,14 @@ namespace LP
             return Parse.String(operand).Token().Text();
         }
 
-        static Object.LpObject def_function(string fname, string[] args, string[] stmts)
+        static Object.LpObject defFunction(string fname, string[] args, string[] stmts)
         {
             var o = Object.LpKernel.initialize();
             o.methods[fname] = Object.LpMethod.initialize(args, stmts);
             return null;
         }
 
-        static Object.LpObject def_class(string fname, string[] stmts)
+        static Object.LpObject defClass(string fname, string[] stmts)
         {
             var o = Object.LpKernel.initialize();
             o.methods[fname] = Object.LpClass.initialize( fname, stmts );

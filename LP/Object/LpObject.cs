@@ -80,13 +80,14 @@ namespace LP.Object
             return obj == this;
         }
 
-        public LpObject funcall(string name, LpObject args)
+        public LpObject funcall(string name, LpObject args, LpObject block = null )
         {
-            return funcall(name, this, args);
+            return funcall(name, this, args, null);
         }
 
-        public LpObject funcall(string name, LpObject self, LpObject args)
+        public LpObject funcall(string name, LpObject self, LpObject args, LpObject block )
         {
+
             name = trueFname(name);
 
             LpMethod m = null;
@@ -103,7 +104,7 @@ namespace LP.Object
 
             if (null != superclass)
             {
-                return superclass.funcall(name, self, args);
+                return superclass.funcall(name, self, args, block);
             }
 
             throw new Error.LpNoMethodError();
