@@ -40,16 +40,18 @@ namespace LP
             new object[]{ 1, new string[]{ "and", "or" } }
         };
 
+        static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();
+
         // 基本文字一覧
         static readonly Parser<string> Term = Parse.Regex("^[;\n]");
 
         // Primary Values
         static readonly Parser<string> Identifier = Parse.Regex("[a-zA-Z_][a-zA-Z0-9_]*");
 
-        static readonly Parser<string> Bool = Parse.Regex("true|false").Text().Token();
-        static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+").Text().Token();
-        static readonly Parser<string> Int = Parse.Regex(@"\d+").Text().Token();
-        static readonly Parser<string> Numeric = Decimal.Or(Int).Token();
+        static readonly Parser<string> Bool = Parse.Regex("true|false").Text();
+        static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+").Text();
+        static readonly Parser<string> Int = Parse.Regex(@"\d+").Text();
+        static readonly Parser<string> Numeric = Decimal.Or(Int);
         static readonly Parser<string> Symbol = from mark in Parse.String(":").Text()
                                                 from idf in Identifier
                                                 select mark+idf;
@@ -65,8 +67,6 @@ namespace LP
                                                       select "";
 
         static readonly Parser<string> Comment = InlineComment.Or(BlockComment);
-
-        static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();
 
         static readonly Parser<string> Fname = (from a in Parse.String("(").Text()
                                                 from v in OperandMarks.Or(Identifier)
@@ -145,7 +145,7 @@ namespace LP
                                                        from idf in Fname
                                                        select idf+"()");
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment }.Aggregate((seed, nxt) => seed.Or(nxt));
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
@@ -167,8 +167,10 @@ namespace LP
         // ２項演算子一覧
         static readonly Parser<string> ChainExprs = makeExpressions(operandTable, ExpArrayAt);
         // =(+=, -= ... )
+        // TODO: 代入演算子作成
         static readonly Parser<string> ExpAssignment = ChainExprs;
         // =
+        // TODO: デバッグ足りていない
         static readonly Parser<string> ExpEqual = Parse.ChainOperator(
             Operator("="),
             ExpAssignment,
@@ -352,7 +354,7 @@ namespace LP
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 
         static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
-                                                          select stmts.ToArray().Aggregate(Object.LpNl.initialize(), ( ret , s) => { ret = STMT.Parse(s); return ret; });
+                                                          select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => { Console.WriteLine(s); ret = STMT.Parse(s); return ret; });
 
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
