@@ -411,6 +411,15 @@ namespace LpTest
             Assert.AreEqual(s, "10.(+)(10)");
         }
 
+        [Test]
+        public void ExpArrayAt()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("ExpArrayAt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"10[1]" });
+            Assert.AreEqual(s, "10.([])(1)");
+        }
+
         /*
         [Test]
         public void ExpRange()

@@ -87,6 +87,8 @@ namespace LP.Object
 
         public LpObject funcall(string name, LpObject self, LpObject args)
         {
+            name = trueFname(name);
+
             LpMethod m = null;
             if (methods[name] is BinMethod)
             {
@@ -105,6 +107,12 @@ namespace LP.Object
             }
 
             throw new Error.LpNoMethodError();
+        }
+
+        private string trueFname(string name) {
+            if (name[0] == '(') name = name.Replace("(", "").Replace(")", "");
+
+            return name;
         }
 
         public LpObject setVariable(String name, LpObject obj)

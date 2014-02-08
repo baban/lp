@@ -17,6 +17,7 @@ namespace LP
     // TODO: 構文エラー処理
     // TODO: エラー処理
     // TODO: nil
+    // Block読み出し
     class LpParser
     {
         // Expressions
@@ -72,12 +73,7 @@ namespace LP
                                                 from b in Parse.String(")").Text()
                                                 select a + v + b).Or(Identifier);
 
-        static readonly Parser<string> FCallname = (from a in Parse.String("(").Text()
-                                                    from v in OperandMarks.Or(Identifier)
-                                                    from b in Parse.String(")").Text()
-                                                    select v).Or(Identifier);
-
-        // Complex Data Values
+        // Array, Hash
         static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
                                                  from s in Parse.Ref(() => Stmt)
                                                  select s).Or(Parse.Ref(() => Stmt));
@@ -101,6 +97,7 @@ namespace LP
                                               from b in Parse.String("}").Text().Token()
                                               select a + string.Join(",", pairs.Select((pair) => pair[0] + " : " + pair[1])) + b;
 
+        // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
                                                       from args in Parse.Ref(() => ArgList)
                                                       from b in Parse.Char(')')
@@ -110,11 +107,14 @@ namespace LP
                                                      from b in Parse.Char('|')
                                                      select args;
 
-        static readonly Parser<string> BlockStart1 = Parse.String("do").Token().Text();
-        static readonly Parser<string> BlockStart2 = from args in BlaketArgs.Token()
+        static readonly Parser<string> BlockStart1 = from _do in Parse.String("do").Text()
+                                                     from ws in Parse.WhiteSpace.Many()
+                                                     select _do;
+        static readonly Parser<string> BlockStart2 = from args in BlaketArgs
                                                      from _do in Parse.String("do").Token()
                                                      select "(" + string.Join(", ", args) + ") do";
-        static readonly Parser<string> BlockStart3 = from _do in Parse.String("do").Token()
+        static readonly Parser<string> BlockStart3 = from _do in Parse.String("do")
+                                                     from ws in Parse.WhiteSpace.Many()
                                                      from args in FenceArgs.Token()
                                                      select "do |" + string.Join(", ", args) + "|";
 
@@ -123,10 +123,9 @@ namespace LP
                                                from c in Parse.String("end").Token()
                                                select start + " " + string.Join("; ", stmts.ToArray()) + " end";
 
-        static readonly Parser<string> Lambda = from a in Parse.String("^do").Token()
-                                                from stmts in Parse.Ref(() => Stmts)
-                                                from c in Parse.String("end").Token()
-                                                select "^do " + string.Join("; ", stmts.ToArray()) + " end";
+        static readonly Parser<string> Lambda = from h in Parse.String("^").Text()
+                                                from blk in Block
+                                                select h+blk;
 
         static readonly Parser<string> Function = from a in Parse.String("def").Token()
                                                   from fname in Identifier
@@ -146,14 +145,6 @@ namespace LP
                                                        from idf in Fname
                                                        select idf+"()");
 
-        static readonly Parser<string> FCallnameCall = (from idf in FCallname
-                                                        from c in Parse.Char('(').Once().Text()
-                                                        from args in Args
-                                                        from d in Parse.Char(')').Once().Text()
-                                                        select idf + c + string.Join(", ", args.ToArray()) + d).Or(
-                                                        from idf in FCallname
-                                                        select idf + "()");
-
         static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
@@ -165,7 +156,7 @@ namespace LP
         static readonly Parser<string> ExpClasscall = Classcall.Or(ExpVal);
 
         // .
-        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.Char('.').Once().Text(), ExpClasscall, Funcall, (opr, a, b) => a + opr + b);
+        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.String(".").Text(), ExpClasscall, Funcall, (opr, a, b) => a + opr + b);
         static readonly Parser<string> ExpFuncall = MethodCall.Or(ExpClasscall);
         // []
         static readonly Parser<string> ExpArrayAt = (from expr in ExpFuncall
@@ -173,9 +164,10 @@ namespace LP
                                                      from v in Stmt
                                                      from b in Parse.Char(']')
                                                      select expr + ".([])(" + v + ")").Or(ExpFuncall);
-
+        // ２項演算子一覧
+        static readonly Parser<string> ChainExprs = makeExpressions(operandTable, ExpArrayAt);
         // =(+=, -= ... )
-        static readonly Parser<string> ExpAssignment = makeExpressions(operandTable, ExpArrayAt);
+        static readonly Parser<string> ExpAssignment = ChainExprs;
         // =
         static readonly Parser<string> ExpEqual = Parse.ChainOperator(
             Operator("="),
@@ -224,7 +216,6 @@ namespace LP
         static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
                                                     from idf in Stmt
                                                     select idf;
-
 
         // is Statements
         static readonly Parser<string> IfExpr =  Parse.Ref( () => (from a in Parse.Char('(')
@@ -296,7 +287,7 @@ namespace LP
         static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
                                                        from pairs in Assoc.Many()
                                                        from b in Parse.String("}").Text().Token()
-                                                       select makeHash(pairs.ToArray() );
+                                                       select makeHash( pairs.ToArray() );
 
         static readonly Parser<object[]> BLOCK_START1 = from a in Parse.String("do").Token()
                                                         select new object[]{ new string[]{}, false };
@@ -339,7 +330,11 @@ namespace LP
                                                                 from args in ARGS_CALL
                                                                 select Object.LpIndexer.last().funcall( fname, args );
 
-        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallRestVStart( Parse.Ref( () => EXP_VAL ) );
+        static readonly Parser<object[]> METHOD_CALL = from fname in Fname
+                                                       from args in ARGS_CALL
+                                                       select new object[]{ fname, args };
+
+        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallRestVStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), Fname, (obj, fname, args) => obj.funcall(fname, args));
 
         static readonly Parser<Object.LpObject> DEF_CLASS = from a in Parse.String("class").Token()
                                                             from fname in Identifier.Text()
@@ -359,7 +354,7 @@ namespace LP
         static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
                                                           select stmts.ToArray().Aggregate(Object.LpNl.initialize(), ( ret , s) => { ret = STMT.Parse(s); return ret; });
 
-        static Parser<T> OperandsChainCallStart<T,T2, TOp>(
+        static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
           Parser<T> operand,
           Parser<T2> operand2,
@@ -368,7 +363,7 @@ namespace LP
             return operand.Then(first => OperandsChainCallRest(first, op, operand, operand2, apply));
         }
 
-        static Parser<T> OperandsChainCallRest<T, T2,TOp>(
+        static Parser<T> OperandsChainCallRest<T,T2,TOp>(
             T firstOperand,
             Parser<TOp> op,
             Parser<T> operand,
@@ -380,24 +375,18 @@ namespace LP
                       Parse.Return(firstOperand));
         }
 
-        static Parser<Object.LpObject> OperandsChainCallRestVStart(Parser<Object.LpObject> operand)
+        static Parser<Object.LpObject> OperandsChainCallRestVStart(Parser<string> op, Parser<Object.LpObject> operand, Parser<string> operand2, Func<Object.LpObject, string, Object.LpObject, Object.LpObject> apply)
         {
-            Parser<string> op = Parse.Char('.').Once().Text();
-            Parser<string> fname_op = FCallname;
             Parser<Object.LpObject> args_op = ARGS_CALL;
-            Func<Object.LpObject, string, Object.LpObject, Object.LpObject> apply = (obj, fname, args) => obj.funcall(fname, args);
-            return operand.Then(first => OperandsChainCallRestV(first));
+            return operand.Then(first => OperandsChainCallRestV(first, op, operand, operand2, apply));
         }
 
-        static Parser<Object.LpObject> OperandsChainCallRestV(Object.LpObject firstOperand)
+        static Parser<Object.LpObject> OperandsChainCallRestV(Object.LpObject firstOperand, Parser<string> op, Parser<Object.LpObject> operand, Parser<string> operand2, Func<Object.LpObject, string, Object.LpObject, Object.LpObject> apply)
         {
-            Parser<string> op = Parse.Char('.').Once().Text();
-            Parser<string> fname_op = FCallname;
             Parser<Object.LpObject> args_op = ARGS_CALL;
-            Func<Object.LpObject, string, Object.LpObject, Object.LpObject> apply = (obj, fname, args) => obj.funcall(fname, args);
             return Parse.Or(op.Then(opvalue =>
-                            fname_op.Then(fname =>
-                            args_op.Then(args => OperandsChainCallRestV(apply(firstOperand, fname, args))))),
+                            operand2.Then(fname =>
+                            args_op.Then(args => OperandsChainCallRestV(apply(firstOperand, fname, args), op, operand, operand2, apply)))),
                       Parse.Return(firstOperand));
         }
 
