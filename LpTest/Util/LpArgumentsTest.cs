@@ -28,5 +28,14 @@ namespace LpTest.Util
             var i = o.GetType().GetMethod("arity").Invoke(o, null);
             Assert.AreEqual( i, 0 );
         }
+
+        [Test]
+        public void check()
+        {
+            Type t = initModule();
+            var o = Activator.CreateInstance(t);
+            var i = o.GetType().GetMethod("check").Invoke(o, null);
+            Assert.AreEqual( true, i );
+        }
     }
 }

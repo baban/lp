@@ -21,9 +21,13 @@ namespace LP.Util
             this.loose = loose;
         }
 
-        public int arity() {
+        public int arity()
+        {
             return arguments.Count();
         }
 
+        public bool check() {
+            return true;
+        }
     }
 }

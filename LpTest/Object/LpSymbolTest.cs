@@ -76,7 +76,7 @@ namespace LpTest.Object
             Console.WriteLine(symbols);
         }
 
-
+        /*
         [Test]
         public void to_s()
         {
@@ -98,7 +98,7 @@ namespace LpTest.Object
             var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
             Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
-
+        */
         [Test]
         public void setOp()
         {
@@ -126,7 +126,7 @@ namespace LpTest.Object
             Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
              */
         }
-
+        /*
         [Test]
         public void eq()
         {
@@ -163,5 +163,6 @@ namespace LpTest.Object
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
+         */
     }
 }

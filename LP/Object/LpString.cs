@@ -46,17 +46,18 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            obj.methods["inspect"] = new BinMethod(inspect);
-            obj.methods["to_s"]    = new BinMethod(to_s);
-            obj.methods["display"] = new BinMethod(display);
-            obj.methods["size"] = new BinMethod(size);
-            obj.methods["len"] = new BinMethod(size);
+            Console.WriteLine("setMethods");
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
+            obj.methods["to_s"]    = new LpMethod( new BinMethod(to_s) );
+            obj.methods["display"] = new LpMethod( new BinMethod(display) );
+            obj.methods["size"] = new LpMethod(new BinMethod(size));
+            obj.methods["len"] = new LpMethod( new BinMethod(size) );
 
-            obj.methods["<<"] = new BinMethod(add);
-            obj.methods["+"]  = new BinMethod(plus);
+            obj.methods["<<"] = new LpMethod( new BinMethod(add) );
+            obj.methods["+"]  = new LpMethod( new BinMethod(plus) );
 
-            obj.methods["=="] = new BinMethod(equal);
-            obj.methods["==="] = new BinMethod(eq);
+            obj.methods["=="] = new LpMethod( new BinMethod(equal) );
+            obj.methods["==="] = new LpMethod( new BinMethod(eq) );
         }
 
         protected static LpObject to_s(LpObject self, LpObject[] args)

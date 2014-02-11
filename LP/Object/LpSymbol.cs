@@ -46,15 +46,13 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            /*
-            obj.methods["inspect"] = new BinMethod2(inspect);
-            obj.methods["to_s"] = new BinMethod2(to_s);
-            obj.methods["display"] = new BinMethod2(display);
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
+            obj.methods["display"] =new LpMethod(  new BinMethod(display) );
 
-            obj.methods["="] = new BinMethod2(setOp);
-            obj.methods["=="] = new BinMethod2(equal);
-            obj.methods["==="] = new BinMethod2(eq);
-             */
+            obj.methods["="] = new LpMethod( new BinMethod(setOp) );
+            obj.methods["=="] = new LpMethod( new BinMethod(equal) );
+            obj.methods["==="] = new LpMethod( new BinMethod(eq) );
         }
 
         protected static LpObject to_s(LpObject self, LpObject[] args)

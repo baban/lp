@@ -13,6 +13,7 @@ namespace LP.Object
         static string className = "Method";
 
         public LpMethod(BinMethod m) {
+            arguments = new Util.LpArguments();
             method = m;
         }
 
@@ -26,6 +27,15 @@ namespace LP.Object
         public static LpObject initialize( string[] args, string[] stmts )
         {
             var obj = createClassTemplate();
+            obj.arguments = new Util.LpArguments( args );
+            obj.statements = stmts.ToList();
+            return obj;
+        }
+
+        public static LpObject initialize( Util.LpArguments args, string[] stmts)
+        {
+            var obj = createClassTemplate();
+            obj.arguments = args;
             obj.statements = stmts.ToList();
             return obj;
         }
@@ -47,12 +57,23 @@ namespace LP.Object
             }
         }
 
-        private static LpObject setMethods(LpObject obj){
-            return obj;
+        private static void setMethods(LpObject obj){
+            // TODO: comment
+            // TODO: arity
+            // TODO: inspect
+            // TODO: to_s
+            // TODO: display
+            // TODO: to_block
+            // TODO: to_method
+            // TODO: to_lambda
+            // TODO: call
         }
 
-        public LpObject funcall(LpObject self, LpObject[] args)
+        public LpObject funcall(LpObject self, LpObject[] args, LpObject block = null)
         {
+            if (null != arguments && !arguments.check())
+                throw new Error.LpArgumentError();
+
             if (null != method)
             {
                 return method(self, args);

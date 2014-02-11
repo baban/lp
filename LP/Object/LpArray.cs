@@ -55,11 +55,11 @@ namespace LP.Object
             // TODO: each
             // TODO: map
             // TODO: join
-            /*
-            obj.methods["+"] = new LpMethod( new  BinMethod(concat) );
-            obj.methods["concat"] = new LpMethod(new BinMethod(concat));
-            obj.methods["last"] = new LpMethod( new BinMethod(last) );
+            //obj.methods["+"] = new LpMethod( new  BinMethod(concat) );
+            //obj.methods["concat"] = new LpMethod(new BinMethod(concat));
+            //obj.methods["last"] = new LpMethod( new BinMethod(last) );
             obj.methods["push"] = new LpMethod(new BinMethod(push));
+            /*
             obj.methods["<<"] = new LpMethod( new BinMethod(push) );
             obj.methods["at"] = new LpMethod( new BinMethod(at) );
             obj.methods["car"] = new LpMethod(new BinMethod(first));
@@ -102,22 +102,20 @@ namespace LP.Object
             return LpString.initialize( "["+s+"]" );
         }
 
-        static LpObject len(LpObject self, LpObject args)
+        static LpObject len(LpObject self, LpObject[] args)
         {
             return LpNumeric.initialize( self.arrayValues.Count );
         }
 
-        static LpObject last(LpObject self, LpObject args)
+        static LpObject last(LpObject self, LpObject[] args)
         {
             return self.arrayValues.Last();
         }
 
-        static LpObject concat(LpObject self, LpObject args)
+        static LpObject concat(LpObject self, LpObject[] args)
         {
-            var v = args.arrayValues.First();
-            Console.WriteLine(self.arrayValues.Count);
+            var v = args[0];
             self.arrayValues.AddRange( v.arrayValues );
-            Console.WriteLine( self.arrayValues.Count );
             return self;
         }
     }

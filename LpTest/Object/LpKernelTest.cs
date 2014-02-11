@@ -35,7 +35,7 @@ namespace LpTest.Object
             Type t = mod.GetType("LP.Object.LpArguments");
             return t;
         }
-
+        /*
         [Test]
         public void print()
         {
@@ -72,5 +72,6 @@ namespace LpTest.Object
             Assert.AreEqual("Numeric", ret.GetType().InvokeMember("class_name", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
             Assert.AreEqual(5, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
+         */
     }
 }

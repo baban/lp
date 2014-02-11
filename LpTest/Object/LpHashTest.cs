@@ -51,7 +51,7 @@ namespace LpTest.Object
             Type t = mod.GetType("LP.Object.LpArguments");
             return t;
         }
-
+        /*
         [Test]
         public void initialize()
         {
@@ -97,5 +97,6 @@ namespace LpTest.Object
             var h = so.GetType().InvokeMember("hashValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
             Assert.NotNull(h);
         }
+         */
     }
 }

@@ -318,10 +318,7 @@ namespace LP
                                                          select Object.LpLambda.initialize( stmts, args );
 
         public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
-        /*
-        static readonly Parser<Object.LpObject> ARGS = from gs in Args
-                                                       select gs.ToArray().Aggregate(Object.LpArguments.initialize(), (args, s) => { args.funcall("push", STMT.Parse(s)); return args; });
-        */
+
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
                                                           select gs.Select( (s) => STMT.Parse(s) ).ToArray();
 
@@ -336,18 +333,14 @@ namespace LP
                                                            from stmts in Stmts
                                                            from c in Parse.String("end").Token()
                                                            select defFunction(fname, args, stmts);
-        /*
+
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
                                                         from args in ARGS_CALL
                                                         from blk in BLOCK
-                                                        select new object[] { (string)fname, (Object.LpObject)args, blk }).Or(
+                                                        select new object[] { (string)fname, (Object.LpObject[])args, blk }).Or(
                                                         from fname in Fname
                                                         from args in ARGS_CALL
-                                                        select new object[] { (string)fname, (Object.LpObject)args, null });
-        */
-        static readonly Parser<object[]> METHOD_CALL = from fname in Fname
-                                                       from args in ARGS_CALL
-                                                       select new object[] { (string)fname, (Object.LpObject[])args, null };
+                                                        select new object[] { (string)fname, (Object.LpObject[])args, null });
 
         static readonly Parser<Object.LpObject> FUNCTION_CALL = from fvals in METHOD_CALL
                                                                 select Object.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1] );

@@ -68,6 +68,9 @@ namespace LP.Object
             // TODO: inspect
             // TODO: to_s
             // TODO: call
+            // TODO: to_block
+            // TODO: to_method
+            // TODO: to_lambda
             //obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
             //obj.methods["display"] = new LpMethod(new BinMethod(display));
             //obj.methods["execute"] = new LpMethod( new BinMethod(execute) );

@@ -51,7 +51,7 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[]{ typeof(string) }, null).Invoke(null, new object[]{ (string)"10" });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
         }
-
+        /*
         [Test]
         public void to_s()
         {
@@ -114,5 +114,6 @@ namespace LpTest.Object
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
+         */
     }
 }
