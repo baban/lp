@@ -75,7 +75,7 @@ namespace LP.Object
         private static LpObject setOp(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            var env = LpIndexer.last();
+            var env = Util.LpIndexer.last();
             var o = env.setVariable(self.stringValue, v);
             return o;
         }

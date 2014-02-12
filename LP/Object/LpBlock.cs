@@ -65,36 +65,30 @@ namespace LP.Object
         private static void setMethods(LpObject obj)
         {
             // TODO: inspect
-            // TODO: to_s
-            // TODO: display
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
+            obj.methods["display"] = new LpMethod( new BinMethod(display) );
             // TODO: to_block
             // TODO: to_method
             // TODO: to_lambda
-            // TODO: call
-            /*
-            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
-            obj.methods["display"] = new LpMethod( new BinMethod(display));
-            obj.methods["execute"] = new LpMethod( new BinMethod(execute) );
-            obj.methods["call"] = new LpMethod( new BinMethod(execute));
-             */
+            obj.methods["call"] = new LpMethod(new BinMethod(call));
         }
 
-        static LpObject to_s(LpObject self, LpObject args)
+        static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             self.stringValue = self.ToString();
             return self;
         }
 
-        static LpObject display(LpObject self, LpObject args)
+        static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var so = to_s(self, args);
-            Console.WriteLine(so.stringValue);
+            var o = to_s(self, args, null);
+            Console.WriteLine(o.stringValue);
             return null;
         }
 
-        static LpObject execute(LpObject self, LpObject args)
+        static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            LpObject ret = null;
+            LpObject ret = LpNl.initialize();
             self.statements.ForEach(delegate(string stmt)
             {
                 ret = LpParser.STMT.Parse(stmt);

@@ -18,6 +18,8 @@ namespace LP
     // TODO: エラー処理
     // TODO: nil
     // Block読み出し
+    // TODO: インスタンス変数
+    // TODO: グローバル変数
     class LpParser
     {
         // Expressions
@@ -343,7 +345,7 @@ namespace LP
                                                         select new object[] { (string)fname, (Object.LpObject[])args, null });
 
         static readonly Parser<Object.LpObject> FUNCTION_CALL = from fvals in METHOD_CALL
-                                                                select Object.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1] );
+                                                                select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1]);
 
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1]));
 

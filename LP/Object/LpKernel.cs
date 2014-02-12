@@ -32,12 +32,12 @@ namespace LP.Object
             }
         }
 
-        static private LpObject setMethods(LpObject obj)
+        static private void setMethods(LpObject obj)
         {
             // TODO: yield
             // TODO: return
             // TODO: while
-            // TODO: until
+            // TODO: until(マクロで再現
             // TODO: alias
             // TODO: break
             // TODO: next
@@ -48,8 +48,7 @@ namespace LP.Object
 
             //obj.methods["while"] = new LpMethod( new BinMethod(print) );
             //obj.methods["print"] = new LpMethod( new BinMethod(print) );
-            //obj.methods["if"] = new LpMethod( new BinMethod(_if) );
-            return obj;
+            obj.methods["if"] = new LpMethod( new BinMethod(_if) );
         }
 
         // TODO: 全く未実装
