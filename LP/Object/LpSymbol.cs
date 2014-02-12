@@ -55,24 +55,24 @@ namespace LP.Object
             obj.methods["==="] = new LpMethod( new BinMethod(eq) );
         }
 
-        protected static LpObject to_s(LpObject self, LpObject[] args)
+        protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             return self;
         }
 
-        protected static LpObject inspect(LpObject self, LpObject[] args)
+        protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
             return self;
         }
 
-        protected static LpObject display(LpObject self, LpObject[] args)
+        protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
             Console.WriteLine(self.stringValue);
             return null;
         }
 
         // TODO: =
-        private static LpObject setOp(LpObject self, LpObject[] args)
+        private static LpObject setOp(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
             var env = LpIndexer.last();
@@ -80,12 +80,12 @@ namespace LP.Object
             return o;
         }
 
-        private static LpObject equal(LpObject self, LpObject[] args)
+        private static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
         {
             return eq( self, args );
         }
 
-        private static LpObject eq(LpObject self, LpObject[] args)
+        private static LpObject eq(LpObject self, LpObject[] args, LpObject block = null)
         {
             var o = args[0];
             var sym = symbols[o.stringValue];

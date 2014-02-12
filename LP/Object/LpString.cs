@@ -60,48 +60,48 @@ namespace LP.Object
             obj.methods["==="] = new LpMethod( new BinMethod(eq) );
         }
 
-        protected static LpObject to_s(LpObject self, LpObject[] args)
+        protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             return self;
         }
 
-        protected static LpObject inspect(LpObject self, LpObject[] args)
+        protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
             return self;
         }
 
-        protected static LpObject display(LpObject self, LpObject[] args)
+        protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
             Console.WriteLine(self.stringValue);
             return null;
         }
 
-        protected static LpObject size(LpObject self, LpObject[] args)
+        protected static LpObject size(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpNumeric.initialize( self.stringValue.Length );
         }
 
-        protected static LpObject add(LpObject self, LpObject[] args)
+        protected static LpObject add(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
             self.stringValue += v.stringValue;
             return self;
         }
 
-        protected static LpObject plus(LpObject self, LpObject[] args)
+        protected static LpObject plus(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
             return init(self.stringValue + v.stringValue);
         }
 
-        private static LpObject equal(LpObject self, LpObject[] args)
+        private static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
         {
             var o = args[0];
             return LpBool.initialize(self.stringValue == o.stringValue);
         }
 
         // TODO: This method must comare to memory address!!
-        private static LpObject eq(LpObject self, LpObject[] args)
+        private static LpObject eq(LpObject self, LpObject[] args, LpObject block = null)
         {
             var o = args[0];
             return LpBool.initialize(self.stringValue == o.stringValue );

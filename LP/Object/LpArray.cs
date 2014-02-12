@@ -77,42 +77,42 @@ namespace LP.Object
             //obj.methods["to_s"] = new LpMethod(new BinMethod(to_s));
         }
 
-        private static LpObject at( LpObject self, LpObject args )
+        private static LpObject at(LpObject self, LpObject args, LpObject block = null)
         {
             var arg = args.arrayValues.First();
             var v = self.arrayValues.ElementAt( (int)arg.doubleValue );
             return v;
         }
 
-        static LpObject first(LpObject self, LpObject[] args)
+        static LpObject first(LpObject self, LpObject[] args, LpObject block = null)
         {
             return self.arrayValues.First();
         }
 
-        static LpObject push(LpObject self, LpObject[] args)
+        static LpObject push(LpObject self, LpObject[] args, LpObject block = null)
         {
             self.arrayValues.Add(args[0]);
             return self;
         }
 
-        static LpObject to_s(LpObject self, LpObject[] args)
+        static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue.ToString() ).ToArray();
             var s = string.Join(", ",vs);
             return LpString.initialize( "["+s+"]" );
         }
 
-        static LpObject len(LpObject self, LpObject[] args)
+        static LpObject len(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpNumeric.initialize( self.arrayValues.Count );
         }
 
-        static LpObject last(LpObject self, LpObject[] args)
+        static LpObject last(LpObject self, LpObject[] args, LpObject block = null)
         {
             return self.arrayValues.Last();
         }
 
-        static LpObject concat(LpObject self, LpObject[] args)
+        static LpObject concat(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
             self.arrayValues.AddRange( v.arrayValues );

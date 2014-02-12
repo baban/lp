@@ -36,9 +36,7 @@ namespace LP.Object
         {
             // TODO: yield
             // TODO: return
-            // TODO: super
             // TODO: while
-            // TODO: until
             // TODO: until
             // TODO: alias
             // TODO: break
@@ -48,19 +46,30 @@ namespace LP.Object
             // 構文
             // TODO: self
 
-            //obj.methods["print"] = new LpMethod( new BinMethod2(print) );
-            //obj.methods["if"] = new LpMethod( new BinMethod2(_if) );
+            //obj.methods["while"] = new LpMethod( new BinMethod(print) );
+            //obj.methods["print"] = new LpMethod( new BinMethod(print) );
+            //obj.methods["if"] = new LpMethod( new BinMethod(_if) );
             return obj;
         }
 
-        private static LpObject print(LpObject self, LpObject[] args)
+        // TODO: 全く未実装
+        private static LpObject _while(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var expr = args[0];
+            while( null != expr ){
+              block.funcall( "call", null, null );
+            }
+            return null;
+        }
+
+        private static LpObject print(LpObject self, LpObject[] args, LpObject block = null)
         {
             var o = args[0];
             o.funcall("display",null);
             return null;
         }
 
-        private static LpObject _if(LpObject self, LpObject[] args)
+        private static LpObject _if(LpObject self, LpObject[] args, LpObject block = null)
         {
             var expr = args[0];
             Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
