@@ -17,6 +17,12 @@ namespace LP.Object
             method = m;
         }
 
+        public LpMethod(BinMethod m, int max)
+        {
+            arguments = new Util.LpArguments();
+            method = m;
+        }
+
         public static LpObject initialize(BinMethod method)
         {
             var obj = createClassTemplate();
@@ -71,24 +77,28 @@ namespace LP.Object
 
         public LpObject funcall(LpObject self, LpObject[] args, LpObject block = null)
         {
-            if (null != arguments && !arguments.check())
-                throw new Error.LpArgumentError();
-
-            if (null != method)
-            {
-                return method(self, args);
-            }
-            return null;
+            return call(self, args, block);
         }
 
-        static LpObject execute(LpObject self, LpObject args)
+        static public LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            LpObject ret = null;
+            var dstArgs = self.arguments.putVariables(args, block);
+            return (self.method != null) ?
+                self.method(self, dstArgs) : 
+                callString(self, dstArgs, block);
+        }
+
+        static private LpObject callString(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            self.arguments.setVariables(self, args, block);
+            LpObject ret = LpNl.initialize();
             self.statements.ForEach(delegate(string stmt)
             {
                 ret = LpParser.STMT.Parse(stmt);
             });
             return ret;
         }
+
     }
+
 }

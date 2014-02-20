@@ -83,16 +83,18 @@ namespace LP.Object
         {
             var o = to_s(self, args, null);
             Console.WriteLine(o.stringValue);
-            return null;
+            return LpNl.initialize();
         }
 
         static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
             LpObject ret = LpNl.initialize();
-            self.statements.ForEach(delegate(string stmt)
-            {
+            foreach( string stmt in self.statements ){
                 ret = LpParser.STMT.Parse(stmt);
-            });
+                if (control_status == (int)LpBase.CONTROL_CODE.RETURN) {
+                    return ret;
+                }
+            }
             return ret;
         }
     }

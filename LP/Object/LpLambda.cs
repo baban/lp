@@ -73,30 +73,33 @@ namespace LP.Object
             // TODO: to_lambda
             //obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
             //obj.methods["display"] = new LpMethod(new BinMethod(display));
-            //obj.methods["execute"] = new LpMethod( new BinMethod(execute) );
-            //obj.methods["call"] = new LpMethod(new BinMethod(execute));
+            obj.methods["call"] = new LpMethod(new BinMethod(call));
         }
 
-        static LpObject to_s(LpObject self, LpObject args)
+        static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             self.stringValue = self.ToString();
             return self;
         }
 
-        static LpObject display(LpObject self, LpObject args)
+        static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
             var so = to_s(self, args);
             Console.WriteLine(so.stringValue);
             return null;
         }
 
-        static LpObject execute(LpObject self, LpObject args)
+        static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
             LpObject ret = null;
-            self.statements.ForEach(delegate(string stmt)
-            {
+            foreach (string stmt in self.statements) {
                 ret = LpParser.STMT.Parse(stmt);
-            });
+                if (control_status == (int)LpBase.CONTROL_CODE.RETURN)
+                {
+                    control_status = (int)LpBase.CONTROL_CODE.NONE;
+                    return ret;
+                }
+            }
             return ret;
         }
     }

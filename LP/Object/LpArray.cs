@@ -23,6 +23,13 @@ namespace LP.Object
             return o;
         }
 
+        public static LpObject initialize(LpObject[] args)
+        {
+            var o = init();
+            o.arrayValues = args.ToList();
+            return o;
+        }
+
         private static LpObject init()
         {
             var obj = createClassTemplate();

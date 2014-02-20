@@ -11,6 +11,9 @@ namespace LP.Object
     {
         public static Dictionary<string, LpObject> classes = new Dictionary<string, LpObject>();
 
+        public enum CONTROL_CODE : int { NONE, RETURN, BREAK, NEXT };
+        public static int control_status = (int)CONTROL_CODE.NONE;
+
         public LpObject superclass = null;
         public BinMethod method = null;
         public Util.LpArguments arguments = null;
@@ -26,5 +29,10 @@ namespace LP.Object
         public List<string> statements = null;
 
         public string class_name = null;
+
+        public static LpMethod makeMethod()
+        {
+            return null;
+        }
     }
 }

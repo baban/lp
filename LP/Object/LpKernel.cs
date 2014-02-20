@@ -34,21 +34,125 @@ namespace LP.Object
 
         static private void setMethods(LpObject obj)
         {
-            // TODO: yield
-            // TODO: return
-            // TODO: while
-            // TODO: until(マクロで再現
-            // TODO: alias
-            // TODO: break
-            // TODO: next
+            // TODO: rescue
+            // TODO: redo
             // TODO: retry
+            // TODO: raise
+
+            // TODO: open
+
+            // TODO: abort
 
             // 構文
             // TODO: self
 
-            //obj.methods["while"] = new LpMethod( new BinMethod(print) );
+            // TODO: block_given? // マクロで再現
+            obj.methods["break"] = new LpMethod( new BinMethod(_break) );
+            // TODO: caller
+            // TODO: eval
+            // TODO: exec
+            //obj.methods["exit"] = new LpMethod( new BinMethod(exit) );
+            obj.methods["if"] = new LpMethod(new BinMethod(_if));
+            obj.methods["loop"] = new LpMethod(new BinMethod(loop));
+            //obj.methods["next"] = new LpMethod( new BinMethod(next_) );
             //obj.methods["print"] = new LpMethod( new BinMethod(print) );
-            obj.methods["if"] = new LpMethod( new BinMethod(_if) );
+            //obj.methods["return"] = new LpMethod( new BinMethod(_return) );
+            // TODO: require
+            // TODO: sleep
+            // TODO: yield // マクロで再現
+
+            // Lv1
+            // TODO: alias
+            //obj.methods["while"] = new LpMethod( new BinMethod(print) ); // マクロで再現
+            // TODO: until(マクロで再現
+            // TODO: p
+
+            // Lv2
+            // TODO: callcc
+        }
+
+        // TODO: 全く未実装
+        private static LpObject alias(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject load(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject require(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject exit(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            Environment.Exit(0);
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject is_block_given(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject _yield(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            control_status = (int)CONTROL_CODE.BREAK;
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject _break(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            control_status = (int)CONTROL_CODE.BREAK;
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject _next(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            control_status = (int)CONTROL_CODE.NEXT;
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject _return(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            control_status = (int)CONTROL_CODE.RETURN;
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject loop(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            LpObject ret = LpNl.initialize();
+            
+            if (block != null) return ret;
+
+            while(true){
+                ret = block.funcall( "call", null, null );
+                // break文
+                if (control_status == (int)LpBase.CONTROL_CODE.BREAK)
+                {
+                    control_status = (int)LpBase.CONTROL_CODE.NONE;
+                    break;
+                }
+                // next文
+                if (control_status == (int)LpBase.CONTROL_CODE.NEXT)
+                {
+                    control_status = (int)LpBase.CONTROL_CODE.NONE;
+                    continue;
+                }
+            }
+            return ret;
         }
 
         // TODO: 全く未実装

@@ -7,6 +7,7 @@ using Sprache;
 
 namespace LP.Object
 {
+    // Lv1
     class LpHash : LpBase
     {
         static string className = "Hash";
@@ -41,9 +42,9 @@ namespace LP.Object
             // TODO: map
             // TODO: keys
             // TODO: values
-            // TODO: size
+            // TODO: len
             //obj.methods["update"] = new LpMethod( new BinMethod(update) );
-            //obj.methods["size"] = new LpMethod( new BinMethod(size));
+            //obj.methods["len"] = new LpMethod( new BinMethod(len));
             // TODO: to_a
             /*
             obj.methods["=="] = new BinMethod(equal);
@@ -55,7 +56,7 @@ namespace LP.Object
              */
         }
 
-        private static LpObject size(LpObject self, LpObject args)
+        private static LpObject len(LpObject self, LpObject args)
         {
             return LpNumeric.initialize(self.hashValues.Count);
         }
