@@ -172,5 +172,18 @@ namespace LpTest.Object
             var so = t.GetMethod("is_a", BindingFlags.Static | BindingFlags.NonPublic).Invoke(o, prms);
             Assert.AreEqual(false, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
+
+        [Test]
+        public void extend()
+        {
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+            // 未実装
+            //var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "class Hoge" });
+
+            //var prms = new object[] { o, args, null };
+            //var so = t.GetMethod("extend", BindingFlags.Static | BindingFlags.NonPublic).Invoke(o, prms);
+            //Assert.AreEqual(false, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
     }
 }

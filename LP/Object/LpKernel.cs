@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sprache;
 
 namespace LP.Object
 {
@@ -49,20 +50,19 @@ namespace LP.Object
             // TODO: block_given? // マクロで再現
             obj.methods["break"] = new LpMethod( new BinMethod(_break) );
             // TODO: caller
-            // TODO: eval
             // TODO: exec
-            //obj.methods["exit"] = new LpMethod( new BinMethod(exit) );
-            obj.methods["if"] = new LpMethod(new BinMethod(_if));
-            obj.methods["loop"] = new LpMethod(new BinMethod(loop));
+            obj.methods["eval"] = new LpMethod(new BinMethod(eval));
+            obj.methods["exit"] = new LpMethod(new BinMethod(exit));
+            obj.methods["if"] = new LpMethod(new BinMethod(_if), 3 );
+            obj.methods["loop"] = new LpMethod(new BinMethod(loop), 0 );
             //obj.methods["next"] = new LpMethod( new BinMethod(next_) );
-            //obj.methods["print"] = new LpMethod( new BinMethod(print) );
+            obj.methods["print"] = new LpMethod( new BinMethod(print), 1 );
             //obj.methods["return"] = new LpMethod( new BinMethod(_return) );
             // TODO: require
             // TODO: sleep
             // TODO: yield // マクロで再現
 
             // Lv1
-            // TODO: alias
             //obj.methods["while"] = new LpMethod( new BinMethod(print) ); // マクロで再現
             // TODO: until(マクロで再現
             // TODO: p
@@ -94,6 +94,12 @@ namespace LP.Object
         {
             Environment.Exit(0);
             return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject eval(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpParser.PROGRAM.Parse(args[0].stringValue);
         }
 
         // TODO: 全く未実装
@@ -168,8 +174,7 @@ namespace LP.Object
         private static LpObject print(LpObject self, LpObject[] args, LpObject block = null)
         {
             var o = args[0];
-            o.funcall("display",null);
-            return null;
+            return o.funcall("display", null, null);
         }
 
         private static LpObject _if(LpObject self, LpObject[] args, LpObject block = null)

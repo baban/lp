@@ -365,8 +365,8 @@ namespace LP
 
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 
-        static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
-                                                          select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => { ret = STMT.Parse(s); return ret; });
+        public static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
+                                                                 select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => { ret = STMT.Parse(s); return ret; });
 
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
