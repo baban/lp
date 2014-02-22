@@ -17,9 +17,9 @@ namespace LP.Object
             method = m;
         }
 
-        public LpMethod(BinMethod m, int max)
+        public LpMethod(BinMethod m, int arity )
         {
-            arguments = new Util.LpArguments();
+            arguments = new Util.LpArguments( arity );
             method = m;
         }
 
@@ -77,20 +77,16 @@ namespace LP.Object
 
         public LpObject funcall(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return call(self, args, block);
+            var dstArgs = arguments.putVariables(args, block);
+
+            return (method != null) ?
+                method(self, dstArgs) :
+                evalStatements(self, dstArgs, block);
         }
 
-        static public LpObject call(LpObject self, LpObject[] args, LpObject block = null)
+        private LpObject evalStatements(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var dstArgs = self.arguments.putVariables(args, block);
-            return (self.method != null) ?
-                self.method(self, dstArgs) : 
-                callString(self, dstArgs, block);
-        }
-
-        static private LpObject callString(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            self.arguments.setVariables(self, args, block);
+            arguments.setVariables(self, args, block);
             LpObject ret = LpNl.initialize();
             self.statements.ForEach(delegate(string stmt)
             {
@@ -98,7 +94,6 @@ namespace LP.Object
             });
             return ret;
         }
-
     }
 
 }

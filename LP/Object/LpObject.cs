@@ -39,37 +39,36 @@ namespace LP.Object
         static private void setMethods( LpObject obj )
         {
             // Lv0
-            // TODO: copy
             // TODO: ==
             // TODO: ===
             // TODO: eq?
             // TODO: equal?
-            // TODO: instance_eval, do
             // TODO: method_missing
             // TODO: method_matching
             // TODO: extend
             // TODO: define_operand
             // TODO: super
-            obj.methods["copy"] = new LpMethod(new BinMethod(copy));
-            obj.methods["extend"] = new LpMethod(new BinMethod(extend));
-            obj.methods["instance_eval"] = new LpMethod(new BinMethod(instance_eval));
-            obj.methods["__send__"] = new LpMethod(new BinMethod(send));
-            obj.methods["methods"] = new LpMethod(new BinMethod(_methods));
-            obj.methods["define_method"] = new LpMethod(new BinMethod(define_method));
-            obj.methods["nil?"] = new LpMethod(new BinMethod(is_nil));
-            obj.methods["inspect"] = new LpMethod(new BinMethod(inspect));
-            obj.methods["display"] = new LpMethod( new BinMethod(display) );
-            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
-            obj.methods["class"] = new LpMethod( new BinMethod(_class) );
-            obj.methods["hash"] = new LpMethod( new BinMethod(hash) );
+            obj.methods["__send__"] = new LpMethod(new BinMethod(send), -1);
+            obj.methods["alias"] = new LpMethod(new BinMethod(alias), 2);
+            obj.methods["class"] = new LpMethod(new BinMethod(class_), 0);
+            obj.methods["copy"] = new LpMethod(new BinMethod(copy), 0);
+            obj.methods["define_method"] = new LpMethod(new BinMethod(define_method), 1);
+            obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
+            obj.methods["extend"] = new LpMethod(new BinMethod(extend), 1);
+            obj.methods["hash"] = new LpMethod(new BinMethod(hash), 0);
+            obj.methods["inspect"] = new LpMethod(new BinMethod(inspect), 0);
+            obj.methods["instance_eval"] = new LpMethod(new BinMethod(instance_eval), 1);
+            obj.methods["methods"] = new LpMethod(new BinMethod(methods_), 0 );
+            obj.methods["nil?"] = new LpMethod(new BinMethod(is_nil), 0 );
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s), 0 );
 
             // Lv1
             // TODO: blank?
             // TODO: tap
-            obj.methods["is_a?"] = new LpMethod(new BinMethod(is_a));
-            obj.methods["send"] = new LpMethod(new BinMethod(send));
-            obj.methods["kind_of?"] = new LpMethod(new BinMethod(is_a));
-            obj.methods["do"] = new LpMethod(new BinMethod(instance_eval));
+            obj.methods["do"] = new LpMethod(new BinMethod(instance_eval), 0);
+            obj.methods["is_a?"] = new LpMethod(new BinMethod(is_a), 1);
+            obj.methods["kind_of?"] = new LpMethod(new BinMethod(is_a), 1 );
+            obj.methods["send"] = new LpMethod(new BinMethod(send), -1);
         }
 
         public override string ToString()
@@ -87,7 +86,7 @@ namespace LP.Object
             return obj == this;
         }
 
-        public LpObject funcall(string name, LpObject[] args,  LpObject block=null )
+        public LpObject funcall(string name, LpObject[] args, LpObject block=null )
         {
             return funcall(name, this, args, block);
         }
@@ -135,18 +134,6 @@ namespace LP.Object
         {
             return (LpObject)this.MemberwiseClone();
         }
-        
-        protected static LpObject define_method(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            var name = args[0].stringValue;
-            self.methods[name] = LpMethod.initialize( block.arguments, block.statements.ToArray());
-            return LpSymbol.initialize( name );
-        }
-
-        protected static LpObject send(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            return self.funcall(args[0].stringValue, args, block);
-        }
 
         protected static LpObject alias(LpObject self, LpObject[] args, LpObject block = null)
         {
@@ -156,48 +143,39 @@ namespace LP.Object
             return Object.LpSymbol.initialize(dst);
         }
 
-        protected static LpObject _methods(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            var keys = new string[] { };
-            return LpArray.initialize( keys );
-        }
-
-        protected static LpObject is_nil(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            return LpBool.initialize(false);
-        }
-
-        protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            return LpString.initialize(self.ToString());
-        }
-
-        protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            var so = to_s( self, args );
-            Console.WriteLine( so.stringValue );
-            return null;
-        }
-
-        protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            return to_s( self, args, block );
-        }
-
-        protected static LpObject _class(LpObject self, LpObject[] args, LpObject block = null)
+        protected static LpObject class_(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpString.initialize(self.class_name);
         }
 
-        protected static LpObject hash(LpObject self, LpObject[] args, LpObject block = null)
+        private static LpObject copy(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpNumeric.initialize( self.GetHashCode() );
+            return self.Clone();
         }
 
-        protected static LpObject instance_eval(LpObject self, LpObject[] args, LpObject block = null)
+        // TODO: 全く未実装
+        private static LpObject extend(LpObject self, LpObject[] args, LpObject block = null)
         {
-            // TODO
             return null;
+        }
+
+        protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var so = to_s(self, args);
+            Console.WriteLine(so.stringValue);
+            return null;
+        }
+
+        protected static LpObject define_method(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var name = args[0].stringValue;
+            self.methods[name] = LpMethod.initialize( block.arguments, block.statements.ToArray());
+            return LpSymbol.initialize( name );
+        }
+
+        protected static LpObject hash(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpNumeric.initialize(self.GetHashCode());
         }
 
         protected static LpObject is_a(LpObject self, LpObject[] args, LpObject block = null)
@@ -211,8 +189,42 @@ namespace LP.Object
             return LpBool.initialize(false);
         }
 
+        protected static LpObject is_nil(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpBool.initialize(false);
+        }
+
+        protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return to_s(self, args, block);
+        }
+
+        protected static LpObject instance_eval(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return block.funcall("call",null,null);
+        }
+
+        protected static LpObject methods_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var keys = new List<string>();
+            foreach (string k in self.methods.Keys) {
+                keys.Add(k);
+            }
+            return LpArray.initialize( keys.ToArray().Select((s) => LpString.initialize(s)).ToArray()  );
+        }
+
+        protected static LpObject send(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return self.funcall(args[0].stringValue, args, block);
+        }
+
+        protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpString.initialize(self.ToString());
+        }
+        /*
         // TODO: 全く未実装
-        private static LpObject _super(LpObject self, LpObject[] args, LpObject block = null)
+        private static LpObject super_(LpObject self, LpObject[] args, LpObject block = null)
         {
             var superclass = self.superclass;
             if (superclass != null)
@@ -221,17 +233,7 @@ namespace LP.Object
             }
             return null;
         }
+         */
 
-        // TODO: 全く未実装
-        private static LpObject copy(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            return null;
-        }
-
-        // TODO: 全く未実装
-        private static LpObject extend(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            return null;
-        }
     }
 }

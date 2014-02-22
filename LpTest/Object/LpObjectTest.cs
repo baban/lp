@@ -109,25 +109,68 @@ namespace LpTest.Object
         [Test]
         public void send()
         {
-            // TODO: 未実装
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "\"to_s\"" });
+
+            // 引数なし
+            var prms = new object[] { o, args, null };
+            var so = t.GetMethod("send", BindingFlags.Static | BindingFlags.NonPublic).Invoke(o, prms);
         }
 
         [Test]
         public void alias()
         {
-            // TODO: 未実装
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "\"to_s\",\"hoge\"" });
+
+            var prms = new object[] { o, args, null };
+            var so = t.GetMethod("alias", BindingFlags.Static | BindingFlags.NonPublic).Invoke(o, prms);
         }
 
         [Test]
         public void methods()
         {
-            // TODO: 未実装
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "" });
+
+            var prms = new object[] { o, args, null };
+            var so = t.GetMethod("methods_", BindingFlags.Static | BindingFlags.NonPublic).Invoke(o, prms);
+        }
+
+        [Test]
+        public void instance_eval()
+        {
+            var pm = initParser();
+            var p = pm.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, pm, null);
+            var block = pm.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)" do 10; end " });
+
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "" });
+
+            var prms = new object[] { o, args, block };
+            var so = t.GetMethod("instance_eval", BindingFlags.Static | BindingFlags.NonPublic).Invoke(o, prms);
+            Assert.AreEqual( 10, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null) );
         }
 
         [Test]
         public void is_a()
         {
-            // TODO: 未実装
+            Type t = initModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "10" });
+
+            var prms = new object[] { o, args, null };
+            var so = t.GetMethod("is_a", BindingFlags.Static | BindingFlags.NonPublic).Invoke(o, prms);
+            Assert.AreEqual(false, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
     }
 }

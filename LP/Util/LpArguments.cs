@@ -12,12 +12,18 @@ namespace LP.Util
         bool loose = false;
         string arrayArg = null;
         string blockArg = null;
-        
+        int? arityNumber = null;
+
         public LpArguments() {
             arguments = new string[] { };
         }
 
-        public LpArguments( string[] args, bool loose = false )
+        public LpArguments( int arity )
+        {
+            arityNumber = arity;
+        }
+
+        public LpArguments(string[] args, bool loose = false)
         {
             arrayArg = args.FirstOrDefault((s) => s[0] == '*');
             blockArg = args.FirstOrDefault((s) => s[0] == '&');
@@ -27,9 +33,12 @@ namespace LP.Util
 
         public int arity()
         {
-            int cnt = arguments.Count();
-            if (arrayArg != null) cnt = -1*(cnt+1);
-            return cnt;
+            if (null == arityNumber) {
+                int cnt = arguments.Count();
+                if (arrayArg != null) cnt = -1 * (cnt + 1);
+                arityNumber = cnt;
+            }
+            return (int)arityNumber;
         }
 
         public bool check( Object.LpObject[] args )
@@ -41,13 +50,18 @@ namespace LP.Util
 
         public Object.LpObject[] putVariables(Object.LpObject[] args, Object.LpObject block)
         {
-            if(args.Count() == arity()) return args;
+            if (args == null) return new Object.LpObject[] { };
+
+            if (args.Count() == arity()) return args;
 
             int argsSize = Math.Abs(arity());
 
             Object.LpObject[] dstArgs = new Object.LpObject[argsSize];
             Array.Copy(args, dstArgs, argsSize);
-            dstArgs[dstArgs.Count()] = Object.LpArray.initialize(args.Skip(argsSize).Take(args.Count() - argsSize).ToArray());
+
+            if( arity() < 0 )
+                dstArgs[dstArgs.Count()] = Object.LpArray.initialize(args.Skip(argsSize).Take(args.Count() - argsSize).ToArray());
+
             return dstArgs;
         }
 
