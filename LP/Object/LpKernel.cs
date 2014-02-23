@@ -48,21 +48,22 @@ namespace LP.Object
             // TODO: self
 
             // TODO: block_given? // マクロで再現
-            obj.methods["break"] = new LpMethod( new BinMethod(_break) );
+            obj.methods["break"] = new LpMethod( new BinMethod(break_) );
             // TODO: caller
             // TODO: exec
             obj.methods["eval"] = new LpMethod(new BinMethod(eval));
             obj.methods["exit"] = new LpMethod(new BinMethod(exit));
-            obj.methods["if"] = new LpMethod(new BinMethod(_if), 3 );
-            obj.methods["loop"] = new LpMethod(new BinMethod(loop), 0 );
+            obj.methods["cond"] = new LpMethod(new BinMethod(cond), -1);
+            obj.methods["loop"] = new LpMethod(new BinMethod(loop), 0);
             //obj.methods["next"] = new LpMethod( new BinMethod(next_) );
-            obj.methods["print"] = new LpMethod( new BinMethod(print), 1 );
             //obj.methods["return"] = new LpMethod( new BinMethod(_return) );
             // TODO: require
-            // TODO: sleep
             // TODO: yield // マクロで再現
 
             // Lv1
+            obj.methods["print"] = new LpMethod(new BinMethod(print), 1);
+            obj.methods["if"] = new LpMethod(new BinMethod(if_), 3);
+            // TODO: sleep
             //obj.methods["while"] = new LpMethod( new BinMethod(print) ); // マクロで再現
             // TODO: until(マクロで再現
             // TODO: p
@@ -78,14 +79,21 @@ namespace LP.Object
         }
 
         // TODO: 全く未実装
-        private static LpObject load(LpObject self, LpObject[] args, LpObject block = null)
+        private static LpObject break_(LpObject self, LpObject[] args, LpObject block = null)
         {
+            control_status = (int)CONTROL_CODE.BREAK;
             return LpNl.initialize();
         }
 
-        // TODO: 全く未実装
-        private static LpObject require(LpObject self, LpObject[] args, LpObject block = null)
+        // 末尾再帰の実装できるかわからないので、便利な道具を優先する
+        private static LpObject cond(LpObject self, LpObject[] args, LpObject block = null)
         {
+            Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
+            Func<LpObject, bool> test = (stmt) => (bool)fun(stmt).funcall("nil?", null, null).boolValue;
+            for (int i = 0; args.Count() >= i + 2; i += 2)
+                if (test(args[i]))
+                    return fun(args[i + 1]);
+
             return LpNl.initialize();
         }
 
@@ -102,6 +110,20 @@ namespace LP.Object
             return LpParser.PROGRAM.Parse(args[0].stringValue);
         }
 
+        private static LpObject if_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var expr = args[0];
+            Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
+            if (expr != null && expr.boolValue != false)
+            {
+                return fun(args[1]);
+            }
+            else
+            {
+                return fun(args[2]);
+            }
+        }
+
         // TODO: 全く未実装
         private static LpObject is_block_given(LpObject self, LpObject[] args, LpObject block = null)
         {
@@ -109,30 +131,8 @@ namespace LP.Object
         }
 
         // TODO: 全く未実装
-        private static LpObject _yield(LpObject self, LpObject[] args, LpObject block = null)
+        private static LpObject load(LpObject self, LpObject[] args, LpObject block = null)
         {
-            control_status = (int)CONTROL_CODE.BREAK;
-            return LpNl.initialize();
-        }
-
-        // TODO: 全く未実装
-        private static LpObject _break(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            control_status = (int)CONTROL_CODE.BREAK;
-            return LpNl.initialize();
-        }
-
-        // TODO: 全く未実装
-        private static LpObject _next(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            control_status = (int)CONTROL_CODE.NEXT;
-            return LpNl.initialize();
-        }
-
-        // TODO: 全く未実装
-        private static LpObject _return(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            control_status = (int)CONTROL_CODE.RETURN;
             return LpNl.initialize();
         }
 
@@ -140,11 +140,12 @@ namespace LP.Object
         private static LpObject loop(LpObject self, LpObject[] args, LpObject block = null)
         {
             LpObject ret = LpNl.initialize();
-            
+
             if (block != null) return ret;
 
-            while(true){
-                ret = block.funcall( "call", null, null );
+            while (true)
+            {
+                ret = block.funcall("call", null, null);
                 // break文
                 if (control_status == (int)LpBase.CONTROL_CODE.BREAK)
                 {
@@ -162,13 +163,17 @@ namespace LP.Object
         }
 
         // TODO: 全く未実装
-        private static LpObject _while(LpObject self, LpObject[] args, LpObject block = null)
+        private static LpObject next_(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var expr = args[0];
-            while( null != expr ){
-              block.funcall( "call", null, null );
-            }
-            return null;
+            control_status = (int)CONTROL_CODE.NEXT;
+            return LpNl.initialize();
+        }
+
+        // TODO: 全く未実装
+        private static LpObject return_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            control_status = (int)CONTROL_CODE.RETURN;
+            return LpNl.initialize();
         }
 
         private static LpObject print(LpObject self, LpObject[] args, LpObject block = null)
@@ -177,15 +182,18 @@ namespace LP.Object
             return o.funcall("display", null, null);
         }
 
-        private static LpObject _if(LpObject self, LpObject[] args, LpObject block = null)
+        // TODO: 全く未実装
+        private static LpObject require(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var expr = args[0];
-            Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
-            if( expr != null && expr.boolValue != false ){
-                return fun(args[1]);
-            } else {
-                return fun(args[2]);
-            }
+            return LpNl.initialize();
         }
+
+        // TODO: 全く未実装
+        private static LpObject yield_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            control_status = (int)CONTROL_CODE.BREAK;
+            return LpNl.initialize();
+        }
+
     }
 }

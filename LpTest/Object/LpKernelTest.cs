@@ -48,14 +48,14 @@ namespace LpTest.Object
         }
 
         [Test]
-        public void _if()
+        public void if_()
         {
             Type t = initParser();
             Type k = initKernel();
             var p = t.InvokeMember("ARGS", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
 
             var args = t.GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { (string)" true, do 10; end, do 20; end " });
-            var ret = k.GetMethod("_if", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { null, args, null });
+            var ret = k.GetMethod("if_", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { null, args, null });
             Assert.AreEqual(10, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
     }
