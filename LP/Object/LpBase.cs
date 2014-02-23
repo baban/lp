@@ -29,10 +29,5 @@ namespace LP.Object
         public List<string> statements = null;
 
         public string class_name = null;
-
-        public static LpMethod makeMethod()
-        {
-            return null;
-        }
     }
 }

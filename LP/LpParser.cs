@@ -322,7 +322,7 @@ namespace LP
         public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
-                                                          select gs.Select( (s) => STMT.Parse(s) ).ToArray();
+                                                         select gs.Select((s) => STMT.Parse(s) ).ToArray();
 
         static readonly Parser<Object.LpObject[]> ARGS_CALL = (from a in Parse.Char('(')
                                                               from args in ARGS
@@ -345,7 +345,7 @@ namespace LP
                                                         select new object[] { (string)fname, (Object.LpObject[])args, null });
 
         static readonly Parser<Object.LpObject> FUNCTION_CALL = from fvals in METHOD_CALL
-                                                                select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1]);
+                                                                select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2]);
 
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1]));
 

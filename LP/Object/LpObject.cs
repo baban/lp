@@ -93,7 +93,6 @@ namespace LP.Object
         public LpObject funcall(string name, LpObject self, LpObject[] args, LpObject block )
         {
             name = trueFname(name);
-
             LpMethod m = null;
             // normal search
             m = methods[name] as LpMethod;

@@ -141,11 +141,11 @@ namespace LP.Object
         {
             LpObject ret = LpNl.initialize();
 
-            if (block != null) return ret;
+            if (block == null) return ret;
 
             while (true)
             {
-                ret = block.funcall("call", null, null);
+                ret = block.funcall("call", args, null);
                 // break文
                 if (control_status == (int)LpBase.CONTROL_CODE.BREAK)
                 {

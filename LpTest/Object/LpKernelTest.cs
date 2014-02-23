@@ -58,5 +58,14 @@ namespace LpTest.Object
             var ret = k.GetMethod("if_", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { null, args, null });
             Assert.AreEqual(10, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
+
+        [Test]
+        public void loop()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "loop() do 10; break(); end" });
+        }
     }
 }

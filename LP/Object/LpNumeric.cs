@@ -57,19 +57,19 @@ namespace LP.Object
 
         private static void setMethods( LpObject obj )
         {
-            obj.methods["+"]  = new LpMethod( new BinMethod(plus) );
-            obj.methods["-"]  = new LpMethod( new BinMethod(minus) );
-            obj.methods["*"]  = new LpMethod( new BinMethod(mul) );
-            obj.methods["/"]  = new LpMethod( new BinMethod(div) );
-            obj.methods["%"]  = new LpMethod( new BinMethod(mod) );
-            obj.methods["**"] = new LpMethod( new BinMethod(pow) );
+            obj.methods["+"]  = new LpMethod( new BinMethod(plus), 1 );
+            obj.methods["-"]  = new LpMethod( new BinMethod(minus), 1 );
+            obj.methods["*"]  = new LpMethod( new BinMethod(mul), 1 );
+            obj.methods["/"]  = new LpMethod( new BinMethod(div), 1 );
+            obj.methods["%"]  = new LpMethod( new BinMethod(mod), 1 );
+            obj.methods["**"] = new LpMethod( new BinMethod(pow), 1 );
 
-            obj.methods[">"]        = new LpMethod( new BinMethod(compareToGreater) );
-            obj.methods[">="]       = new LpMethod( new BinMethod(compareToGreaterEqual) );
-            obj.methods["<"]        = new LpMethod( new BinMethod(compareToLower) );
-            obj.methods["<="]       = new LpMethod( new BinMethod(compareToLowerEqual) );
-            obj.methods["=="]       = new LpMethod( new BinMethod(equal) );
-            obj.methods["==="]      = new LpMethod( new BinMethod(eq) );
+            obj.methods[">"]        = new LpMethod( new BinMethod(compareToGreater), 1 );
+            obj.methods[">="]       = new LpMethod( new BinMethod(compareToGreaterEqual), 1 );
+            obj.methods["<"]        = new LpMethod( new BinMethod(compareToLower), 1 );
+            obj.methods["<="]       = new LpMethod( new BinMethod(compareToLowerEqual), 1 );
+            obj.methods["=="]       = new LpMethod( new BinMethod(equal), 1 );
+            obj.methods["==="]      = new LpMethod( new BinMethod(eq), 1 );
             obj.methods["between?"] = new LpMethod( new BinMethod(between) );
 
             obj.methods["to_i"] = new LpMethod( new BinMethod(to_i) );

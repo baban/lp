@@ -77,10 +77,12 @@ namespace LP.Object
 
         public LpObject funcall(LpObject self, LpObject[] args, LpObject block = null)
         {
+            Console.WriteLine("block2");
+            Console.WriteLine(block);
             var dstArgs = arguments.putVariables(args, block);
 
             return (method != null) ?
-                method(self, dstArgs) :
+                method(self, dstArgs, block) :
                 evalStatements(self, dstArgs, block);
         }
 
