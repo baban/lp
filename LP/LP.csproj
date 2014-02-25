@@ -47,6 +47,7 @@
     <Compile Include="Error\LpArgumentError.cs" />
     <Compile Include="Error\LpNoMethodError.cs" />
     <Compile Include="Error\LpSyntaxError.cs" />
+    <Compile Include="Error\NameError.cs" />
     <Compile Include="LpParser.cs" />
     <Compile Include="Object\LpArray.cs" />
     <Compile Include="Object\LpBase.cs" />

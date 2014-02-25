@@ -85,6 +85,21 @@ namespace LP.Object
             return obj == this;
         }
 
+        public LpObject varcall(string name)
+        {
+            var variale = variables[name] as LpObject;
+
+            if (variale != null)
+                return variale;
+            try {
+                return funcall( name,null,null );
+            } catch( Error.LpNoMethodError e ){
+                throw new Error.NameError();
+            }
+
+            throw new Error.NameError();
+        }
+
         public LpObject funcall(string name, LpObject[] args, LpObject block=null )
         {
             return funcall(name, this, args, block);

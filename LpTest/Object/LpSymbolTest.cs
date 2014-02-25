@@ -12,51 +12,51 @@ namespace LpTest.Object
     [TestFixture]
     class LpSymbolTest
     {
-        private Type initModule()
+        private Type initParser()
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpObject");
+            Type t = mod.GetType("LP.LpParser");
             return t;
+        }
+
+        private Type getModule(string name)
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType(name);
+            return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
         }
 
         private Type initSymbolModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpSymbol");
-            return t;
+            return getModule("LP.Object.LpSymbol");
         }
 
         private Type initArgumentsModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpArguments");
-            return t;
+            return getModule("LP.Object.LpArguments");
         }
 
         private Type initNumericModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpNumeric");
-            return t;
+            return getModule("LP.Object.LpNumeric");
         }
 
         private Type initIndexerModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpIndexer");
-            return t;
+            return getModule("LP.Util.LpIndexer");
         }
 
         [Test]
         public void initialize1()
         {
-            Type ot = initModule();
-            Type t = initSymbolModule();
+            Type t = getModule("LP.Object.LpSymbol");
             var types = new Type[] { typeof(string) };
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
@@ -66,8 +66,7 @@ namespace LpTest.Object
         [Test]
         public void initializeSymbols()
         {
-            Type ot = initModule();
-            Type t = initSymbolModule();
+            Type t = getModule("LP.Object.LpSymbol");
             var types = new Type[] { typeof(string) };
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
@@ -76,56 +75,38 @@ namespace LpTest.Object
             Console.WriteLine(symbols);
         }
 
-        /*
         [Test]
         public void to_s()
         {
-            Type st = initSymbolModule();
-            var types = new Type[] { typeof(string) };
-            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
-            var so = st.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            Type st = getModule("LP.Object.LpSymbol");
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new string[] { "bbb" });
+            var so = st.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
         [Test]
         public void inspect()
         {
-            Type ot = initModule();
-            Type st = initSymbolModule();
-            var types = new Type[] { typeof(string) };
-            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
+            Type st = getModule("LP.Object.LpSymbol");
+            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new string[] { "bbb" });
 
-            var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
-        */
+
         [Test]
         public void setOp()
         {
-            Type ot = initModule();
-            Type nt = initNumericModule();
-            Type it = initIndexerModule();
-            Type st = initSymbolModule();
+            Type st = getModule("LP.Object.LpSymbol");
 
-            var types = new Type[] { typeof(double) };
-            var v = nt.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.0 });
+            var indexer = initIndexerModule().GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
+            var sym = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new string[] { "bbb" });
 
-            var indexer = it.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, null);
-            /*
-            var prms = new object[] { (string)"hoge", v };
-            it.GetMethod("set", BindingFlags.Static | BindingFlags.Public).Invoke(null, prms);
-            var prms2 = new string[] { (string)"hoge" };
-            var o = it.GetMethod("get", BindingFlags.Static | BindingFlags.Public).Invoke(null, prms2);
-            */
-            var types2 = new Type[] { typeof(string) };
-            var sym = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types2, null).Invoke(null, new string[] { "bbb" });
-
-            //var so = sym.GetType().GetMethod("setOp", BindingFlags.Static | BindingFlags.NonPublic).Invoke(sym, new object[] { sym, v });
-            /*
-            var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
-            Assert.AreEqual("bbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
-             */
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
+            var ret = st.GetMethod("setOp", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { sym, args, null });
+            Assert.AreEqual(3, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
+
         /*
         [Test]
         public void eq()

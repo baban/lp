@@ -75,6 +75,8 @@ namespace LP
                                                 from b in Parse.String(")").Text()
                                                 select a + v + b).Or(Identifier);
 
+        static readonly Parser<string> Varname = Identifier;
+
         // Array, Hash
         static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
                                                  from s in Parse.Ref(() => Stmt)
@@ -150,6 +152,8 @@ namespace LP
         static readonly Parser<string> FuncallBlk = from fcall in FuncallArg
                                                     from blk in Block.Token()
                                                     select fcall+" "+blk;
+
+        static readonly Parser<string> Varcall = Varname;
 
         static readonly Parser<string> Funcall = FuncallBlk.Or(FuncallArg);
 
@@ -336,6 +340,9 @@ namespace LP
                                                            from c in Parse.String("end").Token()
                                                            select defFunction(fname, args, stmts);
 
+        static readonly Parser<Object.LpObject> VARIABLE_CALL = from varname in Varname
+                                                          select Util.LpIndexer.last().varcall(varname);
+
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
                                                         from args in ARGS_CALL
                                                         from blk in BLOCK
@@ -344,8 +351,8 @@ namespace LP
                                                         from args in ARGS_CALL
                                                         select new object[] { (string)fname, (Object.LpObject[])args, null });
 
-        static readonly Parser<Object.LpObject> FUNCTION_CALL = from fvals in METHOD_CALL
-                                                                select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2]);
+        static readonly Parser<Object.LpObject> FUNCTION_CALL = (from fvals in METHOD_CALL
+                                                                select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2])).Or(VARIABLE_CALL);
 
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1]));
 
