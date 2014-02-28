@@ -46,13 +46,13 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
-            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
-            obj.methods["display"] =new LpMethod(  new BinMethod(display) );
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect), 0 );
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s), 0 );
+            obj.methods["display"] =new LpMethod(  new BinMethod(display), 0 );
 
-            obj.methods["="] = new LpMethod( new BinMethod(setOp) );
-            obj.methods["=="] = new LpMethod( new BinMethod(equal) );
-            obj.methods["==="] = new LpMethod( new BinMethod(eq) );
+            obj.methods["="] = new LpMethod( new BinMethod(setOp), 1 );
+            obj.methods["=="] = new LpMethod( new BinMethod(equal), 1 );
+            obj.methods["==="] = new LpMethod( new BinMethod(eq), 1 );
         }
 
         protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
@@ -71,13 +71,12 @@ namespace LP.Object
             return null;
         }
 
-        // TODO: =
         private static LpObject setOp(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
             var env = Util.LpIndexer.last();
             var o = env.setVariable(self.stringValue, v);
-            return o;
+            return v;
         }
 
         private static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
