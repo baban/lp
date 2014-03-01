@@ -55,6 +55,8 @@
     <Compile Include="Object\LpKernelTest.cs" />
     <Compile Include="Object\LpLambdaTest.cs" />
     <Compile Include="Object\LpNlTest.cs" />
+    <Compile Include="Object\LpQuoteTest.cs" />
+    <Compile Include="Object\LpUnquoteTest.cs" />
     <Compile Include="TestTest.cs" />
     <Compile Include="Object\LpArrayTest.cs" />
     <Compile Include="Object\LpBlockTest.cs" />
