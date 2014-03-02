@@ -50,13 +50,20 @@ namespace LP
         // Primary Values
         static readonly Parser<string> Identifier = Parse.Regex("[a-zA-Z_][a-zA-Z0-9_]*");
 
+        static readonly Parser<string> Fname = (from a in Parse.String("(").Text()
+                                                from v in OperandMarks.Or(Identifier)
+                                                from b in Parse.String(")").Text()
+                                                select a + v + b).Or(Identifier);
+
+        static readonly Parser<string> Varname = Identifier;
+
         static readonly Parser<string> Bool = Parse.Regex("true|false").Text();
         static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+").Text();
         static readonly Parser<string> Int = Parse.Regex(@"\d+").Text();
         static readonly Parser<string> Numeric = Decimal.Or(Int);
-        static readonly Parser<string> Symbol = from mark in Parse.String(":").Text()
-                                                from idf in Identifier
-                                                select mark+idf;
+        static readonly Parser<string> Symbol = from mark in Parse.String("'").Text()
+                                                from idf in Stmt
+                                                select idf;
         // TODO: 変数展開実装
         static readonly Parser<string> String = from a in Parse.Char('"')
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
@@ -69,13 +76,6 @@ namespace LP
                                                       select "";
 
         static readonly Parser<string> Comment = InlineComment.Or(BlockComment);
-
-        static readonly Parser<string> Fname = (from a in Parse.String("(").Text()
-                                                from v in OperandMarks.Or(Identifier)
-                                                from b in Parse.String(")").Text()
-                                                select a + v + b).Or(Identifier);
-
-        static readonly Parser<string> Varname = Identifier;
 
         // Array, Hash
         static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
@@ -100,6 +100,15 @@ namespace LP
                                               from pairs in Assoc.Many()
                                               from b in Parse.String("}").Text().Token()
                                               select a + string.Join(",", pairs.Select((pair) => pair[0] + " : " + pair[1])) + b;
+
+        // Macro Values
+        static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
+                                               from idf in Stmt
+                                               select idf;
+
+        static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
+                                                    from idf in Stmt
+                                                    select idf;
 
         // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
@@ -153,16 +162,16 @@ namespace LP
                                                     from blk in Block.Token()
                                                     select fcall+" "+blk;
 
-        static readonly Parser<string> Varcall = Varname;
+        static readonly Parser<string> Varcall = Varname.Token();
 
         static readonly Parser<string> Funcall = FuncallBlk.Or(FuncallArg);
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
                                                  from b in Parse.Char(')').Token()
-                                                 select a + v + b).Or(Primary).Or(Funcall);
+                                                 select a + v + b).Or(Primary).Token();
         // ::
         static readonly Parser<string> Classcall = OperandsChainCallStart(Parse.String("::"), ExpVal, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
         static readonly Parser<string> ExpClasscall = Classcall.Or(ExpVal);
@@ -186,7 +195,7 @@ namespace LP
         static readonly Parser<string> ExpEqual = Parse.ChainOperator(
             Operator("="),
             ExpAssignment,
-            (op, a, b) => a + ".(" + op + ")(" + b + ")");
+            (op, a, b) => "'(" + a + ").(" + op + ")(" + b + ")");
 
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
@@ -199,12 +208,12 @@ namespace LP
                                                 select ags.ToArray();
 
         static readonly Parser<string> AstArg = from ast in Parse.Char('*').Once()
-                                                from id in Identifier
+                                                from id in Varname
                                                 select ast + id;
         static readonly Parser<string> AmpArg = from ast in Parse.Char('&').Once()
-                                                from id in Identifier
+                                                from id in Varname
                                                 select ast + id;
-        static readonly Parser<IEnumerable<string>> SimpleArgList = Parse.DelimitedBy(Identifier, Parse.Char(',').Token());
+        static readonly Parser<IEnumerable<string>> SimpleArgList = Parse.DelimitedBy(Varname, Parse.Char(',').Token());
         static readonly Parser<string[]> ArgList = from ags in
                                                        (from args in SimpleArgList
                                                         from astarg in AstArg
@@ -221,15 +230,6 @@ namespace LP
                                                    from args in ArgList
                                                    from b in Parse.Char(')').Once().Text()
                                                    select args;
-
-        // Macro Values
-        static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
-                                               from idf in Stmt
-                                               select idf;
-
-        static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
-                                                    from idf in Stmt
-                                                    select idf;
 
         // is Statements
         static readonly Parser<string> IfExpr =  Parse.Ref( () => (from a in Parse.Char('(')
