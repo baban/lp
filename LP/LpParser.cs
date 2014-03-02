@@ -61,9 +61,6 @@ namespace LP
         static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+").Text();
         static readonly Parser<string> Int = Parse.Regex(@"\d+").Text();
         static readonly Parser<string> Numeric = Decimal.Or(Int);
-        static readonly Parser<string> Symbol = from mark in Parse.String("'").Text()
-                                                from idf in Stmt
-                                                select idf;
         // TODO: 変数展開実装
         static readonly Parser<string> String = from a in Parse.Char('"')
                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
@@ -103,12 +100,13 @@ namespace LP
 
         // Macro Values
         static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
-                                               from idf in Stmt
+                                               from idf in Varname.Or(Primary).Or(ExpVal)
                                                select idf;
 
         static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
-                                                    from idf in Stmt
+                                                    from idf in Varname.Or(Primary).Or(ExpVal)
                                                     select idf;
+        static readonly Parser<string> Symbol = Quote;
 
         // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
@@ -166,7 +164,7 @@ namespace LP
 
         static readonly Parser<string> Funcall = FuncallBlk.Or(FuncallArg);
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Quote, Comment, Funcall }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
@@ -191,12 +189,10 @@ namespace LP
         // TODO: 代入演算子作成
         static readonly Parser<string> ExpAssignment = ChainExprs;
         // =
-        // TODO: デバッグ足りていない
-        static readonly Parser<string> ExpEqual = Parse.ChainOperator(
-            Operator("="),
-            ExpAssignment,
-            (op, a, b) => "'(" + a + ").(" + op + ")(" + b + ")");
-
+        static readonly Parser<string> ExpEqual = (from vname in Varname.Token()
+                                                   from eq in Parse.String("=").Text().Token()
+                                                   from v in ExpAssignment.Token()
+                                                   select "('"+vname+").("+eq+")("+v+")").Or(ExpAssignment);
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
 
@@ -289,9 +285,17 @@ namespace LP
                                                          from b in Parse.Char('"')
                                                          select Object.LpString.initialize(s);
 
-        static readonly Parser<Object.LpObject> SYMBOL = from m in Parse.String(":").Text()
+        static readonly Parser<Object.LpObject> SYMBOL = from m in Parse.String("'").Text()
                                                          from s in Identifier
                                                          select Object.LpSymbol.initialize(s);
+
+        static readonly Parser<Object.LpObject> QUOTE = from m in Parse.String("'").Text()
+                                                         from s in Varname.Or(Primary).Or(ExpVal)
+                                                         select Object.LpSymbol.initialize(s);
+
+        static readonly Parser<Object.LpObject> QUASI_QUOTE = from m in Parse.String("'").Text()
+                                                              from s in Varname.Or(Primary).Or(ExpVal)
+                                                              select Object.LpSymbol.initialize(s);
 
         static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
                                                         from elms in SepElm.Many()
@@ -323,7 +327,7 @@ namespace LP
                                                          from b in Parse.String("end").Token()
                                                          select Object.LpLambda.initialize( stmts, args );
 
-        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
+        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
                                                          select gs.Select((s) => STMT.Parse(s) ).ToArray();
