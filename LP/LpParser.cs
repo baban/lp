@@ -98,15 +98,18 @@ namespace LP
                                               from b in Parse.String("}").Text().Token()
                                               select a + string.Join(",", pairs.Select((pair) => pair[0] + " : " + pair[1])) + b;
 
+        static readonly Parser<string> Symbol = from qmark in Parse.String(":").Text()
+                                                from idf in Varname
+                                                select qmark+idf;
+
         // Macro Values
         static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
                                                from idf in Varname.Or(Primary).Or(ExpVal)
-                                               select idf;
+                                               select qmark+idf;
 
         static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
                                                     from idf in Varname.Or(Primary).Or(ExpVal)
-                                                    select idf;
-        static readonly Parser<string> Symbol = Quote;
+                                                    select qmark+idf;
 
         // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
@@ -164,7 +167,7 @@ namespace LP
 
         static readonly Parser<string> Funcall = FuncallBlk.Or(FuncallArg);
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Quote, Comment, Funcall }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Quote, Comment, Funcall, Varcall }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
@@ -192,7 +195,7 @@ namespace LP
         static readonly Parser<string> ExpEqual = (from vname in Varname.Token()
                                                    from eq in Parse.String("=").Text().Token()
                                                    from v in ExpAssignment.Token()
-                                                   select "('"+vname+").("+eq+")("+v+")").Or(ExpAssignment);
+                                                   select ":"+vname+".("+eq+")("+v+")").Or(ExpAssignment);
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
 
@@ -285,7 +288,7 @@ namespace LP
                                                          from b in Parse.Char('"')
                                                          select Object.LpString.initialize(s);
 
-        static readonly Parser<Object.LpObject> SYMBOL = from m in Parse.String("'").Text()
+        static readonly Parser<Object.LpObject> SYMBOL = from m in Parse.String(":").Text()
                                                          from s in Identifier
                                                          select Object.LpSymbol.initialize(s);
 
@@ -377,7 +380,7 @@ namespace LP
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 
         public static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
-                                                                 select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => ret = STMT.Parse(s) );
+                                                                 select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => { ret = STMT.Parse(s); return ret; });
 
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
