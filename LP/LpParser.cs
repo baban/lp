@@ -177,6 +177,7 @@ namespace LP
                                                  select a + v + b).Or(Primary).Token();
         // ::
         static readonly Parser<string> Classcall = OperandsChainCallStart(Parse.String("::"), ExpVal, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
+
         static readonly Parser<string> ExpClasscall = Classcall.Or(ExpVal);
 
         // .
@@ -363,6 +364,11 @@ namespace LP
         static readonly Parser<Object.LpObject> FUNCTION_CALL = (from fvals in METHOD_CALL
                                                                 select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2])).Or(VARIABLE_CALL);
 
+        static readonly Parser<Object.LpObject> EXP_VAL = (from a in Parse.Char('(').Token()
+                                                           from v in STMT
+                                                           from b in Parse.Char(')').Token()
+                                                           select v).Or(FUNCTION_CALL).Or(PRIMARY);
+
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1]));
 
         static readonly Parser<Object.LpObject> DEF_CLASS = from a in Parse.String("class").Token()
@@ -372,12 +378,7 @@ namespace LP
                                                             from c in Parse.String("end").Token()
                                                             select defClass(fname, stmts);
 
-        static readonly Parser<Object.LpObject> EXP_VAL = (from a in Parse.Char('(').Token()
-                                                           from v in STMT
-                                                           from b in Parse.Char(')').Token()
-                                                           select v).Or(PRIMARY);
-
-        static readonly Parser<Object.LpObject> EXPR = new Parser<Object.LpObject>[] { FUNCTION_CALL, FUNCALL, EXP_VAL }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<Object.LpObject> EXPR = FUNCALL.Or(EXP_VAL).Token();
 
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 

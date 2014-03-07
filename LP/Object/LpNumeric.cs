@@ -98,56 +98,48 @@ namespace LP.Object
 
         protected static LpObject to_f(LpObject self, LpObject[] args, LpObject block = null)
         {
-            self.doubleValue = self.doubleValue;
             return self;
         }
 
         protected static LpObject to_i(LpObject self, LpObject[] args, LpObject block = null)
         {
-            self.doubleValue = (int)self.doubleValue;
-            return self;
+            return LpNumeric.initialize( (int)self.doubleValue );
         }
 
         private static LpObject plus(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            self.doubleValue += v.doubleValue;
-            return self;
+            return LpNumeric.initialize( (double)(self.doubleValue + v.doubleValue) );
         }
 
         private static LpObject minus(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            self.doubleValue -= v.doubleValue;
-            return self;
+            return LpNumeric.initialize( (double)(self.doubleValue - v.doubleValue) );
         }
 
         private static LpObject mul(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            self.doubleValue *= v.doubleValue;
-            return self;
+            return LpNumeric.initialize((double)(self.doubleValue * v.doubleValue));
         }
 
         private static LpObject div(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            self.doubleValue /= v.doubleValue;
-            return self;
+            return LpNumeric.initialize((double)(self.doubleValue / v.doubleValue));
         }
 
         private static LpObject mod(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            self.doubleValue %= v.doubleValue;
-            return self;
+            return LpNumeric.initialize((double)(self.doubleValue % v.doubleValue));
         }
 
         private static LpObject pow(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            self.doubleValue = Math.Pow( (double)self.doubleValue, (double)v.doubleValue );
-            return self;
+            return LpNumeric.initialize(Math.Pow((double)self.doubleValue, (double)v.doubleValue));
         }
 
         private static LpObject compareToGreater(LpObject self, LpObject[] args, LpObject block = null)
