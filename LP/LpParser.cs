@@ -47,8 +47,10 @@ namespace LP
         // 基本文字一覧
         static readonly Parser<string> Term = Parse.Regex("^[;\n]");
 
+        static readonly Parser<string> ReservedNames = new string[] { "true", "false", "do", "end", "else" }.Select( (s) => Parse.String(s).Text() ).Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+
         // Primary Values
-        static readonly Parser<string> Identifier = Parse.Regex("[a-zA-Z_][a-zA-Z0-9_]*");
+        static readonly Parser<string> Identifier = Parse.Except(Parse.Regex("[a-zA-Z_][a-zA-Z0-9_]*"), ReservedNames );
 
         static readonly Parser<string> Fname = (from a in Parse.String("(").Text()
                                                 from v in OperandMarks.Or(Identifier)
@@ -330,7 +332,10 @@ namespace LP
                                                          from b in Parse.String("end").Token()
                                                          select Object.LpLambda.initialize( stmts, args );
 
-        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA }.Aggregate((seed, nxt) => seed.Or(nxt));
+        static readonly Parser<Object.LpObject> VARIABLE_CALL = from varname in Varname
+                                                                select Util.LpIndexer.last().varcall(varname);
+
+        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
                                                          select gs.Select((s) => STMT.Parse(s) ).ToArray();
@@ -346,9 +351,6 @@ namespace LP
                                                            from stmts in Stmts
                                                            from c in Parse.String("end").Token()
                                                            select defFunction(fname, args, stmts);
-
-        static readonly Parser<Object.LpObject> VARIABLE_CALL = from varname in Varname
-                                                                select Util.LpIndexer.last().varcall(varname);
 
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
                                                         from args in ARGS_CALL
@@ -375,7 +377,7 @@ namespace LP
                                                            from b in Parse.Char(')').Token()
                                                            select v).Or(PRIMARY);
 
-        static readonly Parser<Object.LpObject> EXPR = new Parser<Object.LpObject>[] { FUNCALL, FUNCTION_CALL, VARIABLE_CALL, EXP_VAL }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<Object.LpObject> EXPR = new Parser<Object.LpObject>[] { FUNCTION_CALL, FUNCALL, EXP_VAL }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 
@@ -516,13 +518,7 @@ namespace LP
 
         public static Object.LpObject execute(string ctx)
         {
-            Parser<string> expander = Program;
-            var expanded_code = expander.Parse(ctx);
-            Console.WriteLine("Expanded Code:");
-            Console.WriteLine(expanded_code);
-            var parser = PROGRAM;
-            Console.WriteLine("Exec Program:");
-            return parser.Parse(expanded_code);
+            return PROGRAM.Parse(ctx);
         }
     }
 }
