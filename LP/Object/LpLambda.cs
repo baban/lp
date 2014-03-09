@@ -73,7 +73,9 @@ namespace LP.Object
             // TODO: to_lambda
             //obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
             //obj.methods["display"] = new LpMethod(new BinMethod(display));
-            obj.methods["call"] = new LpMethod(new BinMethod(call));
+            obj.methods["call"] = new LpMethod(new BinMethod(call),-1);
+            obj.methods["bind"] = new LpMethod(new BinMethod(bind), 1);
+            obj.methods["to_method"] = new LpMethod(new BinMethod(to_method), 0);
         }
 
         static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
@@ -101,6 +103,19 @@ namespace LP.Object
                 }
             }
             return ret;
+        }
+
+        static LpObject to_method(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpMethod.initialize(self.arguments, self.statements.ToArray());
+        }
+
+        static Object.LpObject bind(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var name = args[0].stringValue;
+            var ctx = Util.LpIndexer.last();
+            ctx.methods[name] = to_method(self, args, null);
+            return self;
         }
     }
 }

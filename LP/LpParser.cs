@@ -458,13 +458,6 @@ namespace LP
             return Parse.String(operand).Token().Text();
         }
 
-        static Object.LpObject defFunction(string fname, string[] args, string[] stmts)
-        {
-            var o = Object.LpKernel.initialize();
-            o.methods[fname] = Object.LpMethod.initialize(args, stmts);
-            return null;
-        }
-
         static Object.LpObject defClass(string fname, string[] stmts)
         {
             var o = Object.LpKernel.initialize();
