@@ -152,9 +152,9 @@ namespace LP
                                                   from b in Term
                                                   from stmts in Stmts
                                                   from c in Parse.String("end")
-                                                  select "def " + fname + "(" + string.Join(", ", args.ToArray()) + ");" + 
+                                                  select "->(" + string.Join(", ", args.ToArray()) + ") do; " + 
                                                          string.Join( "; ", stmts.ToArray()) + 
-                                                         " end";
+                                                         " end.bind(:" + fname + ")";
 
         static readonly Parser<string> Funcall0 = from idf in Fname
                                                   select idf + "()";
@@ -352,13 +352,6 @@ namespace LP
                                                               from args in ARGS
                                                               from b in Parse.Char(')')
                                                               select args;
-
-        static readonly Parser<Object.LpObject> FUNCTION = from a in Parse.String("def").Token()
-                                                           from fname in Fname.Text()
-                                                           from args in ArgDecl
-                                                           from stmts in Stmts
-                                                           from c in Parse.String("end").Token()
-                                                           select defFunction(fname, args, stmts);
 
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
                                                         from args in ARGS_CALL

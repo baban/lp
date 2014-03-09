@@ -583,16 +583,16 @@ namespace LpTest
             Type t = initParser();
             var p = t.InvokeMember("Function", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa()\nend" });
-            Assert.AreEqual("def aaa(); end", s);
+            Assert.AreEqual("->() do;  end.bind(:aaa)", s);
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa()\n10\n20\n end" });
-            Assert.AreEqual("def aaa();10; 20 end", s);
+            Assert.AreEqual("->() do; 10; 20 end.bind(:aaa)", s);
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa(a)\n10\n end" });
-            Assert.AreEqual("def aaa(a);10 end", s);
+            Assert.AreEqual("->(a) do; 10 end.bind(:aaa)", s);
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def aaa(a,b,c)\n10\n end" });
-            Assert.AreEqual("def aaa(a, b, c);10 end", s);
+            Assert.AreEqual("->(a, b, c) do; 10 end.bind(:aaa)", s);
         }
 
         [Test]
