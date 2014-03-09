@@ -19,28 +19,22 @@ namespace LpTest.Object
             return t;
         }
 
-        private Type initModule()
+        private Type getModule(string name)
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpObject");
+            Type t = mod.GetType(name);
             return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
         }
 
         private Type initNumericModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpNumeric");
-            return t;
-        }
-
-        private Type initArgumentsModule()
-        {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpArguments");
-            return t;
+            return getModule("LP.Object.LpNumeric");
         }
 
         [Test]
@@ -167,7 +161,6 @@ namespace LpTest.Object
         {
             Type ot = initModule();
             Type st = initNumericModule();
-            Type at = initArgumentsModule();
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)10.5 });
 

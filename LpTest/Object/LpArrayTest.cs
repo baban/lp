@@ -20,36 +20,27 @@ namespace LpTest.Object
             return t;
         }
 
-        private Type initModule()
+        private Type getModule(string name)
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpObject");
+            Type t = mod.GetType(name);
             return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
         }
 
         private Type initNumericModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpNumeric");
-            return t;
+            return getModule("LP.Object.LpNumeric");
         }
 
         private Type initArrayModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpArray");
-            return t;
-        }
-
-        private Type initArgumentsModule()
-        {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpArguments");
-            return t;
+            return getModule("LP.Object.LpArray");
         }
 
         [Test]

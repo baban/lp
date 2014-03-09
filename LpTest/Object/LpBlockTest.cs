@@ -20,20 +20,22 @@ namespace LpTest.Object
             return t;
         }
 
-        private Type initModule()
+        private Type getModule(string name)
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpObject");
+            Type t = mod.GetType(name);
             return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
         }
 
         private Type initBlockModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpBlock");
-            return t;
+            return getModule("LP.Object.LpBlock");
         }
 
         [Test]

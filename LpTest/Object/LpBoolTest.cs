@@ -12,28 +12,22 @@ namespace LpTest.Object
     [TestFixture]
     class LpBoolTest
     {
-        private Type initModule()
+        private Type getModule(string name)
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpObject");
+            Type t = mod.GetType(name);
             return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
         }
 
         private Type initBoolModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpBool");
-            return t;
-        }
-
-        private Type initArgumentsModule()
-        {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpArguments");
-            return t;
+            return getModule("LP.Object.LpBool");
         }
 
         [Test]

@@ -12,28 +12,22 @@ namespace LpTest.Object
     [TestFixture]
     class LpClassTest
     {
-        private Type initModule()
+        private Type getModule(string name)
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpObject");
+            Type t = mod.GetType(name);
             return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
         }
 
         private Type initClassModule()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpClass");
-            return t;
-        }
-
-        private Type initArgumentsModule()
-        {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpArguments");
-            return t;
+            return getModule("LP.Object.LpClass");
         }
 
         [Test]
@@ -41,7 +35,6 @@ namespace LpTest.Object
         {
             Type ot = initModule();
             Type cl = initClassModule();
-            Type at = initArgumentsModule();
             var types = new Type[] { typeof(string[]) };
             var o = cl.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { new string[]{  } });
             /*

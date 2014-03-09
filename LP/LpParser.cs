@@ -142,7 +142,7 @@ namespace LP
                                                from c in Parse.String("end").Token()
                                                select start + " " + string.Join("; ", stmts.ToArray()) + " end";
 
-        static readonly Parser<string> Lambda = from h in Parse.String("^").Text()
+        static readonly Parser<string> Lambda = from h in Parse.String("->").Text()
                                                 from blk in Block
                                                 select h+blk;
 

@@ -28,14 +28,6 @@ namespace LpTest.Object
             return t;
         }
 
-        private Type initArgumentsModule()
-        {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpArguments");
-            return t;
-        }
-
         [Test]
         public void print()
         {

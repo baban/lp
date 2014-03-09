@@ -224,8 +224,8 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("Lambda", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "^do 10 end" });
-            Assert.AreEqual("^do 10 end", pm);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "->do 10 end" });
+            Assert.AreEqual("->do 10 end", pm);
         }
 
         [Test]
@@ -738,9 +738,9 @@ namespace LpTest
             o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)":test.(=)('i>10)" });
 
             p = t.InvokeMember("QUASI_QUOTE", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"`mywhile(?test) do  end" });
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"`hoge(?test) do  end" });
             var str = o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
-            Assert.AreEqual("mywhile(i.(>)(10)) do  end", str);
+            Assert.AreEqual("hoge(i.(>)(10)) do  end", str);
         }
 
         [Test]
@@ -805,8 +805,8 @@ namespace LpTest
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"do 10 end" });
             Assert.AreEqual(s, "do 10 end");
 
-            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"^do 10 end" });
-            Assert.AreEqual(s, "^do 10 end");
+            s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"->do 10 end" });
+            Assert.AreEqual(s, "->do 10 end");
         }
 
         [Test]
