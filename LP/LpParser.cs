@@ -106,13 +106,16 @@ namespace LP
 
         // Macro Values
         static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
-                                               from idf in Varname.Or(Primary).Or(ExpVal)
+                                               from idf in Stmt
                                                select qmark+idf;
 
         static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
-                                                    from idf in Varname.Or(Primary).Or(ExpVal)
+                                                    from idf in Stmt
                                                     select qmark+idf;
 
+        static readonly Parser<string> QuestionQuote = from qmark in Parse.String("?").Text()
+                                                       from idf in PRIMARY
+                                                       select idf.stringValue;
         // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
                                                       from args in Parse.Ref(() => ArgList)
@@ -169,7 +172,7 @@ namespace LP
 
         static readonly Parser<string> Funcall = FuncallBlk.Or(FuncallArg);
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Quote, Comment, Funcall, Varcall }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
                                                  from v in Expr
@@ -296,12 +299,16 @@ namespace LP
                                                          select Object.LpSymbol.initialize(s);
 
         static readonly Parser<Object.LpObject> QUOTE = from m in Parse.String("'").Text()
-                                                         from s in Varname.Or(Primary).Or(ExpVal)
-                                                         select Object.LpSymbol.initialize(s);
+                                                        from s in Stmt
+                                                        select Object.LpQuote.initialize(s);
 
-        static readonly Parser<Object.LpObject> QUASI_QUOTE = from m in Parse.String("'").Text()
-                                                              from s in Varname.Or(Primary).Or(ExpVal)
-                                                              select Object.LpSymbol.initialize(s);
+        static readonly Parser<Object.LpObject> QUASI_QUOTE = from m in Parse.String("`").Text()
+                                                              from s in Stmt
+                                                              select Object.LpQuote.initialize(s);
+
+        static readonly Parser<Object.LpObject> QUESTION_QUOTE = from m in Parse.String("?").Text()
+                                                                 from s in Primary
+                                                                 select STMT.Parse(s).funcall("to_s",null);
 
         static readonly Parser<Object.LpObject> ARRAY = from a in Parse.String("[").Text().Token()
                                                         from elms in SepElm.Many()
@@ -336,7 +343,7 @@ namespace LP
         static readonly Parser<Object.LpObject> VARIABLE_CALL = from varname in Varname
                                                                 select Util.LpIndexer.last().varcall(varname);
 
-        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL }.Aggregate((seed, nxt) => seed.Or(nxt));
+        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
                                                          select gs.Select((s) => STMT.Parse(s) ).ToArray();

@@ -40,10 +40,10 @@ namespace LP.Object
         }
 
         private static void setMethods( LpObject obj ) {
-            obj.methods["value"] = new LpMethod(new BinMethod(value), 0);
+            obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
         }
 
-        private static LpObject value(LpObject self, LpObject[] args, LpObject block = null)
+        private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpString.initialize( self.stringValue );
         }
