@@ -47,7 +47,7 @@ namespace LP
         // 基本文字一覧
         static readonly Parser<string> Term = Parse.Regex("^[;\n]");
 
-        static readonly Parser<string> ReservedNames = new string[] { "true", "false", "do", "end", "else" }.Select( (s) => Parse.String(s).Text() ).Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> ReservedNames = new string[] { "true", "false", "do", "end", "else", "def" }.Select( (s) => Parse.String(s).Text() ).Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         // Primary Values
         static readonly Parser<string> Identifier = Parse.Except(Parse.Regex("[a-zA-Z_][a-zA-Z0-9_]*"), ReservedNames );
@@ -152,7 +152,7 @@ namespace LP
                                                   from b in Term
                                                   from stmts in Stmts
                                                   from c in Parse.String("end")
-                                                  select "->(" + string.Join(", ", args.ToArray()) + ") do; " + 
+                                                  select "->(" + string.Join(", ", args.ToArray()) + ") do " + 
                                                          string.Join( "; ", stmts.ToArray()) + 
                                                          " end.bind(:" + fname + ")";
 
@@ -334,7 +334,7 @@ namespace LP
                                                         from b in Parse.String("end").Token()
                                                         select Object.LpBlock.initialize( stmts, args );
 
-        static readonly Parser<Object.LpObject> LAMBDA = from head in Parse.Char('^')
+        static readonly Parser<Object.LpObject> LAMBDA = from head in Parse.String("->")
                                                          from args in BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1)
                                                          from stmts in Stmts
                                                          from b in Parse.String("end").Token()
@@ -469,16 +469,6 @@ namespace LP
         {
             Object.LpObject hash = Object.LpHash.initialize();
             return hash;
-        }
-
-        static Object.LpObject doStmts(string[] stmts)
-        {
-            Object.LpObject ret=null;
-            foreach (var stmt in stmts)
-            {
-                ret = STMT.Parse(stmt);
-            }
-            return ret;
         }
 
         // 単体テスト時にアクセスしやすいように
