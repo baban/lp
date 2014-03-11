@@ -334,7 +334,7 @@ namespace LP
                                                         from b in Parse.String("end").Token()
                                                         select Object.LpBlock.initialize( stmts, args );
 
-        static readonly Parser<Object.LpObject> LAMBDA = from head in Parse.String("->")
+        static readonly Parser<Object.LpObject> LAMBDA = from head in Parse.String("->").Token()
                                                          from args in BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1)
                                                          from stmts in Stmts
                                                          from b in Parse.String("end").Token()

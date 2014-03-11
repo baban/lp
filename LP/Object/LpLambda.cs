@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sprache;
+using System.Diagnostics;
 
 namespace LP.Object
 {
@@ -91,7 +92,7 @@ namespace LP.Object
             return null;
         }
 
-        static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
+        public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
             LpObject ret = null;
             foreach (string stmt in self.statements) {
@@ -114,7 +115,7 @@ namespace LP.Object
         {
             var name = args[0].stringValue;
             var ctx = Util.LpIndexer.last();
-            ctx.methods[name] = to_method(self, args, null);
+            ctx.methods[name] = self;
             return self;
         }
     }

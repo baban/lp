@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LP.Object
 {
@@ -108,11 +109,16 @@ namespace LP.Object
         public LpObject funcall(string name, LpObject self, LpObject[] args, LpObject block )
         {
             name = trueFname(name);
-            LpMethod m = null;
             // normal search
-            m = methods[name] as LpMethod;
-            if ( null!= m )
-                return m.funcall(self, args, block);
+            LpMethod m = null;
+            if (null != methods[name])
+            {
+                if ( null!= (m = methods[name] as LpMethod)){
+                    return m.funcall(self, args, block);
+                }else{
+                    return Object.LpLambda.call((LpObject)methods[name], args, block);
+                }
+            }
 
             // method_missing
             m = methods["method_missing"] as LpMethod;
@@ -252,18 +258,5 @@ namespace LP.Object
         {
             return LpString.initialize(self.ToString());
         }
-        /*
-        // TODO: 全く未実装
-        private static LpObject super_(LpObject self, LpObject[] args, LpObject block = null)
-        {
-            var superclass = self.superclass;
-            if (superclass != null)
-            {
-                // 自分の文脈を取得＆同じメソッドを呼び出し
-            }
-            return null;
-        }
-         */
-
     }
 }

@@ -73,6 +73,7 @@ namespace LP.Object
             // TODO: to_method
             // TODO: to_lambda
             // TODO: call
+            //obj.methods["call"] = new LpMethod(new BinMethod(call), -1);
         }
 
         public LpObject funcall(LpObject self, LpObject[] args, LpObject block = null)

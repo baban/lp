@@ -53,7 +53,7 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[]{ typeof(string) }, null).Invoke(null, new object[]{ (string)"10" });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
         }
-        /*
+
         [Test]
         public void to_s()
         {
@@ -61,7 +61,7 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
 
             // 引数なし
-            var prms = new object[] { o, o };
+            var prms = new object[] { o, null, null };
             var so = t.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, prms);
             var str = so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
             var r = new Regex(@"<obj \w+?>");
@@ -75,32 +75,8 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
 
             // 引数なし
-            var prms = new object[] { o, o };
+            var prms = new object[] { o, null, null };
             var so = t.GetMethod("display", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, prms);
-        }
-
-        [Test]
-        public void execute()
-        {
-            Type t = initBlockModule();
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
-
-            // 引数なし
-            var prms = new object[] { o, o };
-            var so = t.GetMethod("execute", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, prms);
-        }
-
-        [Test]
-        public void execute1()
-        {
-            Type t = initBlockModule();
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"10" });
-
-            // 引数なし
-            var prms = new object[] { o, o };
-            var so = t.GetMethod("execute", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, prms);
-            Assert.AreEqual("LP.Object.LpObject", so.GetType().ToString());
-            Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
         [Test]
@@ -112,10 +88,9 @@ namespace LpTest.Object
             var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
 
             // 引数なし
-            var prms = new object[] { "call", null };
+            var prms = new object[] { "call", null, null };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
-         */
     }
 }

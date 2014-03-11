@@ -52,6 +52,20 @@ namespace LpTest.Object
         }
 
         [Test]
+        public void call()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("LAMBDA", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var block = " ->() do 10; end ";
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+
+            // 引数なし
+            var prms = new object[] { "call", null, null };
+            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
         public void bind()
         {
             Type t = initLambdaModule();
