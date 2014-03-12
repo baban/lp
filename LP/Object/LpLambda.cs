@@ -95,6 +95,8 @@ namespace LP.Object
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
             LpObject ret = null;
+            Util.LpIndexer.push( self );
+            self.arguments.setVariables( self, args, block );
             foreach (string stmt in self.statements) {
                 ret = LpParser.STMT.Parse(stmt);
                 if (control_status == (int)LpBase.CONTROL_CODE.RETURN)
@@ -103,6 +105,7 @@ namespace LP.Object
                     return ret;
                 }
             }
+            Util.LpIndexer.pop();
             return ret;
         }
 

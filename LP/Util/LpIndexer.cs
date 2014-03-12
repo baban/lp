@@ -34,15 +34,17 @@ namespace LP.Util
             return context;
         }
 
-        public static Object.LpObject pop(Object.LpObject context)
+        public static Object.LpObject pop()
         {
             return contextStack.Dequeue();
         }
 
         public static Object.LpObject last()
         {
-            return Object.LpKernel.initialize();
-            //return contextStack.Last();
+            if( contextStack.Count()==0 )
+                return Object.LpKernel.initialize();
+
+            return contextStack.Last();
         }
     }
 }

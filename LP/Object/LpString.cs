@@ -46,7 +46,6 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            Console.WriteLine("setMethods");
             obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
             obj.methods["to_s"]    = new LpMethod( new BinMethod(to_s) );
             obj.methods["display"] = new LpMethod( new BinMethod(display) );
