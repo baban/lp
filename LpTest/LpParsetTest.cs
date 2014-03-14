@@ -12,7 +12,16 @@ namespace LpTest
     [TestFixture]
     class ParserTest
     {
-        private Type initParser() {
+        private Type getModule(string name)
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType(name);
+            return t;
+        }
+
+        private Type initParser()
+        {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
             Type t = mod.GetType("LP.LpParser");
@@ -1028,6 +1037,7 @@ namespace LpTest
         [Test]
         public void FUNCTION_CALL()
         {
+            getModule("LP.Util.LpIndexer").GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[] { });
             Type t = initParser();
             var p = t.InvokeMember("FUNCTION_CALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "print(10)" });
@@ -1164,6 +1174,7 @@ namespace LpTest
         [Test]
         public void STMT4()
         {
+            getModule("LP.Util.LpIndexer").GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[] { });
             Type t = initParser();
             var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "print(10)" });
@@ -1196,13 +1207,12 @@ namespace LpTest
         [Test]
         public void STMT7()
         {
+            getModule("LP.Util.LpIndexer").GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[] { });
             Type t = initParser();
             var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var code = "->() do _if(true,do 10 end,do 30 end) end.bind(:hoge); hoge();";
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, code });
 
-            code = "->() do print(10) end.bind(:hoge)";
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, code });
+            var code = "->() do 10; end.bind(:hoge)";
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, code });
             code = "hoge()";
             o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, code });
         }
@@ -1267,11 +1277,12 @@ namespace LpTest
         [Test]
         public void PROGRAM4()
         {
+            getModule("LP.Util.LpIndexer").GetMethod("initialize", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[] { });
             Type t = initParser();
             var p = t.InvokeMember("PROGRAM", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge(a)\nend;hoge(10)" });
 
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge2(a)\n print(a)\n end;hoge2(10)" });
+            //o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge2(a)\n print(a)\n end;hoge2(10)" });
         }
         
         [Test]

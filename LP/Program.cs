@@ -41,6 +41,7 @@ namespace LP
                 return 0;
             }
             string code = readFile(argv[0]);
+            LP.Util.LpIndexer.initialize();
             LpParser.execute(code);
             return 0;
         }

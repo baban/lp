@@ -11,6 +11,11 @@ namespace LP.Util
         public static Stack<Object.LpObject> contextStack = new Stack<Object.LpObject>();
         public static Object.LpObject currentContext = null;
 
+        public static void initialize()
+        {
+            contextStack = new Stack<Object.LpObject>();
+        }
+
         public static Object.LpObject set(string name, Object.LpObject value)
         {
             return currentContext.setVariable(name, value);
@@ -24,6 +29,7 @@ namespace LP.Util
         public static Object.LpObject push(Object.LpObject context)
         {
             contextStack.Push(context);
+            currentContext = context;
             return context;
         }
 
@@ -34,10 +40,18 @@ namespace LP.Util
 
         public static Object.LpObject last()
         {
-            if (contextStack.Count() == 0)
-                return Object.LpKernel.initialize();
+            if (contextStack.Count() == 0) {
+                currentContext = Object.LpKernel.initialize();
+                return currentContext;
+            } else {
+                currentContext = contextStack.Last();
+                return currentContext;
+            }
+        }
 
-            return contextStack.Last();
+        public static int depth()
+        {
+            return contextStack.Count();
         }
     }
 }
