@@ -8,15 +8,8 @@ namespace LP.Util
 {
     class LpIndexer
     {
-        public static Queue<Object.LpObject> contextStack = new Queue<Object.LpObject>();
+        public static Stack<Object.LpObject> contextStack = new Stack<Object.LpObject>();
         public static Object.LpObject currentContext = null;
-
-        public static void initialize()
-        {
-            Object.LpObject kernel = Object.LpObject.initialize();
-            currentContext = kernel;
-            contextStack.Enqueue(kernel);
-        }
 
         public static Object.LpObject set(string name, Object.LpObject value)
         {
@@ -30,18 +23,18 @@ namespace LP.Util
 
         public static Object.LpObject push(Object.LpObject context)
         {
-            contextStack.Enqueue(context);
+            contextStack.Push(context);
             return context;
         }
 
         public static Object.LpObject pop()
         {
-            return contextStack.Dequeue();
+            return contextStack.Pop();
         }
 
         public static Object.LpObject last()
         {
-            if( contextStack.Count()==0 )
+            if (contextStack.Count() == 0)
                 return Object.LpKernel.initialize();
 
             return contextStack.Last();

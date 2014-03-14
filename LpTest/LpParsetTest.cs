@@ -559,13 +559,13 @@ namespace LpTest
             Type t = initParser();
             var p = t.InvokeMember("IfStmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10)end" });
-            Assert.AreEqual("if(10,do  end)", s);
+            Assert.AreEqual("_if(10,do  end)", s);
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10) 10; end" });
-            Assert.AreEqual("if(10,do 10 end)", s);
+            Assert.AreEqual("_if(10,do 10 end)", s);
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10) 10; 20; end" });
-            Assert.AreEqual("if(10,do 10; 20 end)", s);
+            Assert.AreEqual("_if(10,do 10; 20 end)", s);
         }
 
         [Test]
@@ -574,7 +574,7 @@ namespace LpTest
             Type t = initParser();
             var p = t.InvokeMember("IfStmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10) 10; else 10; end" });
-            Assert.AreEqual("if(10,do 10 end,do 10 end)", s);
+            Assert.AreEqual("_if(10,do 10 end,do 10 end)", s);
         }
 
         [Test]
@@ -816,6 +816,16 @@ namespace LpTest
             var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge()\nend" });
             Assert.AreEqual(s, "->() do  end.bind(:hoge)");
+        }
+
+        [Test]
+        public void Stmt5()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var txt = "def hoge()\nif( true )\n 10\n else\n 30\n end\nend";
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)txt });
+            Assert.AreEqual(s, "->() do _if(true,do 10 end,do 30 end) end.bind(:hoge)");
         }
 
         /*
@@ -1184,6 +1194,20 @@ namespace LpTest
         }
 
         [Test]
+        public void STMT7()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var code = "->() do _if(true,do 10 end,do 30 end) end.bind(:hoge); hoge();";
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, code });
+
+            code = "->() do print(10) end.bind(:hoge)";
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, code });
+            code = "hoge()";
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, code });
+        }
+
+        [Test]
         public void VARIABLE_CALL()
         {
             Type t = initParser();
@@ -1245,10 +1269,11 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("PROGRAM", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            //o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"print(10)" });
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge(a)\nend;hoge(10)" }); 
-        }
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge(a)\nend;hoge(10)" });
 
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"def hoge2(a)\n print(a)\n end;hoge2(10)" });
+        }
+        
         [Test]
         public void Parse_Error()
         {

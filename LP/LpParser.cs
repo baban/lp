@@ -258,12 +258,12 @@ namespace LP
         static readonly Parser<string> IfStmt1 = from expr in IfStart
                                                  from stmts1 in Stmts
                                                  from c in IfEnd
-                                                 select "if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end)";
+                                                 select "_if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end)";
         static readonly Parser<string> IfStmt2 = from expr in IfStart
                                                  from stmts1 in Stmts
                                                  from stmts2 in ElseStmts
                                                  from c in IfEnd
-                                                 select "if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end,do " + string.Join("; ", stmts2.ToArray()) + " end)";
+                                                 select "_if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end,do " + string.Join("; ", stmts2.ToArray()) + " end)";
         static readonly Parser<string> IfStmt = IfStmt2.Or(IfStmt1);
 
         static readonly Parser<string> StatCollection = Function.Or(IfStmt);
@@ -383,7 +383,11 @@ namespace LP
         public static readonly Parser<Object.LpObject> STMT = EXPR;
 
         public static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
-                                                                 select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) => { ret = STMT.Parse(s); return ret; });
+                                                                 select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) =>{
+                                                                     Console.WriteLine(s);
+                                                                     ret = STMT.Parse(s);
+                                                                     return ret;
+                                                                 });
 
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,

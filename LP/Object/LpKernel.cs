@@ -62,6 +62,7 @@ namespace LP.Object
 
             // Lv1
             obj.methods["print"] = new LpMethod(new BinMethod(print), 1);
+            obj.methods["_if"] = new LpMethod(new BinMethod(if_), 3);
             obj.methods["if"] = new LpMethod(new BinMethod(if_), 3);
             // TODO: sleep
             //obj.methods["while"] = new LpMethod( new BinMethod(print) ); // マクロで再現
@@ -151,7 +152,7 @@ namespace LP.Object
                 {
                     control_status = (int)LpBase.CONTROL_CODE.NONE;
                     break;
-                }
+                } 
                 // next文
                 if (control_status == (int)LpBase.CONTROL_CODE.NEXT)
                 {
