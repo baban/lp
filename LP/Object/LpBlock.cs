@@ -90,6 +90,7 @@ namespace LP.Object
         {
             LpObject ret = LpNl.initialize();
             foreach( string stmt in self.statements ){
+                Console.WriteLine(stmt);
                 ret = LpParser.STMT.Parse(stmt);
                 if (control_status == (int)LpBase.CONTROL_CODE.RETURN) {
                     return ret;

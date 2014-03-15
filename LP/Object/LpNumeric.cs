@@ -168,7 +168,9 @@ namespace LP.Object
 
         private static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
         {
+            Console.WriteLine("==");
             var o = args[0];
+            LpBool.initialize(self.doubleValue == o.doubleValue).funcall("display",null);
             return LpBool.initialize(self.doubleValue == o.doubleValue);
         }
 

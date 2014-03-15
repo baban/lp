@@ -48,54 +48,52 @@ namespace LP.Object
         {
             // TODO: &
             // TODO: |
-            /*
-            obj.methods["||"] = new LpMethod( new BinMethod(andOp) );
-            obj.methods["&&"] = new LpMethod( new BinMethod(orOp) );
+            obj.methods["||"] = new LpMethod( new BinMethod(andOp), 1 );
+            obj.methods["&&"] = new LpMethod( new BinMethod(orOp), 1 );
 
-            obj.methods["=="] = new LpMethod( new BinMethod(equal) );
-            obj.methods["==="] = new LpMethod( new BinMethod(eq) );
+            obj.methods["=="] = new LpMethod( new BinMethod(equal), 1 );
+            obj.methods["==="] = new LpMethod( new BinMethod(eq), 1 );
 
-            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
-            obj.methods["display"] = new LpMethod( new BinMethod(display) );
-            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
-             */
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s), 0 );
+            obj.methods["display"] = new LpMethod( new BinMethod(display), 0 );
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect), 0 );
         }
 
-        private static LpObject andOp(LpObject self, LpObject args)
+        private static LpObject andOp(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize((bool)self.boolValue && (bool)o.boolValue);
         }
 
-        private static LpObject orOp(LpObject self, LpObject args)
+        private static LpObject orOp(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize((bool)self.boolValue || (bool)o.boolValue);
         }
 
-        private static LpObject equal(LpObject self, LpObject args)
+        private static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize(self.boolValue == o.boolValue);
         }
 
-        private static LpObject eq(LpObject self, LpObject args)
+        private static LpObject eq(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var o = args.arrayValues.ElementAt(0);
+            var o = args[0];
             return LpBool.initialize(self.boolValue == o.boolValue);
         }
 
-        protected static LpObject to_s(LpObject self, LpObject args)
+        protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpString.initialize( self.boolValue==true ? "true" : "false" );
         }
 
-        protected static LpObject inspect(LpObject self, LpObject args)
+        protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
             return to_s(self, args);
         }
 
-        protected static LpObject display(LpObject self, LpObject args)
+        protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = to_s(self, args);
             Console.WriteLine(v.stringValue);

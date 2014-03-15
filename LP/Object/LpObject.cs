@@ -30,7 +30,7 @@ namespace LP.Object
             {
                 LpObject obj = new LpObject();
                 setMethods(obj);
-                obj.superclass = null;
+                obj.superclass = LpKernel.initialize();
                 obj.class_name = className;
                 classes[className] = obj;
                 return obj.Clone();

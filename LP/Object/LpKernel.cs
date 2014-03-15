@@ -115,7 +115,7 @@ namespace LP.Object
         {
             var expr = args[0];
             Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
-            if (expr != null && expr.boolValue != false)
+            if (expr != null && expr.boolValue != null && expr.boolValue==true)
             {
                 return fun(args[1]);
             }

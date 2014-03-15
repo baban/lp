@@ -20,6 +20,7 @@ namespace LP
     // Block読み出し
     // TODO: インスタンス変数
     // TODO: グローバル変数
+    // TODO: コメントはできるだけあとに残す
     class LpParser
     {
         // Expressions
@@ -137,17 +138,19 @@ namespace LP
                                                      from args in FenceArgs.Token()
                                                      select "do |" + string.Join(", ", args) + "|";
 
-        static readonly Parser<string> Block = from start in BlockStart3.Or(BlockStart2).Or(BlockStart1)
-                                               from stmts in Parse.Ref(() => Stmts)
-                                               from c in Parse.String("end").Token()
-                                               select start + " " + string.Join("; ", stmts.ToArray()) + " end";
+        static readonly Parser<string> BlockStmt = from start in BlockStart3.Or(BlockStart2).Or(BlockStart1)
+                                                   from stmts in Parse.Ref(() => Stmts)
+                                                   from c in Parse.String("end").Token()
+                                                   select start + " " + string.Join("; ", stmts.ToArray()) + " end";
+
+        static readonly Parser<string> Block = BlockStmt;
 
         static readonly Parser<string> Lambda = from h in Parse.String("->").Text()
-                                                from blk in Block
+                                                from blk in BlockStmt
                                                 select h+blk;
 
         static readonly Parser<string> Function = from a in Parse.String("def").Token()
-                                                  from fname in Identifier
+                                                  from fname in Fname
                                                   from args in ArgDecl
                                                   from b in Term
                                                   from stmts in Stmts
@@ -328,17 +331,18 @@ namespace LP
         static readonly Parser<object[]> BLOCK_START3 = from args in BlaketArgs.Token()
                                                         from _do in Parse.String("do").Token()
                                                         select new object[] { args, true };
+        static readonly Parser<object[]> BLOCK_START = BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1);
+        static readonly Parser<object[]> BLOCK_STMT = from args in BLOCK_START
+                                                      from stmts in Stmts
+                                                      from b in Parse.String("end").Token()
+                                                      select new object[]{ args, stmts };
 
-        static readonly Parser<Object.LpObject> BLOCK = from args in BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1)
-                                                        from stmts in Stmts
-                                                        from b in Parse.String("end").Token()
-                                                        select Object.LpBlock.initialize( stmts, args );
+        static readonly Parser<Object.LpObject> BLOCK = from blk in BLOCK_STMT
+                                                        select Object.LpBlock.initialize( (string[])blk[1], (object[])(blk[0]) );
 
         static readonly Parser<Object.LpObject> LAMBDA = from head in Parse.String("->").Token()
-                                                         from args in BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1)
-                                                         from stmts in Stmts
-                                                         from b in Parse.String("end").Token()
-                                                         select Object.LpLambda.initialize( stmts, args );
+                                                         from blk in BLOCK_STMT
+                                                         select Object.LpLambda.initialize( (string[])blk[1], (object[])(blk[0]) );
 
         static readonly Parser<Object.LpObject> VARIABLE_CALL = from varname in Varname
                                                                 select Util.LpIndexer.last().varcall(varname);
