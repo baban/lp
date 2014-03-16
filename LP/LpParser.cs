@@ -132,16 +132,17 @@ namespace LP
                                                      select _do;
         static readonly Parser<string> BlockStart2 = from args in BlaketArgs
                                                      from _do in Parse.String("do").Token()
-                                                     select "(" + string.Join(", ", args) + ") do";
+                                                     select string.Format("({0}) do", string.Join(", ", args));
         static readonly Parser<string> BlockStart3 = from _do in Parse.String("do")
                                                      from ws in Parse.WhiteSpace.Many()
                                                      from args in FenceArgs.Token()
-                                                     select "do |" + string.Join(", ", args) + "|";
+                                                     select string.Format("do |{0}|", string.Join(", ", args));
+        static readonly Parser<string> BlockStart = BlockStart3.Or(BlockStart2).Or(BlockStart1);
 
-        static readonly Parser<string> BlockStmt = from start in BlockStart3.Or(BlockStart2).Or(BlockStart1)
+        static readonly Parser<string> BlockStmt = from start in BlockStart
                                                    from stmts in Parse.Ref(() => Stmts)
                                                    from c in Parse.String("end").Token()
-                                                   select start + " " + string.Join("; ", stmts.ToArray()) + " end";
+                                                   select string.Format( "{0} {1} end", start, string.Join("; ", stmts.ToArray()) );
 
         static readonly Parser<string> Block = BlockStmt;
 
@@ -212,9 +213,12 @@ namespace LP
         static readonly Parser<string> Arg = Parse.Ref(() => Stmt);
         static readonly Parser<string[]> ZeroArgs = from sps in Parse.WhiteSpace.Many()
                                                     select new string[]{};
-        static readonly Parser<string[]> Args = from ags in Parse.DelimitedBy(Arg, Parse.Char(',').Token()).Or(ZeroArgs)
+        static readonly Parser<string[]> Args = from ags in Parse.DelimitedBy(Arg, Parse.Char(',')).Or(ZeroArgs)
                                                 select ags.ToArray();
-
+        static readonly Parser<string[]> ArgsCall = from a in Parse.Char('(')
+                                                    from ags in Args
+                                                    from b in Parse.Char(')')
+                                                    select ags;
         static readonly Parser<string> AstArg = from ast in Parse.Char('*').Once()
                                                 from id in Varname
                                                 select ast + id;
@@ -261,12 +265,12 @@ namespace LP
         static readonly Parser<string> IfStmt1 = from expr in IfStart
                                                  from stmts1 in Stmts
                                                  from c in IfEnd
-                                                 select "_if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end)";
+                                                 select string.Format("_if({0},do {1} end)", expr, string.Join("; ", stmts1.ToArray()));
         static readonly Parser<string> IfStmt2 = from expr in IfStart
                                                  from stmts1 in Stmts
                                                  from stmts2 in ElseStmts
                                                  from c in IfEnd
-                                                 select "_if(" + expr + ",do " + string.Join("; ", stmts1.ToArray()) + " end,do " + string.Join("; ", stmts2.ToArray()) + " end)";
+                                                 select string.Format("_if({0},do {1} end,do {2} end)", expr, string.Join("; ", stmts1.ToArray()), string.Join("; ", stmts2.ToArray()));
         static readonly Parser<string> IfStmt = IfStmt2.Or(IfStmt1);
 
         static readonly Parser<string> StatCollection = Function.Or(IfStmt);
@@ -349,8 +353,10 @@ namespace LP
 
         public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
+        static readonly Func<string[], Object.LpObject[]> ARGS_PARSE = (gs) => gs.Select((s) => { return STMT.Parse(s); }).ToArray();
+
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
-                                                         select gs.Select((s) => STMT.Parse(s) ).ToArray();
+                                                         select gs.Select((s) => { return STMT.Parse(s); }).ToArray();
 
         static readonly Parser<Object.LpObject[]> ARGS_CALL = from a in Parse.Char('(')
                                                               from args in ARGS
@@ -358,12 +364,12 @@ namespace LP
                                                               select args;
 
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
-                                                        from args in ARGS_CALL
+                                                        from args in ArgsCall
                                                         from blk in BLOCK
-                                                        select new object[] { (string)fname, (Object.LpObject[])args, blk }).Or(
+                                                        select new object[] { (string)fname, (Object.LpObject[])ARGS_PARSE(args), blk }).Or(
                                                         from fname in Fname
-                                                        from args in ARGS_CALL
-                                                        select new object[] { (string)fname, (Object.LpObject[])args, null });
+                                                        from args in ArgsCall
+                                                        select new object[] { (string)fname, (Object.LpObject[])ARGS_PARSE(args), null });
 
         static readonly Parser<Object.LpObject> FUNCTION_CALL = (from fvals in METHOD_CALL
                                                                 select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2])).Or(VARIABLE_CALL);
@@ -388,7 +394,6 @@ namespace LP
 
         public static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
                                                                  select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) =>{
-                                                                     Console.WriteLine(s);
                                                                      ret = STMT.Parse(s);
                                                                      return ret;
                                                                  });
@@ -506,6 +511,47 @@ namespace LP
         {
             Console.WriteLine(ctx);
             return ARGS.Parse(ctx);
+        }
+
+        static void benchmarkString(Parser<string> psr, string ctx, int max=1000)
+        {
+            Console.WriteLine("benckmark:start");
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            for( int i=0; i<max; i++ ){
+                psr.Parse(ctx);
+            }
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed.TotalSeconds);
+            Console.WriteLine("benckmark:end");
+        }
+
+        static void benchmarkStrings(Parser<string[]> psr, string ctx, int max = 1000)
+        {
+            Console.WriteLine("benckmark:start");
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            for (int i = 0; i < max; i++)
+            {
+                psr.Parse(ctx);
+            }
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed.TotalSeconds);
+            Console.WriteLine("benckmark:end");
+        }
+
+        static void benchmarkObject(Parser<Object.LpObject> psr, string ctx, int max = 1000)
+        {
+            Console.WriteLine("benckmark:start");
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            for (int i = 0; i < max; i++)
+            {
+                psr.Parse(ctx);
+            }
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed.TotalSeconds);
+            Console.WriteLine("benckmark:end");
         }
 
         public static Object.LpObject execute(string ctx)
