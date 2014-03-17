@@ -62,31 +62,27 @@ namespace LP.Object
             // TODO: each
             // TODO: map
             // TODO: join
-            //obj.methods["+"] = new LpMethod( new  BinMethod(concat) );
-            //obj.methods["concat"] = new LpMethod(new BinMethod(concat));
-            //obj.methods["last"] = new LpMethod( new BinMethod(last) );
-            obj.methods["push"] = new LpMethod(new BinMethod(push));
-            /*
-            obj.methods["<<"] = new LpMethod( new BinMethod(push) );
-            obj.methods["at"] = new LpMethod( new BinMethod(at) );
-            obj.methods["car"] = new LpMethod(new BinMethod(first));
-            obj.methods["first"] = new LpMethod( new BinMethod(first) );
-            obj.methods["size"] = new LpMethod( new BinMethod(len) );
-            obj.methods["len"] = new LpMethod( new BinMethod(len) );
-             */
-            /*
-            obj.methods["=="] = new BinMethod(equal);
-            obj.methods["==="] = new BinMethod(eq);
+            obj.methods["+"] = new LpMethod( new  BinMethod(concat), 1 );
+            obj.methods["concat"] = new LpMethod(new BinMethod(concat), 1);
+            obj.methods["last"] = new LpMethod( new BinMethod(last), 0 );
+            obj.methods["push"] = new LpMethod(new BinMethod(push), 1);
+            obj.methods["<<"] = new LpMethod( new BinMethod(push), 0 );
+            obj.methods["at"] = new LpMethod( new BinMethod(at), 1 );
+            obj.methods["car"] = new LpMethod(new BinMethod(first), 0);
+            obj.methods["first"] = new LpMethod( new BinMethod(first), 0 );
+            obj.methods["size"] = new LpMethod( new BinMethod(len), 0 );
+            obj.methods["len"] = new LpMethod( new BinMethod(len), 0 );
+            //obj.methods["=="] = new LpMethod( new BinMethod(equal), 1);
+            //obj.methods["==="] = new LpMethod( new BinMethod(eq), 1 );
 
-            obj.methods["display"] = new BinMethod(display);
-            obj.methods["inspect"] = new BinMethod(inspect);
-             */
-            //obj.methods["to_s"] = new LpMethod(new BinMethod(to_s));
+            obj.methods["display"] = new LpMethod( new BinMethod(display), 0);
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect), 0);
+            obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
         }
 
-        private static LpObject at(LpObject self, LpObject args, LpObject block = null)
+        private static LpObject at(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var arg = args.arrayValues.First();
+            var arg = args[0];
             var v = self.arrayValues.ElementAt( (int)arg.doubleValue );
             return v;
         }
@@ -107,6 +103,19 @@ namespace LP.Object
             var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue.ToString() ).ToArray();
             var s = string.Join(", ",vs);
             return LpString.initialize( "["+s+"]" );
+        }
+
+        static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue.ToString()).ToArray();
+            var s = string.Join(", ", vs);
+            return LpString.initialize("[" + s + "]");
+        }
+
+        static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            Console.WriteLine( to_s(self, args, block).stringValue );
+            return LpNl.initialize();
         }
 
         static LpObject len(LpObject self, LpObject[] args, LpObject block = null)

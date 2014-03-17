@@ -156,21 +156,20 @@ namespace LP
                                                   from b in Term
                                                   from stmts in Stmts
                                                   from c in Parse.String("end")
-                                                  select "->(" + string.Join(", ", args.ToArray()) + ") do " + 
-                                                         string.Join( "; ", stmts.ToArray()) + 
-                                                         " end.bind(:" + fname + ")";
+                                                  select string.Format("->({0}) do {1} end.bind(:{2})", string.Join(", ", args.ToArray()), 
+                                                  string.Join("; ", stmts.ToArray()), fname );
 
         static readonly Parser<string> Funcall0 = from idf in Fname
                                                   select idf + "()";
         static readonly Parser<string> FuncallArg = from idf in Fname
-                                                    from c in Parse.Char('(').Once().Text()
+                                                    from c in Parse.Char('(').Once()
                                                     from args in Args
-                                                    from d in Parse.Char(')').Once().Text()
-                                                    select idf + "(" + string.Join(", ", args.ToArray()) + ")";
+                                                    from d in Parse.Char(')').Once()
+                                                    select string.Format("{0}({1})", idf, string.Join(", ", args.ToArray()) );
 
         static readonly Parser<string> FuncallBlk = from fcall in FuncallArg
                                                     from blk in Block.Token()
-                                                    select fcall+" "+blk;
+                                                    select string.Format("{0} {1}", fcall, blk );
 
         static readonly Parser<string> Varcall = Varname.Token();
 
@@ -195,7 +194,7 @@ namespace LP
                                                      from a in Parse.Char('[')
                                                      from v in Stmt
                                                      from b in Parse.Char(']')
-                                                     select expr + ".([])(" + v + ")").Or(ExpMethodcall);
+                                                     select string.Format("{0}.([])({1})", expr, v)).Or(ExpMethodcall);
         // ２項演算子一覧
         static readonly Parser<string> ChainExprs = makeExpressions(operandTable, ExpArrayAt);
         // =(+=, -= ... )
@@ -205,7 +204,7 @@ namespace LP
         static readonly Parser<string> ExpEqual = (from vname in Varname.Token()
                                                    from eq in Parse.String("=").Text().Token()
                                                    from v in ExpAssignment.Token()
-                                                   select ":"+vname+".("+eq+")("+v+")").Or(ExpAssignment);
+                                                   select string.Format(":{0}.({1})({2})", vname, eq, v )).Or(ExpAssignment);
         // 演算子一覧
         static readonly Parser<string> Expr = ExpEqual;
 
@@ -238,9 +237,9 @@ namespace LP
                                                         from astarg in AstArg
                                                         select args.Concat(new string[] { astarg })).Or(SimpleArgList).Or(ZeroArgs)
                                                    select ags.ToArray();
-        static readonly Parser<string[]> ArgDecl = from a in Parse.Char('(').Once().Text()
+        static readonly Parser<string[]> ArgDecl = from a in Parse.Char('(')
                                                    from args in ArgList
-                                                   from b in Parse.Char(')').Once().Text()
+                                                   from b in Parse.Char(')')
                                                    select args;
 
         // is Statements
@@ -358,15 +357,10 @@ namespace LP
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
                                                          select gs.Select((s) => { return STMT.Parse(s); }).ToArray();
 
-        static readonly Parser<Object.LpObject[]> ARGS_CALL = from a in Parse.Char('(')
-                                                              from args in ARGS
-                                                              from b in Parse.Char(')')
-                                                              select args;
-
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
                                                         from args in ArgsCall
-                                                        from blk in BLOCK
-                                                        select new object[] { (string)fname, (Object.LpObject[])ARGS_PARSE(args), blk }).Or(
+                                                        from blk in Block
+                                                        select new object[] { (string)fname, (Object.LpObject[])ARGS_PARSE(args), BLOCK.Parse(blk) }).Or(
                                                         from fname in Fname
                                                         from args in ArgsCall
                                                         select new object[] { (string)fname, (Object.LpObject[])ARGS_PARSE(args), null });
@@ -375,18 +369,11 @@ namespace LP
                                                                 select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2])).Or(VARIABLE_CALL);
 
         static readonly Parser<Object.LpObject> EXP_VAL = (from a in Parse.Char('(').Token()
-                                                           from v in STMT
+                                                           from s in Stmt
                                                            from b in Parse.Char(')').Token()
-                                                           select v).Or(FUNCTION_CALL).Or(PRIMARY);
+                                                           select STMT.Parse(s)).Or(FUNCTION_CALL).Or(PRIMARY);
 
         static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1]));
-
-        static readonly Parser<Object.LpObject> DEF_CLASS = from a in Parse.String("class").Token()
-                                                            from fname in Identifier.Text()
-                                                            from b in Term
-                                                            from stmts in Stmts
-                                                            from c in Parse.String("end").Token()
-                                                            select defClass(fname, stmts);
 
         static readonly Parser<Object.LpObject> EXPR = FUNCALL.Or(EXP_VAL).Token();
 
@@ -449,21 +436,21 @@ namespace LP
             return Parse.ChainOperator(
                 operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2)),
                 beforeExpr,
-                (op, a, b) => a + ".(" + op + ")(" + b + ")");
+                (op, a, b) => string.Format("{0}.({1})({2})", a, op, b ));
         }
 
         static Parser<string> makeLeftUnary(string[] operators, Parser<string> expr)
         {
             return (from h in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
                     from v in expr
-                    select v+".("+h+"@)()").Or(expr);
+                    select string.Format("{0}.({1}@)()", v, h )).Or(expr);
         }
 
         static Parser<string> makeRightUnary(string[] operators, Parser<string> expr)
         {
             return (from v in expr
                     from t in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
-                    select v + ".(@" + t + ")()").Or(expr);
+                    select string.Format("{0}.(@{1})()", v, t )).Or(expr);
         }
 
         static Parser<string> Operator(string operand)

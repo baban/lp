@@ -90,7 +90,7 @@ namespace LP.Object
 
         protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return to_s(self, args);
+            return to_s(self, args, null);
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)

@@ -82,7 +82,7 @@ namespace LP.Object
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
             Console.WriteLine(self.doubleValue.ToString());
-            return null;
+            return LpNl.initialize();
         }
 
         protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
@@ -169,7 +169,6 @@ namespace LP.Object
         private static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
         {
             var o = args[0];
-            LpBool.initialize(self.doubleValue == o.doubleValue).funcall("display",null);
             return LpBool.initialize(self.doubleValue == o.doubleValue);
         }
 
