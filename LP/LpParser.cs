@@ -17,7 +17,7 @@ namespace LP
     // TODO: 構文エラー処理
     // TODO: エラー処理
     // TODO: nil
-    // Block読み出し
+    // TODO: Block読み出し
     // TODO: インスタンス変数
     // TODO: グローバル変数
     // TODO: コメントはできるだけあとに残す
@@ -60,9 +60,9 @@ namespace LP
 
         static readonly Parser<string> Varname = Identifier;
 
-        static readonly Parser<string> Bool = Parse.Regex("true|false").Text();
-        static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+").Text();
-        static readonly Parser<string> Int = Parse.Regex(@"\d+").Text();
+        static readonly Parser<string> Bool = Parse.Regex("true|false");
+        static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+");
+        static readonly Parser<string> Int = Parse.Regex(@"\d+");
         static readonly Parser<string> Numeric = Decimal.Or(Int);
         // TODO: 変数展開実装
         static readonly Parser<string> String = from a in Parse.Char('"')
@@ -70,7 +70,8 @@ namespace LP
                                                 from b in Parse.Char('"')
                                                 select '"' + string.Join("", s.ToArray() ) + '"';
         // Comment
-        static readonly Parser<string> InlineComment = from a in Parse.Regex("//.*\n")
+        static readonly Parser<string> InlineComment = from a in Parse.String("//")
+                                                       from b in Parse.Regex(".*?\n")
                                                        select "";
         static readonly Parser<string> BlockComment = from a in Parse.Regex(@"/\*.*?\*/")
                                                       select "";
@@ -158,6 +159,14 @@ namespace LP
                                                   from c in Parse.String("end")
                                                   select string.Format("->({0}) do {1} end.bind(:{2})", string.Join(", ", args.ToArray()), 
                                                   string.Join("; ", stmts.ToArray()), fname );
+
+        static readonly Parser<string> DefClass = from a in Parse.String("class").Token()
+                                                  from cname in Fname
+                                                  from b in Term
+                                                  from stmts in Stmt.Many()
+                                                  from c in Parse.String("end").Token()
+                                                  select string.Format("Class.new(:{1}) do {0} end",
+                                                                    string.Join("; ", stmts),cname);
 
         static readonly Parser<string> Funcall0 = from idf in Fname
                                                   select idf + "()";

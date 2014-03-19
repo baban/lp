@@ -20,6 +20,11 @@ namespace LpTest.Object
             return t;
         }
 
+        private Type initParser()
+        {
+            return getModule("LP.LpParser");
+        }
+
         private Type initModule()
         {
             return getModule("LP.Object.LpObject");
@@ -49,6 +54,20 @@ namespace LpTest.Object
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
              */
+        }
+
+
+        [Test]
+        public void new_()
+        {
+            Type ot = initModule();
+            Type cl = initClassModule();
+            cl.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { } });
+
+            Type t = initParser();
+            var p = t.InvokeMember("STMT", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "Class.new(:Hoge)" });
+            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "Class.new(:Hoge2) do 10 end" });
         }
     }
 }

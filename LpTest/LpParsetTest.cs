@@ -69,7 +69,16 @@ namespace LpTest
             var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.1" });
             Assert.AreEqual("10.1", pm);
         }
-        
+
+        [Test]
+        public void DefClass()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("DefClass", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var pm = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "class Hoge; 10; end" });
+            Assert.AreEqual("Class.new(:Hoge) do 10 end", pm);
+        }
+
         [Test]
         public void Numeric()
         {
@@ -1089,16 +1098,6 @@ namespace LpTest
             var stmts = blk.GetType().InvokeMember("statements", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, blk, null);
             List<string> ss = (List<string>)(stmts);
             Assert.AreEqual("10", ss.First());
-        }
-
-        [Test]
-        public void DEF_CLASS()
-        {
-            Type t = initParser();
-            var p = t.InvokeMember("DEF_CLASS", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "class Hoge\n end" });
-            Assert.AreEqual("Hoge", o.GetType().InvokeMember("class_name", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
         [Test]

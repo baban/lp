@@ -88,10 +88,17 @@ namespace LP.Object
 
         public LpObject varcall(string name)
         {
+            //variable
             var variale = variables[name] as LpObject;
-
             if (variale != null)
                 return variale;
+            
+            // class
+            if (classes.ContainsKey(name)) {
+                return classes[name] as LpObject;
+            }
+
+            // method
             try {
                 return funcall( name,null,null );
             } catch( Error.LpNoMethodError e ){

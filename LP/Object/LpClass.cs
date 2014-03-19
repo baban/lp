@@ -39,6 +39,7 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
+            obj.methods["new"] = new LpMethod(new BinMethod(new_), 1);
             /*
             obj.methods["inspect"] = new BinMethod(inspect);
             obj.methods["to_s"] = new BinMethod(to_s);
@@ -73,5 +74,21 @@ namespace LP.Object
                 return obj.Clone();
             }
         }
+
+        public static LpObject new_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var arg = args[0];
+            if (!classes.ContainsKey(arg.stringValue))
+            {
+                classes[arg.stringValue] = LpClass.initialize().Clone();
+            }
+            LpObject klass = classes[arg.stringValue];
+
+            if( null!=block )
+                block.funcall("call",klass,null,null);
+
+            return klass;
+        }
+
     }
 }
