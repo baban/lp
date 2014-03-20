@@ -80,7 +80,9 @@ namespace LP.Object
             var arg = args[0];
             if (!classes.ContainsKey(arg.stringValue))
             {
-                classes[arg.stringValue] = LpClass.initialize().Clone();
+                LpObject kls = LpClass.initialize().Clone();
+                kls.class_name = arg.stringValue;
+                classes[arg.stringValue] = kls;
             }
             LpObject klass = classes[arg.stringValue];
 
