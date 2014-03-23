@@ -89,12 +89,17 @@ namespace LP.Object
         static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
             LpObject ret = LpNl.initialize();
-            foreach( string stmt in self.statements ){
+            Util.LpIndexer.push(self);
+            self.arguments.setVariables(self, args, block);
+            foreach (string stmt in self.statements)
+            {
+                Console.WriteLine(stmt);
                 ret = LpParser.STMT.Parse(stmt);
                 if (control_status == (int)LpBase.CONTROL_CODE.RETURN) {
                     return ret;
                 }
             }
+            Util.LpIndexer.pop();
             return ret;
         }
     }

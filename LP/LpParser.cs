@@ -196,7 +196,7 @@ namespace LP
         static readonly Parser<string> ExpClasscall = Classcall.Or(ExpVal);
 
         // .
-        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.String(".").Text(), ExpClasscall, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
+        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.String(".").Text(), ExpClasscall, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b );
         static readonly Parser<string> ExpMethodcall = MethodCall.Or(ExpClasscall);
         // []
         static readonly Parser<string> ExpArrayAt = (from expr in ExpMethodcall
@@ -365,9 +365,32 @@ namespace LP
 
         static readonly Parser<Object.LpObject[]> ARGS = from gs in Args
                                                          select gs.Select((s) => { return STMT.Parse(s); }).ToArray();
+        /*
+        static readonly Parser<string> Funcall0 = from idf in Fname
+                                                  select idf + "()";
+        static readonly Parser<string> FuncallArg = from idf in Fname
+                                                    from c in Parse.Char('(').Once()
+                                                    from args in Args
+                                                    from d in Parse.Char(')').Once()
+                                                    select string.Format("{0}({1})", idf, string.Join(", ", args.ToArray()));
+        static readonly Parser<string> FuncallBlk = from fcall in FuncallArg
+                                                    from blk in Block.Token()
+                                                    select string.Format("{0} {1}", fcall, blk);
+        */
+
+        static readonly Parser<object[]> FUNCALL_ARG = from fname in Fname
+                                                       from c in Parse.Char('(').Once()
+                                                       from args in Args
+                                                       from d in Parse.Char(')').Once()
+                                                       select new object[] { (string)fname, (string[])args.ToArray() };
+
+        static readonly Parser<object[]> FUNCALL_BLK = from fcall in FUNCALL_ARG
+                                                       from blk in Block.Token()
+                                                       select new object[] { (string)fcall[0], (Object.LpObject[])ARGS_PARSE((string[])fcall[1]), blk };
 
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
                                                         from args in ArgsCall
+                                                        from ws in Parse.WhiteSpace.AtLeastOnce()
                                                         from blk in Block
                                                         select new object[] { (string)fname, (Object.LpObject[])ARGS_PARSE(args), BLOCK.Parse(blk) }).Or(
                                                         from fname in Fname
@@ -382,7 +405,9 @@ namespace LP
                                                            from b in Parse.Char(')').Token()
                                                            select STMT.Parse(s)).Or(FUNCTION_CALL).Or(PRIMARY);
 
-        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1]));
+        static readonly Parser<Object.LpObject> FUNCALL = OperandsChainCallStart(Parse.String(".").Text(), Parse.Ref(() => EXP_VAL), METHOD_CALL, (opr, obj, fvals) => {
+            return obj.funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2]);
+        });
 
         static readonly Parser<Object.LpObject> EXPR = FUNCALL.Or(EXP_VAL).Token();
 

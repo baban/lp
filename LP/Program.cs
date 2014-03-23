@@ -40,11 +40,14 @@ namespace LP
                 showSystemMessage();
                 return 0;
             }
-            Console.WriteLine(DateTime.UtcNow.ToString());
             string code = readFile(argv[0]);
             LP.Util.LpIndexer.initialize();
-            LpParser.execute(code);
-            Console.WriteLine(DateTime.UtcNow.ToString());
+            try {
+                LpParser.execute(code);
+            }
+            catch (Error.LpError e) {
+                Console.WriteLine( e.ToString() );
+            }
             return 0;
         }
 

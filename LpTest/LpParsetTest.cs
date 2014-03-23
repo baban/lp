@@ -846,6 +846,16 @@ namespace LpTest
             Assert.AreEqual(s, "->() do _if(true,do 10 end,do 30 end) end.bind(:hoge)");
         }
 
+        [Test]
+        public void Stmt6()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Stmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var txt = "Class.new(:Hoge) do 10 end";
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)txt });
+            Assert.AreEqual(s, "Class.new(:Hoge) do 10 end");
+        }
+
         /*
         [Test]
         public void FUNCTION()
@@ -1041,6 +1051,17 @@ namespace LpTest
 
             o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(10.(+)(10)).(+)(5.(*)(5))" });
             Assert.AreEqual(45.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+
+        [Test]
+        public void FUNCALL7()
+        {
+            /*
+            Type t = initParser();
+            var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[1].map() do 1 end" });
+            Assert.AreEqual(20.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+             */
         }
 
         [Test]

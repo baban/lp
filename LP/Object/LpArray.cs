@@ -72,6 +72,7 @@ namespace LP.Object
             obj.methods["first"] = new LpMethod( new BinMethod(first), 0 );
             obj.methods["size"] = new LpMethod( new BinMethod(len), 0 );
             obj.methods["len"] = new LpMethod( new BinMethod(len), 0 );
+            obj.methods["map"] = new LpMethod(new BinMethod(map), 0);
             //obj.methods["=="] = new LpMethod( new BinMethod(equal), 1);
             //obj.methods["==="] = new LpMethod( new BinMethod(eq), 1 );
 
@@ -133,6 +134,18 @@ namespace LP.Object
             var v = args[0];
             self.arrayValues.AddRange( v.arrayValues );
             return self;
+        }
+
+        static LpObject map(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            Console.WriteLine( "map func" );
+            Console.WriteLine( block );
+            Console.WriteLine( block.class_name );
+            return LpArray.initialize(self.arrayValues.Select( (v) => {
+                                        Console.WriteLine(v);
+                                        Console.WriteLine(v.class_name);
+                                        return block.funcall("call", self, new LpObject[] { v }, null);
+                                        }).ToArray());
         }
     }
 }

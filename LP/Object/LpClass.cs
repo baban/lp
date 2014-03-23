@@ -86,8 +86,10 @@ namespace LP.Object
             }
             LpObject klass = classes[arg.stringValue];
 
-            if( null!=block )
-                block.funcall("call",klass,null,null);
+            if (null != block)
+            {
+                block.funcall("call", block, new LpObject[]{}, null);
+            }
 
             return klass;
         }
