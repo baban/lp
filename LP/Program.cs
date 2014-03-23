@@ -58,20 +58,19 @@ namespace LP
         }
 
         static string readFile( string filename ){
+            if (!System.IO.File.Exists(filename))
+                return null;
 
-            StreamReader sr = new StreamReader(filename);
-            string line = "";
-            string txt = "";
-
-            while (line != null)
+            StringBuilder strBuff = new StringBuilder();
+            System.IO.StreamReader sr = null;
+            sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
+            while (sr.Peek() >= 0)
             {
-                line = sr.ReadLine();
-                if (line != null)
-                    txt += line + "\n";
+                 strBuff.Append( sr.ReadLine() );
+                 strBuff.Append("\n");
             }
             sr.Close();
-
-            return txt;
+            return strBuff.ToString();
         }
 
         static void initEnv(){
