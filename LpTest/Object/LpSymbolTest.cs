@@ -57,7 +57,6 @@ namespace LpTest.Object
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
             Assert.AreEqual("bbb", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
             var symbols = t.GetField("symbols", BindingFlags.NonPublic | BindingFlags.Static);
-            Console.WriteLine(symbols);
         }
 
         [Test]

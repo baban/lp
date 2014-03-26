@@ -138,14 +138,7 @@ namespace LP.Object
 
         static LpObject map(LpObject self, LpObject[] args, LpObject block = null)
         {
-            Console.WriteLine( "map func" );
-            Console.WriteLine( block );
-            Console.WriteLine( block.class_name );
-            return LpArray.initialize(self.arrayValues.Select( (v) => {
-                                        Console.WriteLine(v);
-                                        Console.WriteLine(v.class_name);
-                                        return block.funcall("call", self, new LpObject[] { v }, null);
-                                        }).ToArray());
+            return LpArray.initialize(self.arrayValues.Select( (v) => block.funcall("call", self, new LpObject[] { v }, null) ).ToArray());
         }
     }
 }

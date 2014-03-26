@@ -93,7 +93,6 @@ namespace LP.Object
             self.arguments.setVariables(self, args, block);
             foreach (string stmt in self.statements)
             {
-                Console.WriteLine(stmt);
                 ret = LpParser.STMT.Parse(stmt);
                 if (control_status == (int)LpBase.CONTROL_CODE.RETURN) {
                     return ret;

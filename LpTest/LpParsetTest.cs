@@ -572,22 +572,22 @@ namespace LpTest
 
         
         [Test]
-        public void IfExpr()
+        public void IfStmt()
         {
             Type t = initParser();
             var p = t.InvokeMember("IfStmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10)end" });
-            Assert.AreEqual("_if(10,do  end)", s);
+            Assert.AreEqual("_if(10,do  end,do  end)", s);
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10) 10; end" });
-            Assert.AreEqual("_if(10,do 10 end)", s);
+            Assert.AreEqual("_if(10,do 10 end,do  end)", s);
 
             s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)"if(10) 10; 20; end" });
-            Assert.AreEqual("_if(10,do 10; 20 end)", s);
+            Assert.AreEqual("_if(10,do 10; 20 end,do  end)", s);
         }
 
         [Test]
-        public void IfExprElse()
+        public void IfStmtElse()
         {
             Type t = initParser();
             var p = t.InvokeMember("IfStmt", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
