@@ -81,10 +81,8 @@ namespace LP
                                                  from s in Parse.Ref(() => Stmt)
                                                  select s).Or(Parse.Ref(() => Stmt));
 
-        static readonly Parser<string> Array = from a in Parse.String("[").Text().Token()
-                                               from elms in SepElm.Many()
-                                               from b in Parse.String("]").Text().Token()
-                                               select a + string.Join(",", elms) + b;
+        static readonly Parser<string> Array = from elms in SepElm.Many().Contained(Parse.String("[").Text().Token(),Parse.String("]").Text().Token())
+                                               select "[" + string.Join(",", elms) + "]";
 
         static readonly Parser<string[]> AssocVal = from k in Parse.Ref(() => Stmt)
                                                     from sps in Parse.Char(':').Token()
@@ -107,7 +105,6 @@ namespace LP
         // Macro Values
         static readonly Parser<string> Quote = Parse.String("'").Text().Then((qmark) => from idf in Stmt
                                                                                         select qmark + idf);
-
         static readonly Parser<string> QuasiQuote = Parse.String("`").Text().Then( (qmark) => from idf in Stmt
                                                                                               select qmark+idf );
 
@@ -115,14 +112,8 @@ namespace LP
                                                        from idf in PRIMARY
                                                        select idf.stringValue;
         // Block,Lambda
-        static readonly Parser<string[]> BlaketArgs = from a in Parse.Char('(')
-                                                      from args in Parse.Ref(() => ArgList)
-                                                      from b in Parse.Char(')')
-                                                      select args;
-        static readonly Parser<string[]> FenceArgs = from a in Parse.Char('|')
-                                                     from args in Parse.Ref(() => ArgList)
-                                                     from b in Parse.Char('|')
-                                                     select args;
+        static readonly Parser<string[]> BlaketArgs = Parse.Ref(() => ArgList).Contained(Parse.Char('('),Parse.Char(')'));
+        static readonly Parser<string[]> FenceArgs = Parse.Ref(() => ArgList).Contained(Parse.Char('|'),Parse.Char('|'));
 
         static readonly Parser<string> BlockStart1 = from _do in Parse.String("do").Text()
                                                      from ws in Parse.WhiteSpace.Many()
@@ -141,7 +132,8 @@ namespace LP
         static readonly Parser<string> BlockStmt = BlockStart.Then(BlockEnd);
         static readonly Parser<string> Block = BlockStmt;
 
-        static readonly Parser<string> Lambda = from blk in Parse.String("->").Text().Then((s) => BlockStmt)
+        static readonly Parser<string> Lambda = from a in Parse.String("->").Text()
+                                                from blk in Block
                                                 select "->"+blk;
 
         static readonly Parser<string> Function = from a in Parse.String("def").Token()
@@ -164,9 +156,7 @@ namespace LP
         static readonly Parser<string> Funcall0 = from idf in Fname
                                                   select idf + "()";
         static readonly Parser<string> FuncallArg = from idf in Fname
-                                                    from c in Parse.Char('(').Once()
-                                                    from args in Args
-                                                    from d in Parse.Char(')').Once()
+                                                    from args in Args.Contained(Parse.Char('(').Once(),Parse.Char(')').Once())
                                                     select string.Format("{0}({1})", idf, string.Join(", ", args.ToArray()) );
 
         static readonly Parser<string> FuncallBlk = from fcall in FuncallArg
@@ -179,10 +169,10 @@ namespace LP
 
         static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
-        static readonly Parser<string> ExpVal = (from a in Parse.Char('(').Token()
+        static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
                                                  from v in Expr
-                                                 from b in Parse.Char(')').Token()
-                                                 select a + v + b).Or(Primary).Token();
+                                                 from b in Parse.Char(')')
+                                                 select "(" + v + ")").Or(Primary).Token();
         // ::
         static readonly Parser<string> Classcall = OperandsChainCallStart(Parse.String("::"), ExpVal, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
 
@@ -193,9 +183,7 @@ namespace LP
         static readonly Parser<string> ExpMethodcall = MethodCall.Or(ExpClasscall);
         // []
         static readonly Parser<string> ExpArrayAt = (from expr in ExpMethodcall
-                                                     from a in Parse.Char('[')
-                                                     from v in Stmt
-                                                     from b in Parse.Char(']')
+                                                     from v in Stmt.Contained(Parse.Char('['), Parse.Char(']'))
                                                      select string.Format("{0}.([])({1})", expr, v)).Or(ExpMethodcall);
         // ２項演算子一覧
         static readonly Parser<string> ChainExprs = makeExpressions(operandTable, ExpArrayAt);
@@ -226,9 +214,8 @@ namespace LP
         static readonly Parser<IEnumerable<string>> SimpleArgList = Parse.DelimitedBy(Varname, Parse.Char(',').Token());
         static readonly Parser<string[]> ArgList = from ags in
                                                        (from args in SimpleArgList
-                                                        from astarg in AstArg
                                                         from amparg in AmpArg
-                                                        select args.Concat(new string[] { astarg, amparg })).Or(
+                                                        select args.Concat(new string[] { amparg })).Or(
                                                         from args in SimpleArgList
                                                         from amparg in AmpArg
                                                         select args.Concat(new string[] { amparg })).Or(
@@ -236,19 +223,13 @@ namespace LP
                                                         from astarg in AstArg
                                                         select args.Concat(new string[] { astarg })).Or(SimpleArgList).Or(ZeroArgs)
                                                    select ags.ToArray();
-        static readonly Parser<string[]> ArgDecl = from a in Parse.Char('(')
-                                                   from args in ArgList
-                                                   from b in Parse.Char(')')
-                                                   select args;
+        static readonly Parser<string[]> ArgDecl = ArgList.Contained(Parse.Char('('), Parse.Char(')'));
 
         // is Statements
-        static readonly Parser<string> IfExpr =  Parse.Ref( () => (from a in Parse.Char('(')
-                                                                   from stmt in Stmt
-                                                                   from b in Parse.Char(')')
-                                                                   select stmt).Or(
-                                                                   from stmt in Stmt
-                                                                   from b in Term
-                                                                   select stmt) );
+        static readonly Parser<string> IfExpr =  Parse.Ref( () => Stmt.Contained(Parse.Char('('),Parse.Char(')')).Or(
+                                                                  from stmt in Stmt
+                                                                  from b in Term
+                                                                  select stmt) );
         static readonly Parser<string> IfStart = (from _if in Parse.String("if").Token()
                                                   from expr in IfExpr
                                                   select expr).Token();

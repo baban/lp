@@ -1261,6 +1261,17 @@ namespace LpTest
             Assert.AreEqual(10.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
+
+        [Test]
+        public void Program()
+        {
+            Type t = initParser();
+            var p = t.InvokeMember("Program", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
+            var txt = "Class.new(:Hoge) do 10 end";
+            var s = t.GetMethod("parseString", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)txt });
+            Assert.AreEqual(s, "Class.new(:Hoge) do 10 end");
+        }
+
         [Test]
         public void PROGRAM()
         {
