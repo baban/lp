@@ -60,18 +60,19 @@ namespace LP
 
         static readonly Parser<string> Varname = Identifier;
 
-        static readonly Parser<string> Bool = Parse.Regex("true|false");
+        static readonly Parser<string> Bool = Parse.Regex("true|false").Named("boolean");
         static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+");
         static readonly Parser<string> Int = Parse.Regex(@"\d+");
-        static readonly Parser<string> Numeric = Decimal.Or(Int);
+        static readonly Parser<string> Numeric = Decimal.Or(Int).Named("numeric");
         // TODO: 変数展開実装
-        static readonly Parser<string> String = Parse.Char('"').Then( (a) => from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
-                                                                             from b in Parse.Char('"')
-                                                                             select '"' + string.Join("", s.ToArray()) + '"');
+        static readonly Parser<string> String = (from a in Parse.Char('"')
+                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
+                                                 from b in Parse.Char('"')
+                                                 select '"' + string.Join("", s.ToArray()) + '"').Named("string");
         // Comment
-        static readonly Parser<string> InlineComment = Parse.String("//").Then( (a) => from b in Parse.Regex(".*?\n")
+        static readonly Parser<string> InlineComment = Parse.String("//").Then( (a) => from b in Parse.Regex(".*?\n").Named("inline comment")
                                                                                        select "" );
-        static readonly Parser<string> BlockComment = from a in Parse.Regex(@"/\*.*?\*/")
+        static readonly Parser<string> BlockComment = from a in Parse.Regex(@"/\*.*?\*/").Named("block comment")
                                                       select "";
 
         static readonly Parser<string> Comment = InlineComment.Or(BlockComment);
@@ -131,11 +132,9 @@ namespace LP
                                                                            select string.Format("{0} {1} end", start, string.Join("; ", stmts.ToArray()));
         static readonly Parser<string> BlockStmt = BlockStart.Then(BlockEnd);
         static readonly Parser<string> Block = BlockStmt;
-
         static readonly Parser<string> Lambda = from a in Parse.String("->").Text()
                                                 from blk in Block
-                                                select "->"+blk;
-
+                                                select "->" + blk;
         static readonly Parser<string> Function = from a in Parse.String("def").Token()
                                                   from fname in Fname
                                                   from args in ArgDecl
@@ -204,9 +203,7 @@ namespace LP
                                                     select new string[]{};
         static readonly Parser<string[]> Args = from ags in Parse.DelimitedBy(Arg, Parse.Char(',')).Or(ZeroArgs)
                                                 select ags.ToArray();
-        static readonly Parser<string[]> ArgsCall = Parse.Char('(').Then((a) => from ags in Args
-                                                                                from b in Parse.Char(')')
-                                                                                select ags);
+        static readonly Parser<string[]> ArgsCall = Args.Contained(Parse.Char('('),Parse.Char(')'));
         static readonly Parser<string> AstArg = Parse.Char('*').Once().Then((ast) => from id in Varname
                                                                                      select ast + id);
         static readonly Parser<string> AmpArg = Parse.Char('&').Once().Then( (ast) => from id in Varname
@@ -257,7 +254,7 @@ namespace LP
                                                from t in Term
                                                select s).Or(StatList).Token();
 
-        static readonly Parser<string[]> Stmts = from stmts in Stmt.Many()
+        static readonly Parser<string[]> Stmts = from stmts in Stmt.XMany()
                                                  select stmts.ToArray();
 
         static readonly Parser<string> Program = from stmts in Stmts
