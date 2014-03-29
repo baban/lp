@@ -70,10 +70,8 @@ namespace LP
                                                  from b in Parse.Char('"')
                                                  select '"' + string.Join("", s.ToArray()) + '"').Named("string");
         // Comment
-        static readonly Parser<string> InlineComment = Parse.String("//").Then( (a) => from b in Parse.Regex(".*?\n").Named("inline comment")
-                                                                                       select "" );
-        static readonly Parser<string> BlockComment = from a in Parse.Regex(@"/\*.*?\*/").Named("block comment")
-                                                      select "";
+        static readonly Parser<string> InlineComment = Parse.Regex("//.*?\n").Return("").Named("lnline comment");
+        static readonly Parser<string> BlockComment = Parse.Regex(@"/\*.*?\*/").Return("").Named("block comment");
 
         static readonly Parser<string> Comment = InlineComment.Or(BlockComment);
 
@@ -127,12 +125,13 @@ namespace LP
                                                      from args in FenceArgs.Token()
                                                      select string.Format("do |{0}|", string.Join(", ", args));
         static readonly Parser<string> BlockStart = BlockStart3.Or(BlockStart2).Or(BlockStart1);
-        static readonly Func<string, Parser<string>> BlockEnd = (start) => from stmts in Parse.Ref(() => Stmts)
-                                                                           from c in Parse.String("end").Token()
-                                                                           select string.Format("{0} {1} end", start, string.Join("; ", stmts.ToArray()));
-        static readonly Parser<string> BlockStmt = BlockStart.Then(BlockEnd);
+        static readonly Parser<string> BlockStmt =  from start in BlockStart
+                                                    from stmts in Parse.Ref(() => Stmts)
+                                                    from c in Parse.String("end").Token()
+                                                    select string.Format("{0} {1} end", start, string.Join("; ", stmts.ToArray() ) );
         static readonly Parser<string> Block = BlockStmt;
         static readonly Parser<string> Lambda = from a in Parse.String("->").Text()
+                                                where a.ToString()=="->"
                                                 from blk in Block
                                                 select "->" + blk;
         static readonly Parser<string> Function = from a in Parse.String("def").Token()
@@ -144,7 +143,7 @@ namespace LP
                                                   select string.Format("->({0}) do {1} end.bind(:{2})", string.Join(", ", args.ToArray()), 
                                                   string.Join("; ", stmts.ToArray()), fname );
 
-        static readonly Parser<string> DefClass = from a in Parse.String("class").Token()
+        static readonly Parser<string> DefClass = from a in Parse.String("class").Token().Text()
                                                   from cname in Fname
                                                   from b in Term
                                                   from stmts in Stmt.Many()
@@ -154,17 +153,12 @@ namespace LP
 
         static readonly Parser<string> Funcall0 = from idf in Fname
                                                   select idf + "()";
-        static readonly Parser<string> FuncallArg = from idf in Fname
-                                                    from args in Args.Contained(Parse.Char('(').Once(),Parse.Char(')').Once())
-                                                    select string.Format("{0}({1})", idf, string.Join(", ", args.ToArray()) );
-
-        static readonly Parser<string> FuncallBlk = from fcall in FuncallArg
-                                                    from blk in Block.Token()
-                                                    select string.Format("{0} {1}", fcall, blk );
-
         static readonly Parser<string> Varcall = Varname.Token();
 
-        static readonly Parser<string> Funcall = FuncallBlk.Or(FuncallArg);
+        static readonly Parser<string> Funcall = from idf in Fname
+                                                 from args in Args.Contained(Parse.Char('(').Once(), Parse.Char(')').Once())
+                                                 from blk in Block.Token().Optional()
+                                                 select string.Format("{0}({1}){2}", idf, string.Join(", ", args.ToArray()), (blk.IsEmpty ? "" : " " + blk.Get()));
 
         static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
@@ -203,7 +197,11 @@ namespace LP
                                                     select new string[]{};
         static readonly Parser<string[]> Args = from ags in Parse.DelimitedBy(Arg, Parse.Char(',')).Or(ZeroArgs)
                                                 select ags.ToArray();
-        static readonly Parser<string[]> ArgsCall = Args.Contained(Parse.Char('('),Parse.Char(')'));
+        static readonly Parser<string[]> ArgsCall = from a in Parse.Char('(')
+                                                    where a.ToString()=="("
+                                                    from args in Args
+                                                    from b in Parse.Char(')')
+                                                    select args.ToArray();
         static readonly Parser<string> AstArg = Parse.Char('*').Once().Then((ast) => from id in Varname
                                                                                      select ast + id);
         static readonly Parser<string> AmpArg = Parse.Char('&').Once().Then( (ast) => from id in Varname
@@ -227,7 +225,7 @@ namespace LP
                                                                   from stmt in Stmt
                                                                   from b in Term
                                                                   select stmt) );
-        static readonly Parser<string> IfStart = (from _if in Parse.String("if").Token()
+        static readonly Parser<string> IfStart = (from _if in Parse.String("if")
                                                   from expr in IfExpr
                                                   select expr).Token();
         static readonly Parser<string[]> ElseStmts = from els in Parse.String("else").Token()
