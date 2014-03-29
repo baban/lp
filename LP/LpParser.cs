@@ -126,7 +126,7 @@ namespace LP
                                                      select string.Format("do |{0}|", string.Join(", ", args));
         static readonly Parser<string> BlockStart = BlockStart3.Or(BlockStart2).Or(BlockStart1);
         static readonly Parser<string> BlockStmt =  from start in BlockStart
-                                                    from stmts in Parse.Ref(() => Stmts)
+                                                    from stmts in Parse.Ref(() => Stmts )
                                                     from c in Parse.String("end").Token()
                                                     select string.Format("{0} {1} end", start, string.Join("; ", stmts.ToArray() ) );
         static readonly Parser<string> Block = BlockStmt;
@@ -146,7 +146,7 @@ namespace LP
         static readonly Parser<string> DefClass = from a in Parse.String("class").Token().Text()
                                                   from cname in Fname
                                                   from b in Term
-                                                  from stmts in Stmt.Many()
+                                                  from stmts in Stmt.Many().Except(Parse.String("end"))
                                                   from c in Parse.String("end").Token()
                                                   select string.Format("Class.new(:{1}) do {0} end",
                                                                     string.Join("; ", stmts),cname);
@@ -163,7 +163,7 @@ namespace LP
         static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
-                                                 from v in Expr
+                                                 from v in Expr.Except(Parse.Char(')'))
                                                  from b in Parse.Char(')')
                                                  select "(" + v + ")").Or(Primary).Token();
         // ::
@@ -192,13 +192,12 @@ namespace LP
         static readonly Parser<string> Expr = ExpEqual;
 
         // arguments
-        static readonly Parser<string> Arg = Parse.Ref(() => Stmt);
+        static readonly Parser<string> Arg = Parse.Ref(() => Parse.Except(Stmt, Parse.Char(')')));
         static readonly Parser<string[]> ZeroArgs = from sps in Parse.WhiteSpace.Many()
                                                     select new string[]{};
         static readonly Parser<string[]> Args = from ags in Parse.DelimitedBy(Arg, Parse.Char(',')).Or(ZeroArgs)
                                                 select ags.ToArray();
         static readonly Parser<string[]> ArgsCall = from a in Parse.Char('(')
-                                                    where a.ToString()=="("
                                                     from args in Args
                                                     from b in Parse.Char(')')
                                                     select args.ToArray();
@@ -250,7 +249,7 @@ namespace LP
 
         static readonly Parser<string> Stmt = (from s in StatList
                                                from t in Term
-                                               select s).Or(StatList).Token();
+                                               select s).Or(StatList).Token().Except(Parse.String("end").Or(Parse.String(")")).Token());
 
         static readonly Parser<string[]> Stmts = from stmts in Stmt.XMany()
                                                  select stmts.ToArray();
