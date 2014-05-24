@@ -12,7 +12,7 @@ namespace LP.Object
     {
         static string className = "Method";
 
-        public LpMethod(BinMethod m) {
+        public LpMethod(BinMethod m) { 
             arguments = new Util.LpArguments();
             method = m;
         }
@@ -87,6 +87,8 @@ namespace LP.Object
 
         private LpObject evalStatements(LpObject self, LpObject[] args, LpObject block = null)
         {
+            return null;
+            /*
             arguments.setVariables(self, args, block);
             LpObject ret = LpNl.initialize();
             self.statements.ForEach(delegate(string stmt)
@@ -94,6 +96,7 @@ namespace LP.Object
                 ret = LpParser.STMT.Parse(stmt);
             });
             return ret;
+             */
         }
     }
 

@@ -12,8 +12,9 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            sysInit("", args, 0);
-            runNode(args);
+            LpParser.execute("10.(aaa)(10)");
+            //sysInit("", args, 0);
+            //runNode(args);
         }
 
         // parse command line options
@@ -36,18 +37,31 @@ namespace LP
         // TODO; start program
         static long runNode(string[] argv)
         {
-            if (argv.Length == 0) {
+            /*
+            Console.WriteLine("benckmark:start");
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            */
+            if (argv.Length == 0)
+            {
                 showSystemMessage();
                 return 0;
             }
             string code = readFile(argv[0]);
             LP.Util.LpIndexer.initialize();
-            try {
+            try
+            {
                 LpParser.execute(code);
             }
-            catch (Error.LpError e) {
-                Console.WriteLine( e.ToString() );
+            catch (Error.LpError e)
+            {
+                Console.WriteLine(e.ToString());
             }
+            /*
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed.TotalSeconds);
+            Console.WriteLine("benckmark:end");
+            */
             return 0;
         }
 

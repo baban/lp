@@ -106,10 +106,11 @@ namespace LP
                                                                                         select qmark + idf);
         static readonly Parser<string> QuasiQuote = Parse.String("`").Text().Then( (qmark) => from idf in Stmt
                                                                                               select qmark+idf );
-
+        /*
         static readonly Parser<string> QuestionQuote = from qmark in Parse.String("?").Text()
                                                        from idf in PRIMARY
                                                        select idf.stringValue;
+         */
         // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = Parse.Ref(() => ArgList).Contained(Parse.Char('('),Parse.Char(')'));
         static readonly Parser<string[]> FenceArgs = Parse.Ref(() => ArgList).Contained(Parse.Char('|'),Parse.Char('|'));
@@ -160,10 +161,11 @@ namespace LP
                                                  from blk in Block.Token().Optional()
                                                  select string.Format("{0}({1}){2}", idf, string.Join(", ", args.ToArray()), (blk.IsEmpty ? "" : " " + blk.Get()));
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        //static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
-                                                 from v in Expr.Except(Parse.Char(')'))
+                                                 from v in Expr
                                                  from b in Parse.Char(')')
                                                  select "(" + v + ")").Or(Primary).Token();
         // ::
@@ -192,7 +194,7 @@ namespace LP
         static readonly Parser<string> Expr = ExpEqual;
 
         // arguments
-        static readonly Parser<string> Arg = Parse.Ref(() => Parse.Except(Stmt, Parse.Char(')')));
+        static readonly Parser<string> Arg = Parse.Ref(() => Stmt);
         static readonly Parser<string[]> ZeroArgs = from sps in Parse.WhiteSpace.Many()
                                                     select new string[]{};
         static readonly Parser<string[]> Args = from ags in Parse.DelimitedBy(Arg, Parse.Char(',')).Or(ZeroArgs)
@@ -257,6 +259,29 @@ namespace LP
         static readonly Parser<string> Program = from stmts in Stmts
                                                  select string.Join( "; ", stmts.ToArray() );
 
+        static readonly Parser<Ast.LpAstNode> INT = from n in Int
+                                                    select new Ast.LpAstLeaf(n);
+        static readonly Parser<Ast.LpAstNode> NUMERIC = from n in Numeric
+                                                        select new Ast.LpAstLeaf(n);
+        public static readonly Parser<Ast.LpAstNode> PRIMARY = new Parser<Ast.LpAstNode>[] { NUMERIC }.Aggregate((seed, nxt) => seed.Or(nxt));
+        static readonly Parser<Ast.LpAstNode> FUNCTION_CALL = from val in PRIMARY
+                                                              from dot in Parse.String(".")
+                                                              from fname in Fname
+                                                              from a in Parse.String("(")
+                                                              from arg in PRIMARY
+                                                              from b in Parse.String(")")
+                                                              select new Ast.LpAstMethodCall(fname, val, arg);
+        public static readonly Parser<Ast.LpAstNode> STMT = FUNCTION_CALL;
+        /*
+        public static readonly Parser<Object.LpObject> PROGRAM = from stmts in Stmts
+                                                                 select stmts.ToArray().Aggregate(Object.LpNl.initialize(), (ret, s) =>
+                                                                 {
+                                                                     ret = STMT.Parse(s);
+                                                                     return ret;
+                                                                 });
+        */
+
+        /*
         // Primary Values
         static readonly Parser<Object.LpObject> INT = from n in Int
                                                       select Object.LpNumeric.initialize(double.Parse(n));
@@ -369,7 +394,7 @@ namespace LP
                                                                      ret = STMT.Parse(s);
                                                                      return ret;
                                                                  });
-
+        */
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
           Parser<T> operand,
@@ -481,8 +506,11 @@ namespace LP
 
         static Object.LpObject[] parseArgsObject(string ctx)
         {
+            return null;
+            /*
             Console.WriteLine(ctx);
             return ARGS.Parse(ctx);
+             */
         }
 
         static void benchmarkString(Parser<string> psr, string ctx, int max=1000)
@@ -528,7 +556,10 @@ namespace LP
 
         public static Object.LpObject execute(string ctx)
         {
-            return PROGRAM.Parse(ctx);
+            var o = FUNCTION_CALL.Parse("10.(+)(10)");
+            Console.WriteLine( o.Evaluate().doubleValue);
+            return null;
+            //return PROGRAM.Parse(ctx);
         }
     }
 }

@@ -88,6 +88,8 @@ namespace LP.Object
 
         static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
+            return null;
+            /*
             LpObject ret = LpNl.initialize();
             Util.LpIndexer.push(self);
             self.arguments.setVariables(self, args, block);
@@ -100,6 +102,7 @@ namespace LP.Object
             }
             Util.LpIndexer.pop();
             return ret;
+             */
         }
     }
 }

@@ -95,6 +95,8 @@ namespace LP.Object
 
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
+            return null;
+            /*
             LpObject ret = null;
             Util.LpIndexer.push( self );
             self.arguments.setVariables( self, args, block );
@@ -108,6 +110,7 @@ namespace LP.Object
             }
             Util.LpIndexer.pop();
             return ret;
+             */
         }
 
         static LpObject to_class(LpObject self, LpObject[] args, LpObject block = null)

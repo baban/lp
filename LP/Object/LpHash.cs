@@ -19,12 +19,15 @@ namespace LP.Object
 
         public static LpObject initialize( string[][] pairs )
         {
+            return null;
+            /*
             var obj = init();
             foreach (var pair in pairs)
             {
                 obj.hashValues[LpParser.STMT.Parse(pair[0])] = LpParser.STMT.Parse(pair[1]);
             }
             return obj;
+             */
         }
 
         private static LpObject init()

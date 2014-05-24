@@ -108,7 +108,8 @@ namespace LP.Object
         // TODO: 全く未実装
         private static LpObject eval(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpParser.PROGRAM.Parse(args[0].stringValue);
+            return null;
+            //return LpParser.PROGRAM.Parse(args[0].stringValue);
         }
 
         private static LpObject if_(LpObject self, LpObject[] args, LpObject block = null)
