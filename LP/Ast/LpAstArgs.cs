@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace LP.Ast
 {
-    class LpAstStmts : LpAstNode
+    class LpAstArgs : LpAstNode
     {
-        public LpAstStmts( List<LpAstNode> nodes ){
-            ChildNodes = nodes;
+        public LpAstArgs() {
             this.Evaluate = DoEvaluate;
         }
 
         public override Object.LpObject DoEvaluate()
         {
-            Object.LpObject ret = Object.LpNl.initialize();
-            ChildNodes.ForEach((node) => { ret = node.Evaluate(); });
-            return ret;
+            return base.DoEvaluate(); 
         }
     }
 }

@@ -12,7 +12,9 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            LpParser.execute("10.(aaa)(10)");
+            LpParser.execute("10.(+)(10)");
+            LpParser.execute("10");
+            LpParser.execute("6;5");
             //sysInit("", args, 0);
             //runNode(args);
         }

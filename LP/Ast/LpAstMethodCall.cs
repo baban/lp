@@ -10,24 +10,19 @@ namespace LP.Ast
     {
         private string name = null;
         private LpAstNode lft = null;
-        private LpAstNode arg;
+        private LpAstNode[] args;
 
-        public LpAstMethodCall( string name, LpAstNode lft, LpAstNode arg ) {
+        public LpAstMethodCall( string name, LpAstNode lft, LpAstNode[] args, LpAstNode blk ) {
             this.name = name;
             this.lft = lft;
-            this.arg = arg;
+            this.args = args;
 
             this.Evaluate = DoEvaluate;
         }
 
-        public LpAstMethodCall Init() {
-            return this;
-        }
-
-        public virtual Object.LpObject DoEvaluate()
+        public override Object.LpObject DoEvaluate()
         {
-            Console.WriteLine("AstNode");
-            return lft.DoEvaluate().funcall(this.name, new Object.LpObject[] { arg.DoEvaluate() }, null);
+            return lft.DoEvaluate().funcall(this.name, args.Select( (arg) => arg.DoEvaluate() ).ToArray(), null);
         }
     }
 }

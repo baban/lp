@@ -17,19 +17,11 @@ namespace LP.Ast
 
         public LpAstNode()
         {
-            Console.WriteLine("Node");
             this.Evaluate = DoEvaluate;
-        }
-
-        public LpAstNode Init(Object.LpObject leaf)
-        {
-            this.Leaf = leaf;
-            return this;
         }
 
         public virtual Object.LpObject DoEvaluate()
         {
-            Console.WriteLine("AstNode");
             return null;
         }
     }

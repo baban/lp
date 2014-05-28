@@ -69,7 +69,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Sprache">
+    <Reference Include="Sprache, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Downloads\Sprache-master\bin\Sprache.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -81,9 +82,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ast\LpAstArgs.cs" />
     <Compile Include="Ast\LpAstLeaf.cs" />
     <Compile Include="Ast\LpAstMethodCall.cs" />
     <Compile Include="Ast\LpAstNode.cs" />
+    <Compile Include="Ast\LpAstStmts.cs" />
     <Compile Include="Error\LpArgumentError.cs" />
     <Compile Include="Error\LpNoMethodError.cs" />
     <Compile Include="Error\LpSyntaxError.cs" />
