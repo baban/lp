@@ -212,7 +212,7 @@ namespace LP.Object
         protected static LpObject define_method(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
-            self.methods[name] = LpMethod.initialize( block.arguments, block.statements.ToArray());
+            self.methods[name] = LpMethod.initialize( block.arguments, block.statements.ToList() );
             return LpSymbol.initialize( name );
         }
 

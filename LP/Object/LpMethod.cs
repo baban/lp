@@ -30,19 +30,19 @@ namespace LP.Object
             return obj;
         }
 
-        public static LpObject initialize( string[] args, string[] stmts )
+        public static LpObject initialize( string[] args, List<Ast.LpAstNode> stmts )
         {
             var obj = createClassTemplate();
             obj.arguments = new Util.LpArguments( args );
-            obj.statements = stmts.ToList();
+            obj.statements = stmts;
             return obj;
         }
 
-        public static LpObject initialize( Util.LpArguments args, string[] stmts)
+        public static LpObject initialize(Util.LpArguments args, List<Ast.LpAstNode> stmts)
         {
             var obj = createClassTemplate();
             obj.arguments = args;
-            obj.statements = stmts.ToList();
+            obj.statements = stmts;
             return obj;
         }
 

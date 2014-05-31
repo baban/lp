@@ -26,7 +26,8 @@ namespace LP.Object
         public string stringValue = null;
         public List<LpObject> arrayValues = null;
         public Dictionary<LpObject, LpObject> hashValues = null;
-        public List<string> statements = null;
+
+        public List<Ast.LpAstNode> statements = null;
 
         public string class_name = null;
     }

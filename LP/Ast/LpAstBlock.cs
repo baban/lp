@@ -6,15 +6,20 @@ using System.Threading.Tasks;
 
 namespace LP.Ast
 {
-    class LpAstArgs : LpAstNode
+    class LpAstBlock : LpAstNode
     {
-        public LpAstArgs() {
+        string[] args;
+
+        public LpAstBlock(List<LpAstNode> nodes, string[] args)
+        {
+            this.args = args;
+            ChildNodes = nodes;
             this.Evaluate = DoEvaluate;
         }
 
         public override Object.LpObject DoEvaluate()
         {
-            return base.DoEvaluate(); 
+            return Object.LpBlock.initialize( ChildNodes, args );
         }
     }
 }

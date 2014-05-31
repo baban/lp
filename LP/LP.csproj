@@ -82,7 +82,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ast\LpAstArgs.cs" />
+    <Compile Include="Ast\LpAstArray.cs" />
+    <Compile Include="Ast\LpAstBlock.cs" />
+    <Compile Include="Ast\LpAstLambda.cs" />
     <Compile Include="Ast\LpAstLeaf.cs" />
     <Compile Include="Ast\LpAstMethodCall.cs" />
     <Compile Include="Ast\LpAstNode.cs" />
