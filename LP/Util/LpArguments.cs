@@ -55,12 +55,17 @@ namespace LP.Util
             if (args.Count() == arity()) return args;
 
             int argsSize = Math.Abs(arity());
-
             Object.LpObject[] dstArgs = new Object.LpObject[argsSize];
-            Array.Copy(args, dstArgs, argsSize);
 
-            if( arity() < 0 )
-                dstArgs[dstArgs.Count()] = Object.LpArray.initialize(args.Skip(argsSize).Take(args.Count() - argsSize).ToArray());
+            if (arity() < 0)
+            {
+                Array.Copy(args, dstArgs, argsSize-1);
+                dstArgs[argsSize - 1] = Object.LpArray.initialize(args.Skip(argsSize).Take(args.Count() - argsSize).ToArray());
+            }
+            else
+            {
+                Array.Copy(args, dstArgs, argsSize);
+            }
 
             return dstArgs;
         }

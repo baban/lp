@@ -12,14 +12,16 @@ namespace LP
     {
         static void Main(string[] args)
         {
+            /*
             LpParser.execute("10");
             LpParser.execute("10.(+)(10)");
             LpParser.execute("10.(+)(10).(+)(5).(+)(7).(+)(7).(-)(7).(+)(7)");
             LpParser.execute("6;5");
-            LpParser.execute("->(a){ 10 }");
-            LpParser.execute("->(a){ 10 }.call()");
-            //sysInit("", args, 0);
-            //runNode(args);
+            //LpParser.execute("-> do 10 end");
+            LpParser.execute("->() do 10 end.call()");
+             */
+            sysInit("", args, 0);
+            runNode(args);
         }
 
         // parse command line options

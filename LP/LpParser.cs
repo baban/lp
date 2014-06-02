@@ -304,22 +304,22 @@ namespace LP
                                                         from _do in Parse.String("do").Token()
                                                         select new object[] { args, true };
         static readonly Parser<object[]> BLOCK_START = BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1);
-        static readonly Parser<object[]> BLOCK_STMT = from args in BLOCK_START
+        static readonly Parser<object[]> BLOCK_STMT = from argset in BLOCK_START
                                                       from stmts in Stmts
                                                       from b in Parse.String("end").Token()
-                                                      select new object[] { new object[] { }, stmts.Select((stmt) => STMT.Parse(stmt)).ToList() };
+                                                      select new object[] { (string[])argset[0], (bool)argset[1], stmts.Select((stmt) => STMT.Parse(stmt)).ToList() };
 
         static readonly Parser<Ast.LpAstNode> LAMBDA = from head in Parse.String("->").Token()
                                                        from blk in BLOCK_STMT
-                                                       select new Ast.LpAstLambda((List<Ast.LpAstNode>)blk[2], (string[])blk[1]);
+                                                       select new Ast.LpAstLambda( (List<Ast.LpAstNode>)blk[2], (string[])blk[0], (bool)blk[1] );
         static readonly Parser<Ast.LpAstNode> BLOCK = from blk in BLOCK_STMT
-                                                      select new Ast.LpAstBlock( (List<Ast.LpAstNode>)blk[2], (string[])blk[1] );
+                                                      select new Ast.LpAstBlock( (List<Ast.LpAstNode>)blk[2], (string[])blk[0], (bool)blk[1] );
 
         static readonly Parser<Ast.LpAstNode> VARIABLE_CALL = from varname in Varname
                                                               select new Ast.LpAstLeaf(varname, "VARIABLE_CALL");
 
         public static readonly Parser<Ast.LpAstNode> PRIMARY = new Parser<Ast.LpAstNode>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, QUASI_QUOTE, ARRAY, BLOCK, LAMBDA, VARIABLE_CALL }.Aggregate((seed, nxt) => seed.Or(nxt));
-        /*
+        /* 
         public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
         static readonly Parser<Object.LpObject> FUNCTION_CALL = (from fvals in METHOD_CALL
                                                                  select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2])).Or(VARIABLE_CALL);
@@ -335,19 +335,24 @@ namespace LP
                                                        from blk in Block.Token()
                                                        select new object[] { (string)fcall[0], (Object.LpObject[])ARGS_PARSE((string[])fcall[1]), blk };
         */
+        static readonly Func<string[], Ast.LpAstNode[]> nodeMap = (args) => (Ast.LpAstNode[])args.Select((arg) => STMT.Parse(arg)).ToArray();
+
+        static readonly Parser<Ast.LpAstNode[]> ARGS = from args in Args
+                                                       select (Ast.LpAstNode[])args.Select((arg) => STMT.Parse(arg)).ToArray();
+
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
-                                                        from args in ArgsCall
+                                                        from args in Args
                                                         from ws in Parse.WhiteSpace.AtLeastOnce()
                                                         from blk in Block
-                                                        select new object[] { (string)fname, (Ast.LpAstNode[])args.Select((arg) => STMT.Parse(arg)).ToArray(), BLOCK.Parse(blk) }).Or(
+                                                        select new object[] { (string)fname, nodeMap(args), BLOCK.Parse(blk) }).Or(
                                                         from fname in Fname
-                                                        from args in ArgsCall
-                                                        select new object[] { (string)fname, (Ast.LpAstNode[])args.Select((arg) => STMT.Parse(arg)).ToArray(), null });
+                                                        from args in Args
+                                                        select new object[] { (string)fname, nodeMap(args), null });
         static readonly Parser<Ast.LpAstNode> FUNCTION_CALL = (from fname in Fname
                                                                from a in Parse.String("(")
-                                                               from args in ArgsCall
+                                                               from args in Args
                                                                from b in Parse.String(")")
-                                                               select new Ast.LpAstMethodCall(fname, null, args.Select((arg) => STMT.Parse(arg)).ToArray(), null)).Or(VARIABLE_CALL);
+                                                               select new Ast.LpAstFuncall(fname, nodeMap(args), null)).Or(VARIABLE_CALL);
         static readonly Parser<Ast.LpAstNode> EXP_VAL = (from a in Parse.Char('(').Token()
                                                          from s in Stmt
                                                          from b in Parse.Char(')').Token()
@@ -471,13 +476,15 @@ namespace LP
             return psr.Parse(ctx);
         }
 
+        static Ast.LpAstNode parseNode(Parser<Ast.LpAstNode> psr, string ctx)
+        {
+            Console.WriteLine(ctx);
+            return psr.Parse(ctx);
+        }
+
         static Object.LpObject[] parseArgsObject(string ctx)
         {
-            return null;
-            /*
-            Console.WriteLine(ctx);
-            return ARGS.Parse(ctx);
-             */
+            return ARGS.Parse(ctx).Select( (node) => node.Evaluate() ).ToArray();
         }
 
         static void benchmarkString(Parser<string> psr, string ctx, int max=1000)
@@ -523,11 +530,9 @@ namespace LP
 
         public static Object.LpObject execute(string ctx)
         {
-            var o = STMTS.Parse(ctx);
-            //var o = STMT.Parse(ctx);
-            Console.WriteLine( o.Evaluate().doubleValue );
-            return null;
-            //return PROGRAM.Parse(ctx);
+            var str = Program.Parse(ctx);
+            Console.WriteLine(str);
+            return PROGRAM.Parse(str).Evaluate();
         }
     }
 }

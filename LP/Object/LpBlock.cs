@@ -37,11 +37,11 @@ namespace LP.Object
             return obj;
         }
 
-        public static LpObject initialize(List<Ast.LpAstNode> stmts, object[] args)
+        public static LpObject initialize(List<Ast.LpAstNode> stmts, string[] args, bool argsLoose = false )
         {
             LpObject obj = init();
             obj.statements = stmts.ToList();
-            obj.arguments = new Util.LpArguments( (string[])args[0], (bool)args[1] );
+            obj.arguments = new Util.LpArguments( args, argsLoose );
             return obj;
         }
 

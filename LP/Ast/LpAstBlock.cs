@@ -10,7 +10,7 @@ namespace LP.Ast
     {
         string[] args;
 
-        public LpAstBlock(List<LpAstNode> nodes, string[] args)
+        public LpAstBlock(List<LpAstNode> nodes, string[] args, bool argLoose = false )
         {
             this.args = args;
             ChildNodes = nodes;

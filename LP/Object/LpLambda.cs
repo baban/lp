@@ -31,11 +31,11 @@ namespace LP.Object
             return obj;
         }
 
-        public static LpObject initialize(List<Ast.LpAstNode> stmts, object[] args)
+        public static LpObject initialize(List<Ast.LpAstNode> stmts, string[] args, bool argLoose = false )
         {
             LpObject obj = init();
             obj.statements = stmts;
-            obj.arguments = new Util.LpArguments((string[])args[0], (bool)args[1]);
+            obj.arguments = new Util.LpArguments( args, argLoose );
             return obj;
         }
 
@@ -95,25 +95,13 @@ namespace LP.Object
 
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            Console.WriteLine("call");
             LpObject ret = Object.LpNl.initialize();
-
-            return ret;
-            /*
-            LpObject ret = null;
-            Util.LpIndexer.push( self );
-            self.arguments.setVariables( self, args, block );
-            foreach (string stmt in self.statements) {
-                ret = LpParser.STMT.Parse(stmt);
-                if (control_status == (int)LpBase.CONTROL_CODE.RETURN)
-                {
-                    control_status = (int)LpBase.CONTROL_CODE.NONE;
-                    return ret;
-                }
+            Util.LpIndexer.push(self);
+            self.arguments.setVariables(self, args, block);
+            foreach (Ast.LpAstNode stmt in self.statements) {
+                ret = stmt.Evaluate();
             }
-            Util.LpIndexer.pop();
             return ret;
-             */
         }
 
         static LpObject to_class(LpObject self, LpObject[] args, LpObject block = null)
