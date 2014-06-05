@@ -57,10 +57,10 @@ namespace LpTest.Object
             Type t = initParser();
             var p = t.InvokeMember("LAMBDA", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var block = " ->() do 10; end ";
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
-
+            var node = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var o = node.GetType().InvokeMember("DoEvaluate", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, node, null);
+            var prms = new object[] { "call", o, null, null };
             // 引数なし
-            var prms = new object[] { "call", null, null };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }

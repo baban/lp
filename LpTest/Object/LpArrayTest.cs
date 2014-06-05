@@ -71,7 +71,7 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, null);
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
 
-            var so = t.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args });
+            var so = t.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             var ary = so.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
         }
 
@@ -83,10 +83,10 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, null);
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
 
-            var so = t.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args });
+            var so = t.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             var ary = so.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
 
-            var so2 = t.GetMethod("first", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { so, null });
+            var so2 = t.GetMethod("first", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { so, null, null });
             Assert.AreEqual("LP.Object.LpObject", so2.GetType().ToString());
         }
 

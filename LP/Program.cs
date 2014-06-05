@@ -12,6 +12,9 @@ namespace LP
     {
         static void Main(string[] args)
         {
+            LpParser.execute("10; 5");
+            LpParser.execute("8.(+)(3)");
+            LpParser.execute("print(7)");
             /*
             LpParser.execute("10");
             LpParser.execute("10.(+)(10)");
@@ -20,8 +23,8 @@ namespace LP
             //LpParser.execute("-> do 10 end");
             LpParser.execute("->() do 10 end.call()");
              */
-            sysInit("", args, 0);
-            runNode(args);
+            //sysInit("", args, 0);
+            //runNode(args);
         }
 
         // parse command line options

@@ -90,7 +90,7 @@ namespace LpTest.Object
             Type st = initNumericModule();
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.0 });
-            var so = st.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            var so = st.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual("1", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
@@ -101,7 +101,7 @@ namespace LpTest.Object
             Type st = initNumericModule();
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.5 });
-            var prms = new object[] { "to_s", null };
+            var prms = new object[] { "to_s", o, null, null };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual("1.5", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
@@ -141,8 +141,8 @@ namespace LpTest.Object
             Type st = initNumericModule();
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.0 });
-            var so = st.GetMethod("display", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
-            Assert.AreEqual(null,so);
+            var so = st.GetMethod("display", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
+            Assert.IsNotNull(so);
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace LpTest.Object
             Type st = initNumericModule();
             var types = new Type[] { typeof(double) };
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)1.0 });
-            var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            var so = st.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual("1", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
@@ -165,21 +165,20 @@ namespace LpTest.Object
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (double)10.5 });
 
             // 引数なし
-            var prms = new object[] { "to_i", null };
+            var prms = new object[] { "to_i", o, null, null };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
         [Test]
         public void plus()
-
         {
             Type ot = initModule();
             Type st = initNumericModule();
 
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "15" });
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(double) }, null).Invoke(null, new object[] { (double)10.0 });
-            var prms = new object[] { "+", args };
+            var prms = new object[] { "+", o, args, null };
             var ret = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(25.0, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
@@ -192,7 +191,7 @@ namespace LpTest.Object
 
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(double) }, null).Invoke(null, new object[] { (double)10.0 });
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "5" });
-            var prms = new object[] { "-", args };
+            var prms = new object[] { "-", o, args, null };
             var ret = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(5.0, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
@@ -205,7 +204,7 @@ namespace LpTest.Object
 
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(double) }, null).Invoke(null, new object[] { (double)10.0 });
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "5" });
-            var prms = new object[] { "*", args };
+            var prms = new object[] { "*", o, args, null };
             var ret = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(50.0, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
@@ -218,9 +217,9 @@ namespace LpTest.Object
 
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(double) }, null).Invoke(null, new object[] { (double)10.0 });
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "5" });
-            var prms = new object[] { "*", args };
+            var prms = new object[] { "/", o, args, null };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
-            Assert.AreEqual(50.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+            Assert.AreEqual(2.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
         [Test]
@@ -231,7 +230,7 @@ namespace LpTest.Object
 
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(double) }, null).Invoke(null, new object[] { (double)10.0 });
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
-            var prms = new object[] { "**", args };
+            var prms = new object[] { "**", o, args, null };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(1000.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
@@ -244,7 +243,7 @@ namespace LpTest.Object
 
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(double) }, null).Invoke(null, new object[] { (double)10.0 });
             var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
-            var prms = new object[] { "%", args };
+            var prms = new object[] { "%", o, args, null };
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(1.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
