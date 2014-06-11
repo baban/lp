@@ -296,9 +296,9 @@ namespace LP
                                                       select new object[] { (string[])argset[0], (bool)argset[1], stmts };
 
         static readonly Parser<object[]> LAMBDA = from head in Parse.String("->").Token()
-                                                  from blk in BLOCK_STMT
+                                                  from blk in BLOCK_STMT.Token()
                                                   select new object[]{ NodeType.LAMBDA, blk };
-        static readonly Parser<object[]> BLOCK = from blk in BLOCK_STMT
+        static readonly Parser<object[]> BLOCK = from blk in BLOCK_STMT.Token()
                                                  select new object[]{ NodeType.BLOCK, blk };
 
         public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
@@ -329,8 +329,8 @@ namespace LP
         static readonly Parser<object[]> EXPR = FUNCALL.Or(EXP_VAL).Token();
         static readonly Parser<object[]> STMT = (from expr in EXPR
                                                  from t in Term
-                                                 select expr).Or(EXPR);
-        static readonly Parser<object[]> STMTS = from stmts in STMT.Many()
+                                                 select expr).Or(EXPR).Token();
+        static readonly Parser<object[]> STMTS = from stmts in STMT.Many().Token()
                                                  select new object[] { NodeType.STMTS, stmts };
         public static readonly Parser<object[]> PROGRAM = STMTS;
         /*
@@ -542,6 +542,18 @@ namespace LP
                         (string)vals[0],
                         (Ast.LpAstNode[])((object[])vals[1]).Select((n) => toNode((object[])n)).ToArray(),
                         null);
+                case NodeType.LAMBDA:
+                    var blk = (object[])node[1];
+                    return new Ast.LpAstLambda(
+                        toNode((object[])blk[2]).ChildNodes,
+                        (string[])blk[0],
+                        (bool)blk[1] );
+                case NodeType.BLOCK:
+                    var blk2 = (object[])node[1];
+                    return new Ast.LpAstLambda(
+                        toNode((object[])blk2[2]).ChildNodes,
+                        (string[])blk2[0],
+                        (bool)blk2[1]);
                 case NodeType.FUNCALL:
                     object[] fvals = (object[])node[1];
                     return new Ast.LpAstMethodCall(
