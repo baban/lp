@@ -18,7 +18,7 @@ namespace LP
             LpParser.execute("10.(+)(10).(+)(5)");
             LpParser.execute("->() do 10 end");
             LpParser.execute("->() do 10 end.call()");
-            LpParser.execute("->(n) do 10; 5.(+)(7) end.call(7)");
+            LpParser.execute("->(n) do 10; 5.(+)(3) end.call(7)");
             /*
             LpParser.execute("10");
             LpParser.execute("10.(+)(10)");

@@ -319,14 +319,14 @@ namespace LP
                                                         from fname in Fname
                                                         from args in ARGS_CALL
                                                         select new object[] { fname, args, null });
-        static readonly Parser<object[]> FUNCTION_CALL = (from fvals in METHOD_CALL
-                                                          select new object[] { NodeType.FUNCTION_CALL, fvals }).Or(VARIABLE_CALL);
+        static readonly Parser<object[]> FUNCTION_CALL = from fvals in METHOD_CALL
+                                                         select new object[] { NodeType.FUNCTION_CALL, fvals };
         static readonly Parser<object[]> FUNCALL = from val in PRIMARY
                                                    from dot in Parse.String(".")
                                                    from fname in Fname
                                                    from args in ARGS_CALL
                                                    select new object[] { NodeType.FUNCALL, new object[] { fname, val, args, null } };
-        static readonly Parser<object[]> EXPR = FUNCALL.Or(EXP_VAL).Token();
+        static readonly Parser<object[]> EXPR = FUNCALL.Or(EXP_VAL).Or(FUNCTION_CALL).Or(VARIABLE_CALL).Token();
         static readonly Parser<object[]> STMT = (from expr in EXPR
                                                  from t in Term
                                                  select expr).Or(EXPR).Token();
@@ -537,10 +537,10 @@ namespace LP
                     return new Ast.LpAstLeaf((string)node[1], "SYMBOL");
                 case NodeType.FUNCTION_CALL:
                     Console.WriteLine("NodeType.FUNCTION_CALL");
-                    object[] vals = (object[])node[0];
+                    object[] vals = (object[])node[1];
                     return new Ast.LpAstFuncall(
                         (string)vals[0],
-                        (Ast.LpAstNode[])((object[])vals[1]).Select((n) => toNode((object[])n)).ToArray(),
+                        (Ast.LpAstNode[])((object[])vals[1]).Select( (n) => toNode((object[])n) ).ToArray(),
                         null);
                 case NodeType.LAMBDA:
                     var blk = (object[])node[1];
