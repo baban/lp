@@ -11,7 +11,7 @@ namespace LP.Ast
         string[] args;
         bool loose = false;
 
-        public LpAstLambda(List<LpAstNode> nodes, string[] args, bool argLoose = false )
+        public LpAstLambda(List<LpAstNode> nodes, string[] args, bool argLoose = false)
         {
             this.args = args;
             this.loose = argLoose;

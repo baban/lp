@@ -23,7 +23,7 @@ namespace LP.Util
             arityNumber = arity;
         }
 
-        public LpArguments(string[] args, bool loose = false)
+        public LpArguments( string[] args, bool loose = false )
         {
             arrayArg = args.FirstOrDefault((s) => s[0] == '*');
             blockArg = args.FirstOrDefault((s) => s[0] == '&');
@@ -51,16 +51,14 @@ namespace LP.Util
         public Object.LpObject[] putVariables(Object.LpObject[] args, Object.LpObject block)
         {
             if (args == null) return new Object.LpObject[] { };
-
-            if (args.Count() == arity()) return args;
+            if (args.Count() == arity()) return args; 
 
             int argsSize = Math.Abs(arity());
             Object.LpObject[] dstArgs = new Object.LpObject[argsSize];
-
             if (arity() < 0)
             {
                 Array.Copy(args, dstArgs, argsSize-1);
-                dstArgs[argsSize - 1] = Object.LpArray.initialize(args.Skip(argsSize).Take(args.Count() - argsSize).ToArray());
+                dstArgs[argsSize - 1] = Object.LpArray.initialize(args.Skip(argsSize-1).Take(args.Count() - (argsSize-1)).ToArray());
             }
             else
             {

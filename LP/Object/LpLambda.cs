@@ -35,7 +35,7 @@ namespace LP.Object
         {
             LpObject obj = init();
             obj.statements = stmts;
-            obj.arguments = new Util.LpArguments( args, argLoose );
+            obj.arguments = new Util.LpArguments(args, argLoose);
             return obj;
         }
 
@@ -95,21 +95,24 @@ namespace LP.Object
 
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            LpObject ret = Object.LpNl.initialize();
+            var dstArgs = (null==args || args.Count()==0) ? new LpObject[]{} : args.First().arrayValues.ToArray();
+            self.arguments.setVariables(self, dstArgs, block);
             Util.LpIndexer.push(self);
-            self.arguments.setVariables(self, args, block);
-            foreach (Ast.LpAstNode stmt in self.statements) {
+
+            LpObject ret = Object.LpNl.initialize();
+            foreach (Ast.LpAstNode stmt in self.statements)
+            {
                 ret = stmt.Evaluate();
             }
             return ret;
-        }
+        } 
 
         static LpObject to_class(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
             return LpClass.initialize( name, self.statements.ToList() );
         }
-
+         
         static LpObject to_method(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpMethod.initialize(self.arguments, self.statements.ToList() );
