@@ -9,12 +9,14 @@ namespace LP.Ast
     class LpAstFuncall : LpAstNode
     {
         private string name = null;
-        private LpAstNode[] args;
+        private LpAstNode[] args = null;
+        private LpAstNode block = null;
 
         public LpAstFuncall(string name, LpAstNode[] args, LpAstNode blk)
         {
             this.name = name;
             this.args = args;
+            this.block = null;
 
             this.Evaluate = DoEvaluate;
         }

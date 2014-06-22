@@ -251,11 +251,8 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("BOOL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "true" });
+            var o = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "true" });
             Assert.AreEqual( "LP.Ast.LpAstLeaf", o.GetType().ToString() );
-
-            o = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "false" });
-            Assert.AreEqual("LP.Ast.LpAstLeaf", o.GetType().ToString());
         }
 
         [Test]
@@ -875,7 +872,7 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("NUMERIC", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var node = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.1" });
+            var node = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.1" });
             Assert.AreEqual( "LP.Ast.LpAstLeaf", node.GetType().ToString() );
             var o = node.GetType().InvokeMember("DoEvaluate", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, node, null);
             var str = o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
@@ -897,7 +894,9 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("SYMBOL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, ":aaa" });
+            var node = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, ":aaa" });
+            Assert.AreEqual("LP.Ast.LpAstLeaf", node.GetType().ToString());
+            var o = node.GetType().InvokeMember("DoEvaluate", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, node, null);
             var str = o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null);
             Assert.AreEqual("aaa", str);
         }
@@ -907,7 +906,7 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("ARRAY", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[]" });
+            var o = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[]" });
             Assert.AreEqual("LP.Ast.LpAstArray", o.GetType().ToString());
         }
 
@@ -916,7 +915,7 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("ARRAY", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10]" });
+            var o = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10]" });
             Assert.AreEqual("LP.Ast.LpAstArray", o.GetType().ToString());
         }
 
@@ -925,7 +924,7 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("ARRAY", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10,5]" });
+            var o = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10,5]" });
             Assert.AreEqual("LP.Ast.LpAstArray", o.GetType().ToString());
         }
 
@@ -934,7 +933,7 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("ARRAY", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10.(+)(10), 5.(*)(5)]" });
+            var o = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "[10.(+)(10), 5.(*)(5)]" });
             Assert.AreEqual("LP.Ast.LpAstArray", o.GetType().ToString());
         }
 
@@ -970,15 +969,16 @@ namespace LpTest
             var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "print(10)" });
         }
         */
+
         [Test]
         public void FUNCALL()
         {
             Type t = initParser();
             var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.to_s()" });
+            var o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.to_s()" });
             Assert.AreEqual("10", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
 
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.5.to_s()" });
+            o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.5.to_s()" });
             Assert.AreEqual("10.5", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
@@ -987,19 +987,19 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10)" });
+            var o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10)" });
             Assert.AreEqual(20.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
 
             p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(-)(10)" });
+            o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(-)(10)" });
             Assert.AreEqual(5.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
 
             p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(*)(10)" });
+            o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(*)(10)" });
             Assert.AreEqual(150.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
 
             p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(/)(10)" });
+            o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "15.(/)(10)" });
             Assert.AreEqual(1.5, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
@@ -1008,11 +1008,11 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(**)(3)" });
+            var o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(**)(3)" });
             Assert.AreEqual(1000.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
 
             p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(%)(3)" });
+            o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(%)(3)" });
             Assert.AreEqual(1.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
@@ -1021,10 +1021,10 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.to_s().to_s()" });
+            var o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.to_s().to_s()" });
             Assert.AreEqual("10", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
 
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10).to_s()" });
+            o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(10).to_s()" });
             Assert.AreEqual("20", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
@@ -1033,7 +1033,7 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(2.(*)(2))" });
+            var o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "10.(+)(2.(*)(2))" });
             Assert.AreEqual(14.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
@@ -1042,10 +1042,10 @@ namespace LpTest
         {
             Type t = initParser();
             var p = t.InvokeMember("FUNCALL", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(10).(+)(10)" });
+            var o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(10).(+)(10)" });
             Assert.AreEqual(20.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
 
-            o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(10.(+)(10)).(+)(5.(*)(5))" });
+            o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "(10.(+)(10)).(+)(5.(*)(5))" });
             Assert.AreEqual(45.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
@@ -1075,28 +1075,32 @@ namespace LpTest
             Type t = initParser();
             var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var block = " do 10; end ";
-            var blk = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var blk = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
             Assert.AreEqual( blk.GetType().ToString(), "LP.Ast.LpAstBlock" );
         }
 
         [Test]
         public void BLOCK2()
         {
+        /*
             Type t = initParser();
             var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var block = " do 10 + 2; end ";
-            var blk = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var blk = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
             Assert.AreEqual(blk.GetType().ToString(), "LP.Ast.LpAstBlock");
+        */
         }
 
         [Test]
         public void BLOCK3()
         {
+            /*
             Type t = initParser();
             var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var block = "() do 10 + 2; end ";
-            var blk = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var blk = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
             Assert.AreEqual(blk.GetType().ToString(), "LP.Ast.LpAstBlock");
+             */
         }
 
         [Test]
@@ -1105,7 +1109,7 @@ namespace LpTest
             Type t = initParser();
             var p = t.InvokeMember("LAMBDA", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var block = "->do 10; end ";
-            var blk = t.GetMethod("parseNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var blk = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
             Assert.AreEqual(blk.GetType().ToString(), "LP.Ast.LpAstLambda");
         }
 

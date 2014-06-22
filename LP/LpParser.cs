@@ -280,7 +280,7 @@ namespace LP
         static readonly Parser<object[]> ARRAY = from a in Parse.String("[").Text().Token()
                                                  from elms in SepElm.Many()
                                                  from b in Parse.String("]").Text().Token()
-                                                 select new object[] { NodeType.ARRAY, elms };
+                                                 select new object[] { NodeType.ARRAY, elms.Select((elm) => STMT.Parse(elm)).ToList() };
         static readonly Parser<object[]> BLOCK_START1 = from a in Parse.String("do").Token()
                                                         select new object[] { new string[] { }, false };
         static readonly Parser<object[]> BLOCK_START2 = from _do in Parse.String("do").Token()
@@ -324,11 +324,30 @@ namespace LP
         static readonly Parser<object[]> FUNCTION_CALL = from fvals in METHOD_CALL
                                                          select new object[] { NodeType.FUNCTION_CALL, fvals };
         static readonly Parser<object[]> STARTER = EXP_VAL.Or(FUNCTION_CALL).Or(VARIABLE_CALL);
+
+        /*
+        static readonly Parser<object[]> FUNCALL = from val in STARTER
+                                                   from dot in Parse.String(".")
+                                                   from fvals in METHOD_CALL
+                                                   select new object[] { NodeType.FUNCALL, new object[] { (string)fvals[0], val, (object[])fvals[1], null } };
         static readonly Parser<object[]> FUNCALL = from val in STARTER
                                                    from dot in Parse.String(".")
                                                    from fname in Fname
                                                    from args in ARGS_CALL
                                                    select new object[] { NodeType.FUNCALL, new object[] { fname, val, args, null } };
+         */
+        static readonly Parser<object[]> FUNCALL = OperandsChainCallStart(Parse.String("."), STARTER, METHOD_CALL, (dot, op1, op2) => {
+            return new object[] {
+                NodeType.FUNCALL,
+                new object[]{
+                    (string)(op2)[0],
+                    op1,
+                    ((object[])op2)[1],
+                    null
+                }
+            };
+        });
+        
         static readonly Parser<object[]> EXPR = FUNCALL.Or(STARTER).Token();
         static readonly Parser<object[]> STMT = (from expr in EXPR
                                                  from t in Term
@@ -463,15 +482,21 @@ namespace LP
         }
 
         // 単体テスト時にアクセスしやすいように
-        static Object.LpObject parseToNode(Parser<object[]> psr, string ctx)
-        {
-            return toNode(psr.Parse(ctx)).Evaluate();
-        }
-
-        // 単体テスト時にアクセスしやすいように
         static object[] parseNode(Parser<object[]> psr, string ctx)
         {
             return psr.Parse(ctx);
+        }
+
+        // 単体テスト時にアクセスしやすいように
+        static Ast.LpAstNode parseToNode(Parser<object[]> psr, string ctx)
+        {
+            return toNode(psr.Parse(ctx));
+        }
+
+        // 単体テスト時にアクセスしやすいように
+        static Object.LpObject parseToObject(Parser<object[]> psr, string ctx)
+        {
+            return toNode(psr.Parse(ctx)).Evaluate();
         }
 
         // 単体テスト時にアクセスしやすいように
@@ -559,7 +584,7 @@ namespace LP
                         (bool)blk[1] );
                 case NodeType.BLOCK:
                     var blk2 = (object[])node[1];
-                    return new Ast.LpAstLambda(
+                    return new Ast.LpAstBlock(
                         toNode((object[])blk2[2]).ChildNodes,
                         (string[])blk2[0],
                         (bool)blk2[1]);
@@ -575,6 +600,8 @@ namespace LP
                 case NodeType.STMTS:
                     var stmts = ((List<object[]>)node[1]).Select((o) => toNode(o)).ToList();
                     return new Ast.LpAstStmts( stmts );
+                case NodeType.ARRAY:
+                    return new Ast.LpAstArray(((List<object[]>)node[1]).Select((o) => toNode(o)).ToList());
                 default:
                     Console.WriteLine("null");
                     return null;
