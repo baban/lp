@@ -306,7 +306,7 @@ namespace LP
         static readonly Parser<object[]> EXP_VAL = (from a in Parse.Char('(').Token()
                                                     from s in STMT
                                                     from b in Parse.Char(')').Token()
-                                                    select new object[] { NodeType.EXP_VAL, s }).Or(PRIMARY);
+                                                    select s).Or(PRIMARY);
         static readonly Parser<object[]> ARGS = from args in Args
                                                 select args.Select((arg) => ((object[])STMT.Parse(arg))).ToArray();
         static readonly Parser<object[]> ARGS_CALL = from a in Parse.Char('(').Token()
@@ -496,7 +496,13 @@ namespace LP
         // 単体テスト時にアクセスしやすいように
         static Object.LpObject parseToObject(Parser<object[]> psr, string ctx)
         {
-            return toNode(psr.Parse(ctx)).Evaluate();
+            var p = psr.Parse(ctx);
+            Console.WriteLine("p");
+            Console.WriteLine(p);
+            var o = toNode(p);
+            Console.WriteLine("o");
+            Console.WriteLine(o);
+            return o.Evaluate();
         }
 
         // 単体テスト時にアクセスしやすいように
@@ -612,16 +618,14 @@ namespace LP
         {
             var str = Program.Parse(ctx);
             Console.WriteLine(str);
-            var nodes = PROGRAM.Parse(str);
-            //Console.WriteLine("nodes");
-            //Console.WriteLine(nodes);
-            //Console.WriteLine(toNode( new object[]{ NodeType.NUMERIC, "10" } ).DoEvaluate().doubleValue);
-            //Console.WriteLine(toNode(new object[] { NodeType.STRING, "\"aaaaa\"" }).DoEvaluate().stringValue);
-            //return null;
-            var o = toNode(nodes).Evaluate();
-            Console.WriteLine( o.class_name);
+            var pobj = PROGRAM.Parse(str);
+            Console.WriteLine(pobj);
+            var nodes = toNode(pobj);
+            Console.WriteLine(nodes);
+            var o = nodes.Evaluate();
+            Console.WriteLine(o.class_name);
             Console.WriteLine( o.doubleValue);
-            return toNode(nodes).Evaluate();
+            return o;
         }
     }
 }
