@@ -44,7 +44,7 @@ namespace LP.Util
                 currentContext = Object.LpKernel.initialize();
                 return currentContext;
             } else {
-                currentContext = contextStack.Last();
+                currentContext = contextStack.First();
                 return currentContext;
             }
         }

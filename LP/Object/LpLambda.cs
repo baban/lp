@@ -96,7 +96,6 @@ namespace LP.Object
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
             Util.LpIndexer.push(self);
-
             var dstArgs = (null == args || args.Count() == 0) ? new LpObject[] { } : args.First().arrayValues.ToArray();
             self.arguments.setVariables(self, dstArgs, block);
 
