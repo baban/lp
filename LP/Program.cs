@@ -12,6 +12,7 @@ namespace LP
     {
         static void Main(string[] args)
         {
+            Util.LpIndexer.push( Object.LpKernel.initialize() );
             /*
             LpParser.execute("10; 5");
             LpParser.execute("8.(+)(3)");
@@ -33,9 +34,10 @@ namespace LP
             //LpParser.execute("-> do 10 end");
             LpParser.execute("->() do 10 end.call()");
              */
-            LpParser.execute("(10).(+)(6)");
+            //LpParser.execute("(10).(+)(6)");
             //LpParser.execute("->(n) do print(n) end.bind(:fact);");
-            //LpParser.execute("->(n) do print(n) end.bind(:fact); fact(2)");
+            //LpParser.execute("->() do 10 end.bind(:fact); fact()");
+            LpParser.execute("->(n) do 10 end.bind(:fact);fact(10)");
             //"->(n) do _if(n.(==)(1),do 1 end,do n.(*)(fact(n.(-)(1))) end) end.bind(:fact); fact(2).display()";
              
             //sysInit("", args, 0);

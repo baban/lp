@@ -21,7 +21,7 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate()
         {
-            return Object.LpLambda.initialize( ChildNodes, args, loose );
+            return Object.LpLambda.initialize(ChildNodes, args, loose);
         }
     }
 }

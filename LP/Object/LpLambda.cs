@@ -90,20 +90,22 @@ namespace LP.Object
         {
             var so = to_s(self, args);
             Console.WriteLine(so.stringValue);
-            return null;
+            return Object.LpNl.initialize();
         }
 
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var dstArgs = (null==args || args.Count()==0) ? new LpObject[]{} : args.First().arrayValues.ToArray();
-            self.arguments.setVariables(self, dstArgs, block);
             Util.LpIndexer.push(self);
+
+            var dstArgs = (null == args || args.Count() == 0) ? new LpObject[] { } : args.First().arrayValues.ToArray();
+            self.arguments.setVariables(self, dstArgs, block);
 
             LpObject ret = Object.LpNl.initialize();
             foreach (Ast.LpAstNode stmt in self.statements)
             {
                 ret = stmt.Evaluate();
             }
+            Util.LpIndexer.pop();
             return ret;
         } 
 

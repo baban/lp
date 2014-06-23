@@ -123,7 +123,9 @@ namespace LP.Object
                 if ( null!= (m = methods[name] as LpMethod)){
                     return m.funcall(self, args, block);
                 }else{
-                    return Object.LpLambda.call((LpObject)methods[name], args, block);
+                    var dstArgs = LpArray.initialize();
+                    dstArgs.arrayValues = args.ToList();
+                    return Object.LpLambda.call((LpObject)methods[name], new LpObject[] { dstArgs }, block);
                 }
             }
 

@@ -24,7 +24,7 @@ namespace LP.Ast
         public override Object.LpObject DoEvaluate()
         {
             var lft = Util.LpIndexer.last();
-            return lft.funcall(this.name, args.Select( (arg) => arg.DoEvaluate() ).ToArray(), null);
+            return lft.funcall(this.name, args.Select((arg) => arg.DoEvaluate()).ToArray(), null);
         }
     }
 }
