@@ -88,21 +88,17 @@ namespace LP.Object
 
         static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return null;
-            /*
-            LpObject ret = LpNl.initialize();
             Util.LpIndexer.push(self);
-            self.arguments.setVariables(self, args, block);
-            foreach (string stmt in self.statements)
+            var dstArgs = (null == args || args.Count() == 0) ? new LpObject[] { } : args.First().arrayValues.ToArray();
+            self.arguments.setVariables(self, dstArgs, block);
+
+            LpObject ret = Object.LpNl.initialize();
+            foreach (Ast.LpAstNode stmt in self.statements)
             {
-                ret = LpParser.STMT.Parse(stmt);
-                if (control_status == (int)LpBase.CONTROL_CODE.RETURN) {
-                    return ret;
-                }
+                ret = stmt.Evaluate();
             }
             Util.LpIndexer.pop();
             return ret;
-             */
         }
     }
 }

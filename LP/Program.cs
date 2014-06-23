@@ -25,7 +25,7 @@ namespace LP
             LpParser.execute(":a.(=)(7); print(a)");
              */
             //LpParser.execute("->(g) do 10 end.call(6)");
-            LpParser.execute("->(g) do g.(+)(2) end.call(6)");
+            //LpParser.execute("->(g) do g.(+)(2) end.call(6)");
             //LpParser.execute("->(g) do print(g) end.call(6)");
             /*
             LpParser.execute("10");
@@ -40,6 +40,8 @@ namespace LP
             //LpParser.execute("->() do 10 end.bind(:fact); fact()");
             //LpParser.execute("->(n) do 10 end.bind(:fact);fact(10)");
             //LpParser.execute("->(n) do n end.bind(:fact);fact(10)");
+            //LpParser.execute("do 1 end.call()");
+            LpParser.execute("->(n) do _if(n.(==)(1), do 1 end, n.(*)(n.(-)(1)) ) end.bind(:fact); fact(2)");
             //"->(n) do _if(n.(==)(1),do 1 end,do n.(*)(fact(n.(-)(1))) end) end.bind(:fact); fact(2).display()";
              
             //sysInit("", args, 0);
