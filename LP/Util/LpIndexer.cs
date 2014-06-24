@@ -49,6 +49,15 @@ namespace LP.Util
             }
         }
 
+        public static Object.LpObject varsearch( string name ){
+            foreach (var o in contextStack)
+            {
+                var ret = o.varcall(name);
+                if (ret != null) return ret;
+            }
+            throw new Error.NameError();
+        }
+
         public static int depth()
         {
             return contextStack.Count();

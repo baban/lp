@@ -36,6 +36,7 @@ namespace LP.Object
             LpObject obj = init();
             obj.statements = stmts;
             obj.arguments = new Util.LpArguments(args, argLoose);
+            obj.superclass = LpObject.initialize();
             return obj;
         }
 

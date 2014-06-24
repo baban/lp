@@ -616,6 +616,7 @@ namespace LP
 
         public static Object.LpObject execute(string ctx)
         {
+            Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
             Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);

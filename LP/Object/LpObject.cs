@@ -102,10 +102,11 @@ namespace LP.Object
             try {
                 return funcall( name,null,null );
             } catch( Error.LpNoMethodError e ){
-                throw new Error.NameError();
+                //throw new Error.NameError();
             }
 
-            throw new Error.NameError();
+            //throw new Error.NameError();
+            return null;
         }
 
         public LpObject funcall(string name, LpObject[] args, LpObject block=null )

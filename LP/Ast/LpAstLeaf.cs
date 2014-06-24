@@ -44,7 +44,7 @@ namespace LP.Ast
                 case "QUASI_QUOTE":
                     return Object.LpQuote.initialize( leaf );
                 case "VARIABLE_CALL":
-                    return Util.LpIndexer.last().varcall( leaf );
+                    return Util.LpIndexer.varsearch( leaf );
                 default:
                     return null;
             }
