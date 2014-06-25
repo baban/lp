@@ -603,9 +603,9 @@ namespace LP
             var str = Program.Parse(ctx);
             //Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
-            //Console.WriteLine(pobj);
+            Console.WriteLine(pobj);
             var nodes = toNode(pobj);
-            //Console.WriteLine(nodes);
+            Console.WriteLine(nodes);
             var o = nodes.Evaluate();
             //Console.WriteLine(o.class_name);
             //Console.WriteLine( o.doubleValue);
