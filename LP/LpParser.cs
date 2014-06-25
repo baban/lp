@@ -260,7 +260,7 @@ namespace LP
                                                  select string.Join( "; ", stmts.ToArray() );
         public enum NodeType {
             INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, VARIABLE_CALL, LAMBDA, BLOCK, PRIMARY,
-            ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM
+            ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH
         };
         static readonly Parser<object[]> INT = from n in Int
                                                select new object[] { NodeType.INT, n };
@@ -444,7 +444,10 @@ namespace LP
 
         static object[] makeHash( string[][] pairs )
         {
-            return new object[]{};
+            return new object[]{
+                NodeType.HASH,
+                pairs.Select((pair) => new object[] { STMT.Parse(pair[0]), STMT.Parse(pair[1]) }).ToArray()
+            };
         }
 
         // 単体テスト時にアクセスしやすいように
@@ -585,6 +588,9 @@ namespace LP
                     return new Ast.LpAstStmts( stmts );
                 case NodeType.ARRAY:
                     return new Ast.LpAstArray(((List<object[]>)node[1]).Select((o) => toNode(o)).ToList());
+                case NodeType.HASH:
+                    // TODO: Hash create method create
+                    return null;
                 default:
                     Console.WriteLine("null");
                     return null;
