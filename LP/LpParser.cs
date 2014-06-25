@@ -161,7 +161,7 @@ namespace LP
                                                  from blk in Block.Token().Optional()
                                                  select string.Format("{0}({1}){2}", idf, string.Join(", ", args.ToArray()), (blk.IsEmpty ? "" : " " + blk.Get()));
 
-         static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
         //static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
@@ -246,7 +246,7 @@ namespace LP
                                                                 select new string[]{})
                                                 select string.Format("_if({0},do {1} end,do {2} end)", expr, string.Join("; ", stmts1), string.Join("; ", stmts2));
 
-        static readonly Parser<string> StatCollection = Function.Or(IfStmt);
+        static readonly Parser<string> StatCollection = DefClass.Or(Function).Or(IfStmt);
         static readonly Parser<string> StatList = StatCollection.Or(Expr);
 
         static readonly Parser<string> Stmt = (from s in StatList
@@ -596,12 +596,12 @@ namespace LP
                     return null;
             }
         }
-
+         
         public static Object.LpObject execute(string ctx)
         {
             //Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
-            //Console.WriteLine(str);
+            Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
             Console.WriteLine(pobj);
             var nodes = toNode(pobj);
