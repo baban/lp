@@ -301,7 +301,12 @@ namespace LP
         static readonly Parser<object[]> BLOCK = from blk in BLOCK_STMT.Token()
                                                  select new object[]{ NodeType.BLOCK, blk };
 
-        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
+        static readonly Parser<object[]> HASH = from a in Parse.String("{").Text().Token()
+                                                from pairs in Assoc.Many()
+                                                from b in Parse.String("}").Text().Token()
+                                                select makeHash(pairs.ToArray());
+        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, HASH, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
+        //public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<object[]> EXP_VAL = (from a in Parse.Char('(').Token()
                                                     from s in STMT
@@ -325,17 +330,6 @@ namespace LP
                                                          select new object[] { NodeType.FUNCTION_CALL, fvals };
         static readonly Parser<object[]> STARTER = EXP_VAL.Or(FUNCTION_CALL).Or(VARIABLE_CALL);
 
-        /*
-        static readonly Parser<object[]> FUNCALL = from val in STARTER
-                                                   from dot in Parse.String(".")
-                                                   from fvals in METHOD_CALL
-                                                   select new object[] { NodeType.FUNCALL, new object[] { (string)fvals[0], val, (object[])fvals[1], null } };
-        static readonly Parser<object[]> FUNCALL = from val in STARTER
-                                                   from dot in Parse.String(".")
-                                                   from fname in Fname
-                                                   from args in ARGS_CALL
-                                                   select new object[] { NodeType.FUNCALL, new object[] { fname, val, args, null } };
-         */
         static readonly Parser<object[]> FUNCALL = OperandsChainCallStart(Parse.String("."), STARTER, METHOD_CALL, (dot, op1, op2) => {
             return new object[] {
                 NodeType.FUNCALL,
@@ -366,22 +360,6 @@ namespace LP
         static readonly Parser<Object.LpObject> QUESTION_QUOTE = from m in Parse.String("?").Text()
                                                                  from s in Primary
                                                                  select STMT.Parse(s).funcall("to_s", null);
-        static readonly Parser<Object.LpObject> HASH = from a in Parse.String("{").Text().Token()
-                                                       from pairs in Assoc.Many()
-                                                       from b in Parse.String("}").Text().Token()
-                                                       select makeHash( pairs.ToArray() );
-        public static readonly Parser<Object.LpObject> PRIMARY = new Parser<Object.LpObject>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
-        static readonly Parser<Object.LpObject> FUNCTION_CALL = (from fvals in METHOD_CALL
-                                                                 select Util.LpIndexer.last().funcall((string)fvals[0], (Object.LpObject[])fvals[1], (Object.LpObject)fvals[2])).Or(VARIABLE_CALL);
-        static readonly Parser<object[]> FUNCALL_ARG = from fname in Fname
-                                                       from c in Parse.Char('(').Once()
-                                                       from args in Args
-                                                       from d in Parse.Char(')').Once()
-                                                       select new object[] { (string)fname, (string[])args.ToArray() };
-
-        static readonly Parser<object[]> FUNCALL_BLK = from fcall in FUNCALL_ARG
-                                                       from blk in Block.Token()
-                                                       select new object[] { (string)fcall[0], (Object.LpObject[])ARGS_PARSE((string[])fcall[1]), blk };
         */
 
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
@@ -464,10 +442,9 @@ namespace LP
             return (Object.LpObject)o.methods[fname];
         }
 
-        static Object.LpObject makeHash( string[][] pairs )
+        static object[] makeHash( string[][] pairs )
         {
-            Object.LpObject hash = Object.LpHash.initialize();
-            return hash;
+            return new object[]{};
         }
 
         // 単体テスト時にアクセスしやすいように
@@ -616,16 +593,16 @@ namespace LP
 
         public static Object.LpObject execute(string ctx)
         {
-            Console.WriteLine(ctx);
+            //Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
-            Console.WriteLine(str);
+            //Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
-            Console.WriteLine(pobj);
+            //Console.WriteLine(pobj);
             var nodes = toNode(pobj);
-            Console.WriteLine(nodes);
+            //Console.WriteLine(nodes);
             var o = nodes.Evaluate();
-            Console.WriteLine(o.class_name);
-            Console.WriteLine( o.doubleValue);
+            //Console.WriteLine(o.class_name);
+            //Console.WriteLine( o.doubleValue);
             return o;
         }
     }
