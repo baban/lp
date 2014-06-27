@@ -91,8 +91,14 @@ namespace LP.Object
                 block.funcall("call", block, new LpObject[]{}, null);
             }
 
+            klass.methods["new"] = new LpMethod(new BinMethod(initialize), -1);
+
             return klass;
         }
 
+        public static LpObject initialize(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return self;
+        }
     }
 }
