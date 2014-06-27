@@ -32,7 +32,7 @@ namespace LP.Object
             obj.statements = stmts.ToList();
 
             classes[obj.class_name] = obj;
-            Util.LpIndexer.push(obj);
+            //Util.LpIndexer.push(obj);
 
             return obj;
         }

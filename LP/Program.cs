@@ -12,7 +12,6 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            Util.LpIndexer.push( Object.LpKernel.initialize() );
             sysInit("", args, 0);
             runNode(args);
         }
@@ -48,7 +47,10 @@ namespace LP
                 return 0;
             }
             string code = readFile(argv[0]);
+
             LP.Util.LpIndexer.initialize();
+            Util.LpIndexer.push(Object.LpKernel.initialize());
+            initializeBuiltInClasses();
             try
             {
                 LpParser.execute(code);
@@ -63,6 +65,26 @@ namespace LP
             Console.WriteLine("benckmark:end");
             */
             return 0;
+        }
+
+        static void initializeBuiltInClasses()
+        {
+            Object.LpArray.initialize();
+            Object.LpBlock.initialize();
+            Object.LpBool.initialize();
+            Object.LpClass.initialize();
+            Object.LpFile.initialize();
+            Object.LpHash.initialize();
+            Object.LpKernel.initialize();
+            Object.LpLambda.initialize();
+            Object.LpMethod.initialize();
+            Object.LpModule.initialize();
+            Object.LpNl.initialize();
+            Object.LpNumeric.initialize();
+            Object.LpObject.initialize();
+            Object.LpQuote.initialize();
+            Object.LpString.initialize();
+            Object.LpSymbol.initialize();
         }
 
         static void showSystemMessage()

@@ -10,6 +10,11 @@ namespace LP.Object
     {
         static string className = "Quote";
 
+        public static LpObject initialize()
+        {
+            return init("");
+        }
+
         public static LpObject initialize(string s)
         {
             return init(s);

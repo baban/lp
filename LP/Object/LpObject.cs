@@ -94,7 +94,8 @@ namespace LP.Object
                 return variale;
             
             // class
-            if (classes.ContainsKey(name)) {
+            if (classes.ContainsKey(name))
+            {
                 return classes[name] as LpObject;
             }
 

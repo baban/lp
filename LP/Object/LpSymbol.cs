@@ -12,6 +12,11 @@ namespace LP.Object
         protected static Dictionary<string, LpObject> symbols = new Dictionary<string, LpObject>();
         static string className = "Symbol";
 
+        public static LpObject initialize()
+        {
+            return init("");
+        }
+
         public static LpObject initialize(string s)
         {
             return init(s);

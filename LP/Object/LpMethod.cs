@@ -23,6 +23,11 @@ namespace LP.Object
             method = m;
         }
 
+        public static LpObject initialize()
+        {
+            return createClassTemplate();
+        }
+
         public static LpObject initialize(BinMethod method)
         {
             var obj = createClassTemplate();

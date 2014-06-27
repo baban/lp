@@ -10,7 +10,12 @@ namespace LP.Object
     {
         static string className = "Bool";
 
-        public static LpObject initialize( bool b )
+        public static LpObject initialize()
+        {
+            return createClassTemplate();
+        }
+
+        public static LpObject initialize(bool b)
         {
             return init(b);
         }
