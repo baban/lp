@@ -33,6 +33,12 @@ namespace LP.Object
         public static LpObject initialize( List<Ast.LpAstNode[]> pairs )
         {
             var obj = init();
+
+            foreach (var pair in pairs)
+            {
+                obj.hashValues[pair[0].Evaluate()] = pair[1].Evaluate();
+            }
+
             return obj;
         }
 
