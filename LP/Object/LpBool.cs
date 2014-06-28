@@ -102,7 +102,7 @@ namespace LP.Object
         {
             var v = to_s(self, args);
             Console.WriteLine(v.stringValue);
-            return null;
+            return LpNl.initialize();
         }
     }
 }

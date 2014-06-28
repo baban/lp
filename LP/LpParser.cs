@@ -60,6 +60,7 @@ namespace LP
 
         static readonly Parser<string> Varname = Identifier;
 
+        static readonly Parser<string> Nl = Parse.Regex("nl").Named("Nl");
         static readonly Parser<string> Bool = Parse.Regex("true|false").Named("boolean");
         static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+");
         static readonly Parser<string> Int = Parse.Regex(@"\d+");
@@ -161,7 +162,7 @@ namespace LP
                                                  from blk in Block.Token().Optional()
                                                  select string.Format("{0}({1}){2}", idf, string.Join(", ", args.ToArray()), (blk.IsEmpty ? "" : " " + blk.Get()));
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Nl, Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
         //static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
@@ -259,9 +260,11 @@ namespace LP
         static readonly Parser<string> Program = from stmts in Stmts
                                                  select string.Join( "; ", stmts.ToArray() );
         public enum NodeType {
-            INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, VARIABLE_CALL, LAMBDA, BLOCK, PRIMARY,
+            NL, INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, VARIABLE_CALL, LAMBDA, BLOCK, PRIMARY,
             ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH
         };
+        static readonly Parser<object[]> NL = from s in Nl
+                                                select new object[] { NodeType.NL, s };
         static readonly Parser<object[]> INT = from n in Int
                                                select new object[] { NodeType.INT, n };
         static readonly Parser<object[]> NUMERIC = from n in Numeric
@@ -318,7 +321,7 @@ namespace LP
                                                                  from s in Primary
                                                                  select STMT.Parse(s).funcall("to_s", null);
         */
-        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
+        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
         //public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<object[]> EXP_VAL = (from a in Parse.Char('(').Token()
@@ -546,6 +549,8 @@ namespace LP
         public static Ast.LpAstNode toNode( object[] node ) {
             switch ((NodeType)node[0])
             {
+                case NodeType.NL:
+                    return new Ast.LpAstLeaf((string)node[1], "NL");
                 case NodeType.NUMERIC:
                     return new Ast.LpAstLeaf((string)node[1], "NUMERIC");
                 case NodeType.STRING:

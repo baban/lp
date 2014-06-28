@@ -88,7 +88,7 @@ namespace LP
 
             do {
                 line = Console.ReadLine();
-                LpParser.execute(line);
+                LpParser.execute(line).funcall("display",null,null);
             } while (true);
         }
 

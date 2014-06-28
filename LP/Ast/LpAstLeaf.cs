@@ -27,6 +27,8 @@ namespace LP.Ast
         public override Object.LpObject DoEvaluate()
         {
             switch (type) {
+                case "NL":
+                    return Object.LpNl.initialize();
                 case "INT":
                     return Object.LpNumeric.initialize(Double.Parse(leaf));
                 case "DOUBLE":

@@ -72,7 +72,7 @@ namespace LP.Object
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
             Console.WriteLine(self.stringValue);
-            return null;
+            return LpNl.initialize();
         }
 
         protected static LpObject size(LpObject self, LpObject[] args, LpObject block = null)

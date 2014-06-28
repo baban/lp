@@ -25,10 +25,10 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
+            obj.methods["display"] = new BinMethod(display);
             /*
             obj.methods["inspect"] = new BinMethod(inspect);
             obj.methods["to_s"] = new BinMethod(to_s);
-            obj.methods["display"] = new BinMethod(display);
             obj.methods["size"] = new BinMethod(size);
 
             obj.methods["<<"] = new BinMethod(add);
@@ -54,6 +54,18 @@ namespace LP.Object
                 classes[className] = obj;
                 return obj.Clone();
             }
+        }
+
+        protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpString.initialize("");
+        }
+
+        protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var v = to_s(self, args);
+            Console.WriteLine(v.stringValue);
+            return LpNl.initialize();
         }
     }
 }

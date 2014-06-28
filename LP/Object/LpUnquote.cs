@@ -28,7 +28,7 @@ namespace LP.Object
         public static LpObject display(LpObject self, LpObject args)
         {
             //return (LpObject)(new LpNl());
-            return null;
+            return LpNl.initialize();
         }
 
         public static string expand(string name){

@@ -73,7 +73,7 @@ namespace LP.Object
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
             Console.WriteLine(self.stringValue);
-            return null;
+            return LpNl.initialize();
         }
 
         private static LpObject setOp(LpObject self, LpObject[] args, LpObject block = null)
