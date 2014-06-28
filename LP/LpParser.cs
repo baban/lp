@@ -320,8 +320,7 @@ namespace LP
                                                      select args.Select((arg) => ((object[])STMT.Parse(arg))).ToArray();
         static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
                                                         from args in ARGS_CALL
-                                                        from ws in Parse.WhiteSpace.AtLeastOnce()
-                                                        from blk in BLOCK
+                                                        from blk in BLOCK.Token()
                                                         select new object[] { fname, args, blk }).Or(
                                                         from fname in Fname
                                                         from args in ARGS_CALL
@@ -576,15 +575,16 @@ namespace LP
                         (bool)blk2[1]);
                 case NodeType.FUNCALL:
                     object[] fvals = (object[])node[1];
+                    object[] block = fvals[3] as object[];
                     return new Ast.LpAstMethodCall(
                         (string)fvals[0],
                         toNode((object[])fvals[1]),
                         (Ast.LpAstNode[])((object[])fvals[2]).Select( (n) => toNode((object[])n) ).ToArray(),
-                        ((fvals[3]==null) ? null : toNode((object[])fvals[3])) );
+                        ((block == null) ? null : toNode(block)));
                 case NodeType.EXPR:
                     return toNode( (object[])node[1] );
                 case NodeType.STMTS:
-                    var stmts = ((List<object[]>)node[1]).Select((o) => toNode(o)).ToList();
+                     var stmts = ((List<object[]>)node[1]).Select((o) => toNode(o)).ToList();
                     return new Ast.LpAstStmts( stmts );
                 case NodeType.ARRAY:
                     return new Ast.LpAstArray(((List<object[]>)node[1]).Select((o) => toNode(o)).ToList());

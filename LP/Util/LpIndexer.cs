@@ -49,6 +49,15 @@ namespace LP.Util
             }
         }
 
+        public static Object.LpObject getLatestClass()
+        {
+            foreach (var o in contextStack)
+                if (o.class_name == "Kernel" || o.class_name == "Class")
+                    return o;
+
+            return null;
+        }
+
         public static Object.LpObject varsearch( string name ){
             foreach (var o in contextStack)
             {

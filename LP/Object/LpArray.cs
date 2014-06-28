@@ -16,13 +16,6 @@ namespace LP.Object
             return init();
         }
 
-        public static LpObject initialize( string[] args )
-        {
-            var o = init();
-            //o.arrayValues = args.Select( (stmt) => LpParser.STMT.Parse(stmt).DoEvaluate() ).ToList();
-            return o;
-        }
-
         public static LpObject initialize(LpObject[] args)
         {
             var o = init();
@@ -138,7 +131,7 @@ namespace LP.Object
 
         static LpObject map(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpArray.initialize(self.arrayValues.Select( (v) => block.funcall("call", self, new LpObject[] { v }, null) ).ToArray());
+            return LpArray.initialize(self.arrayValues.Select((v) => block.funcall("call", block, new LpObject[] { v }, null)).ToArray());
         }
     }
 }
