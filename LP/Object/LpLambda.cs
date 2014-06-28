@@ -107,7 +107,7 @@ namespace LP.Object
             }
             Util.LpIndexer.pop();
             return ret;
-        } 
+        }
 
         static LpObject to_class(LpObject self, LpObject[] args, LpObject block = null)
         {

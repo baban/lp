@@ -305,7 +305,7 @@ namespace LP
                                                 from pairs in Assoc.Many()
                                                 from b in Parse.String("}").Text().Token()
                                                 select makeHash(pairs.ToArray());
-        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, HASH, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
+        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
         //public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<object[]> EXP_VAL = (from a in Parse.Char('(').Token()
@@ -334,10 +334,10 @@ namespace LP
             return new object[] {
                 NodeType.FUNCALL,
                 new object[]{
-                    (string)(op2)[0],
+                    (string)op2[0],
                     op1,
-                    ((object[])op2)[1],
-                    null
+                    (object[])op2[1],
+                    (object[])op2[2]
                 }
             };
         });
@@ -580,7 +580,7 @@ namespace LP
                         (string)fvals[0],
                         toNode((object[])fvals[1]),
                         (Ast.LpAstNode[])((object[])fvals[2]).Select( (n) => toNode((object[])n) ).ToArray(),
-                        null);
+                        ((fvals[3]==null) ? null : toNode((object[])fvals[3])) );
                 case NodeType.EXPR:
                     return toNode( (object[])node[1] );
                 case NodeType.STMTS:
@@ -589,8 +589,11 @@ namespace LP
                 case NodeType.ARRAY:
                     return new Ast.LpAstArray(((List<object[]>)node[1]).Select((o) => toNode(o)).ToList());
                 case NodeType.HASH:
-                    // TODO: Hash create method create
-                    return null;
+                    var pairs = ((object[])node[1]).Select((pair) => {
+                        var pr = (object[])pair;
+                        return new Ast.LpAstNode[] { toNode((object[])pr[0]), toNode((object[])pr[1]) };
+                    } ).ToList();
+                    return new Ast.LpAstHash( pairs );
                 default:
                     Console.WriteLine("null");
                     return null;

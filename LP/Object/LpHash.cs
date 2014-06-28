@@ -30,6 +30,12 @@ namespace LP.Object
              */
         }
 
+        public static LpObject initialize( List<Ast.LpAstNode[]> pairs )
+        {
+            var obj = init();
+            return obj;
+        }
+
         private static LpObject init()
         {
             LpObject obj = createClassTemplate();

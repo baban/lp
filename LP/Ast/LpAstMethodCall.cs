@@ -17,14 +17,16 @@ namespace LP.Ast
             this.name = name;
             this.lft = lft;
             this.args = args;
-            this.block = null;
-
+            this.block = blk;
             this.Evaluate = DoEvaluate;
         }
 
         public override Object.LpObject DoEvaluate()
         {
-            return lft.DoEvaluate().funcall(this.name, args.Select( (arg) => arg.DoEvaluate() ).ToArray(), null);
+            return lft.DoEvaluate().funcall(
+                this.name,
+                args.Select( (arg) => arg.DoEvaluate() ).ToArray(),
+                ( this.block==null ? null : this.block.DoEvaluate()) );
         }
     }
 }
