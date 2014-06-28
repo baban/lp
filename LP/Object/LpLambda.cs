@@ -64,12 +64,11 @@ namespace LP.Object
             }
         }
 
-        private static void setMethods(LpObject obj)
+         private static void setMethods(LpObject obj)
         {
             // TODO: display
             // TODO: inspect
             // TODO: to_s
-            // TODO: call
             // TODO: to_block
             // TODO: to_method
             // TODO: to_lambda

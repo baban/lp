@@ -13,7 +13,19 @@ namespace LP
         static void Main(string[] args)
         {
             sysInit("", args, 0);
-            runNode(args);
+
+            initEnv();
+
+            if (args.Length==0)
+            {
+                consoleReadFile();
+                return;
+            }
+            else
+            {
+                runNode(args);
+                return;
+            }
         }
 
         // parse command line options
@@ -41,16 +53,8 @@ namespace LP
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             */
-            if (argv.Length == 0)
-            {
-                showSystemMessage();
-                return 0;
-            }
             string code = readFile(argv[0]);
 
-            LP.Util.LpIndexer.initialize();
-            Util.LpIndexer.push(Object.LpKernel.initialize());
-            initializeBuiltInClasses();
             try
             {
                 LpParser.execute(code);
@@ -65,6 +69,50 @@ namespace LP
             Console.WriteLine("benckmark:end");
             */
             return 0;
+        }
+
+        static void showSystemMessage()
+        {
+            var message = " LP version 0.1 ";
+            Console.WriteLine( message );
+        }
+
+        static void consoleReadFile()
+        {
+            Console.WriteLine("LP version {0}", 0.1);
+            //Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
+            //Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
+
+            string code = "";
+            string line = null;
+
+            do {
+                line = Console.ReadLine();
+                LpParser.execute(line);
+            } while (true);
+        }
+
+        static string readFile( string filename ){
+            if (!System.IO.File.Exists(filename))
+                return null;
+
+            StringBuilder strBuff = new StringBuilder();
+            System.IO.StreamReader sr = null;
+            sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
+            while (sr.Peek() >= 0)
+            {
+                 strBuff.Append( sr.ReadLine() );
+                 strBuff.Append("\n");
+            }
+            sr.Close();
+            return strBuff.ToString();
+        }
+
+        static void initEnv(){
+            LP.Util.LpIndexer.initialize();
+            Util.LpIndexer.push(Object.LpKernel.initialize());
+            initializeBuiltInClasses();
+            return;
         }
 
         static void initializeBuiltInClasses()
@@ -85,33 +133,6 @@ namespace LP
             Object.LpQuote.initialize();
             Object.LpString.initialize();
             Object.LpSymbol.initialize();
-        }
-
-        static void showSystemMessage()
-        {
-            var message = " LP version 0.1 ";
-            Console.WriteLine( message );
-        }
-
-        static string readFile( string filename ){
-            if (!System.IO.File.Exists(filename))
-                return null;
-
-            StringBuilder strBuff = new StringBuilder();
-            System.IO.StreamReader sr = null;
-            sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
-            while (sr.Peek() >= 0)
-            {
-                 strBuff.Append( sr.ReadLine() );
-                 strBuff.Append("\n");
-            }
-            sr.Close();
-            return strBuff.ToString();
-        }
-
-        static void initEnv(){
-            Object.LpKernel.initialize();
-            return;
         }
     }
 }

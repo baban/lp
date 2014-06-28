@@ -298,6 +298,7 @@ namespace LP
         static readonly Parser<object[]> LAMBDA = from head in Parse.String("->").Token()
                                                   from blk in BLOCK_STMT.Token()
                                                   select new object[]{ NodeType.LAMBDA, blk };
+
         static readonly Parser<object[]> BLOCK = from blk in BLOCK_STMT.Token()
                                                  select new object[]{ NodeType.BLOCK, blk };
 
@@ -305,6 +306,18 @@ namespace LP
                                                 from pairs in Assoc.Many()
                                                 from b in Parse.String("}").Text().Token()
                                                 select makeHash(pairs.ToArray());
+        /*
+        // TODO: 変数展開を入れる
+        static readonly Parser<Ast.LpAstNode> QUOTE = from m in Parse.String("'").Text()
+                                                      from s in Stmt
+                                                      select new Ast.LpAstLeaf(s, "QUOTE");
+        static readonly Parser<Ast.LpAstNode> QUASI_QUOTE = from m in Parse.String("`").Text()
+                                                            from s in Stmt
+                                                            select new Ast.LpAstLeaf(s, "QUASI_QUOTE");
+        static readonly Parser<Object.LpObject> QUESTION_QUOTE = from m in Parse.String("?").Text()
+                                                                 from s in Primary
+                                                                 select STMT.Parse(s).funcall("to_s", null);
+        */
         public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
         //public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
@@ -348,18 +361,6 @@ namespace LP
         static readonly Parser<object[]> STMTS = from stmts in STMT.Many().Token()
                                                  select new object[] { NodeType.STMTS, stmts };
         public static readonly Parser<object[]> PROGRAM = STMTS;
-        /*
-        // TODO: 変数展開を入れる
-        static readonly Parser<Ast.LpAstNode> QUOTE = from m in Parse.String("'").Text()
-                                                      from s in Stmt
-                                                      select new Ast.LpAstLeaf(s, "QUOTE");
-        static readonly Parser<Ast.LpAstNode> QUASI_QUOTE = from m in Parse.String("`").Text()
-                                                            from s in Stmt
-                                                            select new Ast.LpAstLeaf(s, "QUASI_QUOTE");
-        static readonly Parser<Object.LpObject> QUESTION_QUOTE = from m in Parse.String("?").Text()
-                                                                 from s in Primary
-                                                                 select STMT.Parse(s).funcall("to_s", null);
-        */
 
         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
@@ -595,7 +596,6 @@ namespace LP
                     } ).ToList();
                     return new Ast.LpAstHash( pairs );
                 default:
-                    Console.WriteLine("null");
                     return null;
             }
         }
