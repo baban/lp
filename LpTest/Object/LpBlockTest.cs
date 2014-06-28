@@ -85,7 +85,7 @@ namespace LpTest.Object
             Type t = initParser();
             var p = t.InvokeMember("BLOCK", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var block = " do 10; end ";
-            var o = t.GetMethod("parseObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
+            var o = t.GetMethod("parseToObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, (string)block });
 
             // 引数なし
             var prms = new object[] { "call", null, null };
