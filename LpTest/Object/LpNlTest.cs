@@ -73,6 +73,15 @@ namespace LpTest.Object
             Assert.AreEqual("", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
+        public void to_i()
+        {
+            Type ot = initModule();
+            Type t = initNlModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            var so = t.GetMethod("to_i", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
+            Assert.AreEqual(0.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
         [Test]
         public void inspect()
         {
@@ -81,6 +90,28 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
             var so = t.GetMethod("inspect", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual("nl", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void eq()
+        {
+            Type ot = initModule();
+            Type t = initNlModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "nl" });
+            var so = t.GetMethod("eq", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
+            Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
+        }
+
+        [Test]
+        public void equal()
+        {
+            Type ot = initModule();
+            Type t = initNlModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "nl" });
+            var so = t.GetMethod("equal", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
+            Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
     }
 }

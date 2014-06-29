@@ -23,18 +23,12 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            obj.methods["display"] = new BinMethod(display);
-            obj.methods["to_s"] = new BinMethod(to_s);
-            obj.methods["inspect"] = new BinMethod(inspect);
-            /*
-            obj.methods["size"] = new BinMethod(size);
-
-            obj.methods["<<"] = new BinMethod(add);
-            obj.methods["+"] = new BinMethod(plus);
-
-            obj.methods["=="] = new BinMethod(equal);
-            obj.methods["==="] = new BinMethod(eq);
-             */
+            obj.methods["display"] = new LpMethod( new BinMethod(display), 0 );
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s), 0 );
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect), 0 );
+            obj.methods["to_i"] = new BinMethod(to_i);
+            obj.methods["=="] = new LpMethod( new BinMethod(equal), 1 );
+            obj.methods["==="] = new LpMethod( new BinMethod(eq), 1 );
         }
 
         private static LpObject createClassTemplate()
@@ -70,5 +64,23 @@ namespace LP.Object
         {
             return LpString.initialize("nl");
         }
+
+        protected static LpObject to_i(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpNumeric.initialize(0);
+        }
+
+        protected static LpObject eq(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var v = args.First();
+            return LpBool.initialize( v.class_name==self.class_name );
+        }
+
+        protected static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var v = args.First();
+            return LpBool.initialize(v.class_name == self.class_name);
+        }
+
     }
 }
