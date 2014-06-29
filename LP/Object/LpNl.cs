@@ -18,17 +18,15 @@ namespace LP.Object
         private static LpObject init()
         {
             LpObject obj = createClassTemplate();
-            obj.class_name = className;
-
             return obj;
         }
 
         private static void setMethods(LpObject obj)
         {
             obj.methods["display"] = new BinMethod(display);
-            /*
-            obj.methods["inspect"] = new BinMethod(inspect);
             obj.methods["to_s"] = new BinMethod(to_s);
+            obj.methods["inspect"] = new BinMethod(inspect);
+            /*
             obj.methods["size"] = new BinMethod(size);
 
             obj.methods["<<"] = new BinMethod(add);
@@ -66,6 +64,11 @@ namespace LP.Object
             var v = to_s(self, args);
             Console.WriteLine(v.stringValue);
             return LpNl.initialize();
+        }
+
+        protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpString.initialize("nl");
         }
     }
 }
