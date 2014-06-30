@@ -26,7 +26,7 @@ namespace LP.Object
             obj.methods["display"] = new LpMethod( new BinMethod(display), 0 );
             obj.methods["to_s"] = new LpMethod( new BinMethod(to_s), 0 );
             obj.methods["inspect"] = new LpMethod( new BinMethod(inspect), 0 );
-            obj.methods["to_i"] = new BinMethod(to_i);
+            obj.methods["to_i"] = new LpMethod( new BinMethod(to_i), 0 );
             obj.methods["=="] = new LpMethod( new BinMethod(equal), 1 );
             obj.methods["==="] = new LpMethod( new BinMethod(eq), 1 );
         }

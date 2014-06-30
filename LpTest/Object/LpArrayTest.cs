@@ -59,7 +59,8 @@ namespace LpTest.Object
             Type ot = initModule();
             Type t = initArrayModule();
             var types = new Type[] { typeof(string[]) };
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[]{ new string[]{ "10", "5" } });
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { args });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
         }
 
