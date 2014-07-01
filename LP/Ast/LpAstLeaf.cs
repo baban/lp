@@ -54,7 +54,12 @@ namespace LP.Ast
 
         public override string toSource()
         {
-            return leaf;
+            switch (type) {
+                case "QUOTE":
+                    return "'"+leaf;
+                default:
+                    return leaf;
+            }
         }
     }
 }
