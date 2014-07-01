@@ -261,7 +261,7 @@ namespace LP
                                                  select string.Join( "; ", stmts.ToArray() );
         public enum NodeType {
             NL, INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, VARIABLE_CALL, LAMBDA, BLOCK, PRIMARY,
-            ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH, QUOTE
+            ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH, QUOTE, QUESTION_QUOTE
         };
         static readonly Parser<object[]> NL = from s in Nl
                                                 select new object[] { NodeType.NL, s };
@@ -309,23 +309,18 @@ namespace LP
                                                 from pairs in Assoc.Many()
                                                 from b in Parse.String("}").Text().Token()
                                                 select makeHash(pairs.ToArray());
-         static readonly Parser<object[]> QUOTE = from m in Parse.String("'").Text()
-                                                  from s in PRIMARY
+        static readonly Parser<object[]> QUOTE = from m in Parse.String("'").Text()
+                                                  from s in STMT
                                                   select new object[]{ NodeType.QUOTE, toNode( s ).toSource() };
-        /*
+        static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
+                                                        from s in STMT
+                                                        select new object[]{ NodeType.QUOTE, toNode( s ).toSource() };
         // TODO: 変数展開を入れる
-        static readonly Parser<Ast.LpAstNode> QUOTE = from m in Parse.String("'").Text()
-                                                      from s in Stmt
-                                                      select new Ast.LpAstLeaf(s, "QUOTE");
-        static readonly Parser<Ast.LpAstNode> QUASI_QUOTE = from m in Parse.String("`").Text()
-                                                            from s in Stmt
-                                                            select new Ast.LpAstLeaf(s, "QUASI_QUOTE");
-        static readonly Parser<Object.LpObject> QUESTION_QUOTE = from m in Parse.String("?").Text()
-                                                                 from s in Primary
-                                                                 select STMT.Parse(s).funcall("to_s", null);
-        */
-        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK }.Aggregate((seed, nxt) => seed.Or(nxt));
-        //public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NUMERIC, BOOL, STRING, SYMBOL, QUOTE, ARRAY, HASH, BLOCK, LAMBDA, VARIABLE_CALL, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
+        static readonly Parser<object[]> QUESTION_QUOTE = from m in Parse.String("?").Text()
+                                                          from s in Primary
+                                                          select new object[] { NodeType.QUESTION_QUOTE, toNode(STMT.Parse(s)).DoEvaluate().ToString() };
+
+        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK, QUOTE, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<object[]> EXP_VAL = (from a in Parse.Char('(').Token()
                                                     from s in STMT
