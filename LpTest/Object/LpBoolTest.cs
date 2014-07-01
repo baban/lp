@@ -131,6 +131,7 @@ namespace LpTest.Object
             var so = t.GetMethod("equal", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
+
         [Test]
         public void eq()
         {

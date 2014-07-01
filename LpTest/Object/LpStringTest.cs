@@ -11,7 +11,16 @@ namespace LpTest.Object
     [TestFixture]
     class LpStringTest
     {
-        private Type getModule(string name) {
+        private Type initParser()
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.LpParser");
+            return t;
+        }
+
+        private Type getModule(string name)
+        {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
             Type t = mod.GetType(name);
@@ -95,53 +104,40 @@ namespace LpTest.Object
             var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new string[] { "bbb" });
 
             var so = st.GetMethod("display", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
-            Assert.Null(so);
+            Assert.NotNull(so);
         }
 
-        /*
         [Test]
         public void size()
         {
-            Type ot = initModule();
-            Type st = initStringModule();
-            Type at = initArgumentsModule();
+            Type t = initStringModule();
 
-            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"aaaa" });
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"aaaa" });
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
 
-            var prms = new object[] { "size", null };
-            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            var so = t.GetMethod("size", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual(4.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
         [Test]
         public void add()
         {
-            Type ot = initModule();
-            Type st = initStringModule();
-            Type at = initArgumentsModule();
+            Type t = initStringModule();
             var types = new Type[] { typeof(string) };
-            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
-
-            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { (string)"\"bbbb\"" } });
-
-            var prms = new object[] { "<<", args };
-            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { (string)"\"bbbb\"" });
+            var so = t.GetMethod("add", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             Assert.AreEqual("aaaabbbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
         [Test]
         public void plus()
         {
-            Type ot = initModule();
-            Type st = initStringModule();
-            Type at = initArgumentsModule();
-
-            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"aaaa" });
-
-            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { (string)"\"bbbb\"" } });
-
-            var prms = new object[] { "+", args };
-            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            Type t = initStringModule();
+            var types = new Type[] { typeof(string) };
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { (string)"aaaa" });
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { (string)"\"bbbb\"" });
+            var so = t.GetMethod("plus", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             Assert.AreEqual("aaaabbbb", so.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
@@ -149,13 +145,13 @@ namespace LpTest.Object
         public void eq()
         {
             Type ot = initModule();
-            Type st = initStringModule();
+            Type t = initStringModule();
             Type at = initArgumentsModule();
 
-            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"aaaa" });
-            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { (string)"\"aaaa\"" } });
-            var prms = new object[] { "===", args };
-            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"aaaa" });
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { (string)"\"aaaa\"" });
+
+            var so = t.GetMethod("eq", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
 
@@ -163,18 +159,14 @@ namespace LpTest.Object
         public void equal()
         {
             Type ot = initModule();
-            Type st = initStringModule();
+            Type t = initStringModule();
             Type at = initArgumentsModule();
 
-            var o = st.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"aaaa" });
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new object[] { (string)"aaaa" });
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { (string)"\"aaaa\"" });
 
-            // 引数
-            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { (string)"\"aaaa\"" } });
-
-            var prms = new object[] { "==", args };
-            var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
+            var so = t.GetMethod("equal", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
-        */
     }
 }
