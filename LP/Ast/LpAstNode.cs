@@ -14,13 +14,21 @@ namespace LP.Ast
 
         public delegate Object.LpObject EvaluateMethod();
         public EvaluateMethod Evaluate;
+        public delegate string toSourceMethod();
+        public toSourceMethod Source;
 
         public LpAstNode()
         {
             this.Evaluate = DoEvaluate;
+            this.Source = toSource;
         }
 
         public virtual Object.LpObject DoEvaluate()
+        {
+            return null;
+        }
+
+        public virtual string toSource()
         {
             return null;
         }

@@ -52,5 +52,9 @@ namespace LP.Ast
             }
         }
 
+        public override string toSource()
+        {
+            return leaf;
+        }
     }
 }
