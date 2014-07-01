@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ast\LpAstLeafTest.cs" />
     <Compile Include="Benchmark\Parser.cs" />
     <Compile Include="Object\LpClassTest.cs" />
     <Compile Include="Error\LpErrorTest.cs" />
