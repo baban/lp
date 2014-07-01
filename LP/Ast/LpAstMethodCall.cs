@@ -18,7 +18,14 @@ namespace LP.Ast
             this.lft = lft;
             this.args = args;
             this.block = blk;
+
+            init();
+        }
+
+        public void init()
+        {
             this.Evaluate = DoEvaluate;
+            this.Source = toSource;
         }
 
         public override Object.LpObject DoEvaluate()
@@ -27,6 +34,15 @@ namespace LP.Ast
                 this.name,
                 args.Select( (arg) => arg.DoEvaluate() ).ToArray(),
                 ( this.block==null ? null : this.block.DoEvaluate()) );
+        }
+
+        public virtual string toSource()
+        {
+            return string.Format("{0}.{1}({2}){3}",
+                lft.toSource(),
+                this.name,
+                string.Join( ", ", this.args.Select( (o) => o.toSource() ).ToArray() ),
+                (this.block==null ? "" : "") );
         }
     }
 }

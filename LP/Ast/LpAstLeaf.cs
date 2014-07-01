@@ -14,14 +14,19 @@ namespace LP.Ast
 
         public LpAstLeaf(string n) {
             leaf = n;
-            this.Evaluate = DoEvaluate;
+            init();
         }
 
         public LpAstLeaf(string n, string type)
         {
             leaf = n;
             this.type = type;
+            init();
+        }
+
+        public void init() {
             this.Evaluate = DoEvaluate;
+            this.Source = toSource;
         }
 
         public override Object.LpObject DoEvaluate()
