@@ -163,7 +163,6 @@ namespace LP
                                                  select string.Format("{0}({1}){2}", idf, string.Join(", ", args.ToArray()), (blk.IsEmpty ? "" : " " + blk.Get()));
 
         static readonly Parser<string> Primary = new Parser<string>[] { Nl, Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
-        //static readonly Parser<string> Primary = new Parser<string>[] { Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuestionQuote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
                                                  from v in Expr
@@ -609,11 +608,11 @@ namespace LP
         {
             //Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
-            Console.WriteLine(str);
+            //Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
-            Console.WriteLine(pobj);
+            //Console.WriteLine(pobj);
             var nodes = toNode(pobj);
-            Console.WriteLine(nodes);
+            //Console.WriteLine(nodes);
             var o = nodes.Evaluate();
             //Console.WriteLine(o.class_name);
             //Console.WriteLine( o.doubleValue);
