@@ -22,5 +22,14 @@ namespace LP.Ast
             Object.LpObject ret = Object.LpHash.initialize( this.pairs );
             return ret;
         }
+
+        public override string toSource()
+        {
+            return "{ " +
+                string.Join(", ", pairs.Select((pair) => {
+                    return string.Join( " : ", pair.Select((node) => node.toSource()) );
+                }).ToArray() ) +
+                   " }";
+        }
     }
 }

@@ -23,5 +23,17 @@ namespace LP.Ast
         {
             return Object.LpLambda.initialize(ChildNodes, args, loose);
         }
+
+        public override string toSource()
+        {
+            return string.Format("->{0} do {1} end",
+                toSourceArgs(),
+                string.Join("; ", ChildNodes.Select((node) => node.toSource())));
+        }
+
+        private string toSourceArgs()
+        {
+            return string.Format("({0})", string.Join(",", this.args.ToArray()));
+        }
     }
 }

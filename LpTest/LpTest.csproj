@@ -51,6 +51,8 @@
     <Compile Include="Ast\LpAstArrayTest.cs" />
     <Compile Include="Ast\LpAstBlockTest.cs" />
     <Compile Include="Ast\LpAstFuncallTest.cs" />
+    <Compile Include="Ast\LpAstHashTest.cs" />
+    <Compile Include="Ast\LpAstLambdaTest.cs" />
     <Compile Include="Ast\LpAstLeafTest.cs" />
     <Compile Include="Ast\LpAstMethodCallTest.cs" />
     <Compile Include="Ast\LpAstStmtsTest.cs" />
