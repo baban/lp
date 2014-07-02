@@ -19,5 +19,10 @@ namespace LP.Ast
             ChildNodes.ForEach((node) => { ret = node.Evaluate(); });
             return ret;
         }
+
+        public virtual string toSource()
+        {
+            return string.Join("; ", ChildNodes.Select((node) => node.toSource()));
+        }
     }
 }

@@ -18,5 +18,10 @@ namespace LP.Ast
         {
             return Object.LpArray.initialize( ChildNodes.Select( (node) => node.DoEvaluate() ).ToArray() );
         }
+
+        public virtual string toSource()
+        {
+            return string.Format("[{0}]", string.Join(", ", ChildNodes.Select((node) => node.toSource())));
+        }
     }
 }

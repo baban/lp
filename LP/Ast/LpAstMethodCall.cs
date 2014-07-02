@@ -41,8 +41,18 @@ namespace LP.Ast
             return string.Format("{0}.{1}({2}){3}",
                 lft.toSource(),
                 this.name,
-                string.Join( ", ", this.args.Select( (o) => o.toSource() ).ToArray() ),
-                (this.block==null ? "" : "") );
+                this.toSourceArgs(),
+                this.toSourceBlock() );
+        }
+
+        private string toSourceArgs(){
+            return string.Join(", ", this.args.Select((o) => o.toSource()).ToArray());
+        }
+
+        private string toSourceBlock()
+        {
+            if (this.block == null) return "";
+            return " "+this.block.toSource();
         }
     }
 }

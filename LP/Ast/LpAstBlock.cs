@@ -14,12 +14,31 @@ namespace LP.Ast
         {
             this.args = args;
             ChildNodes = nodes;
+            init();
+        }
+
+        public void init()
+        {
             this.Evaluate = DoEvaluate;
+            this.Source = toSource;
         }
 
         public override Object.LpObject DoEvaluate()
         {
             return Object.LpBlock.initialize( ChildNodes, args );
+        }
+
+        public override string toSource()
+        {
+            return string.Format("do {0}{1} end",
+                toSourceArgs(),
+                string.Join("; ", ChildNodes.Select((node) => node.toSource())) );
+        }
+
+        private string toSourceArgs()
+        {
+            if (this.args.Count() == 0) return "";
+            return string.Format( "|{0}| ", string.Join(",", this.args.ToArray()));
         }
     }
 }
