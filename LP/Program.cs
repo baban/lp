@@ -12,20 +12,33 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            sysInit("", args, 0);
-
-            initEnv();
-
-            if (args.Length==0)
+            var opts = new Options();
+            //コマンドライン引数を解析する
+            bool isSuccess = CommandLine.Parser.Default.ParseArguments(args, opts);
+            if (isSuccess)
             {
-                consoleReadFile();
-                return;
+                //解析に成功した時は、解析結果を表示
+                //Console.WriteLine("OutputFile: {0}", opts.OutputFile);
+                Console.WriteLine("", opts.Overwrite);
             }
             else
             {
-                runNode(args);
-                return;
+                sysInit("", args, 0);
+
+                initEnv();
+
+                if (args.Length == 0)
+                {
+                    consoleReadFile();
+                    return;
+                }
+                else
+                {
+                    runNode(new string[] { });
+                    return;
+                }
             }
+
         }
 
         // parse command line options
