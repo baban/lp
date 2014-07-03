@@ -8,9 +8,8 @@ namespace LP
 {
     class Options
     {
-        //Boolean型のオプション
-        [CommandLine.Option('v')]
-        public bool Overwrite
+        [CommandLine.Option('v',"version")]
+        public bool Version
         {
             get {
                 Console.WriteLine("LP version {0}", 0.1);
@@ -19,5 +18,34 @@ namespace LP
             set {
             }
         }
+
+        [CommandLine.Option('e', "evaluate")]
+        public bool Evaluate
+        {
+            get
+            {
+                return true;
+            }
+            set
+            {
+            }
+        }
+
+        [CommandLine.Option('h', "help")]
+        public bool Help
+        {
+            get
+            {
+                Console.WriteLine("LP version {0}", 0.1);
+                Console.WriteLine("-h --help print help ");
+                Console.WriteLine("-v --version print version info ");
+                Console.WriteLine("-e --evalueate evaluate script ");
+                return true;
+            }
+            set
+            {
+            }
+        }
+
     }
 }

@@ -19,7 +19,8 @@ namespace LP
             {
                 //解析に成功した時は、解析結果を表示
                 //Console.WriteLine("OutputFile: {0}", opts.OutputFile);
-                Console.WriteLine("", opts.Overwrite);
+                Console.WriteLine("", opts.Version);
+                Console.WriteLine("", opts.Help);
             }
             else
             {
