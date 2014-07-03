@@ -260,7 +260,7 @@ namespace LP
                                                  select string.Join( "; ", stmts.ToArray() );
         public enum NodeType {
             NL, INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, VARIABLE_CALL, LAMBDA, BLOCK, PRIMARY,
-            ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH, QUOTE, QUESTION_QUOTE
+            ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH, QUOTE, QUASI_QUOTE, QUESTION_QUOTE
         };
         static readonly Parser<object[]> NL = from s in Nl
                                                 select new object[] { NodeType.NL, s };
@@ -560,6 +560,8 @@ namespace LP
                     return new Ast.LpAstLeaf((string)node[1], "VARIABLE_CALL");
                 case NodeType.QUOTE:
                     return new Ast.LpAstLeaf((string)node[1], "QUOTE");
+                case NodeType.QUASI_QUOTE:
+                    return new Ast.LpAstLeaf((string)node[1], "QUASI_QUOTE");
                 case NodeType.FUNCTION_CALL:
                     object[] vals = (object[])node[1];
                     return new Ast.LpAstFuncall(

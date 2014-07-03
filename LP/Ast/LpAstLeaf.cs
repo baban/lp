@@ -62,6 +62,8 @@ namespace LP.Ast
             switch (type) {
                 case "QUOTE":
                     return string.Format("'{0}", leaf);
+                case "QUASI_QUOTE":
+                    return string.Format("`{0}", leaf);
                 default:
                     return leaf;
             }

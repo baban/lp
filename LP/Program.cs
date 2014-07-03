@@ -83,13 +83,25 @@ namespace LP
             //Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
             //Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
 
-            string code = "";
             string line = null;
 
             do {
+                Console.Write(" >> ");
                 line = Console.ReadLine();
-                LpParser.execute(line).funcall("display",null,null);
+                try {
+                    LpParser.execute(line).funcall("display",null,null);
+                } catch( Error.LpError e ){
+                    printError( e );
+                } catch ( Sprache.ParseException e ) {
+                    printError( e );
+                }
             } while (true);
+        }
+
+        static void printError( Exception e ) {
+            Console.WriteLine("Message");
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
         }
 
         static string readFile( string filename ){

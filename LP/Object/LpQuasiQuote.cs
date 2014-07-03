@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Sprache;
+using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpQuote : LpBase
+    class LpQuasiQuote : LpBase
     {
         static string className = "Quote";
 
@@ -20,7 +20,7 @@ namespace LP.Object
             return init(s);
         }
 
-        private static LpObject init( string s )
+        private static LpObject init(string s)
         {
             LpObject obj = createClassTemplate();
             obj.stringValue = s;
@@ -44,14 +44,15 @@ namespace LP.Object
             }
         }
 
-        private static void setMethods( LpObject obj ) {
+        private static void setMethods(LpObject obj)
+        {
             obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
             obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
         }
 
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize( self.stringValue );
+            return LpString.initialize(self.stringValue);
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
