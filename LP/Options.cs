@@ -3,49 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommandLine;
+using CommandLine.Text;
 
 namespace LP
 {
     class Options
     {
-        [CommandLine.Option('v',"version")]
-        public bool Version
+        [Option('v', null, HelpText = "Print details during execution.")]
+        public bool Verbose
         {
-            get {
-                Console.WriteLine("LP version {0}", 0.1);
-                return true;
-            }
-            set {
-            }
+            get;
+            set;
         }
 
-        [CommandLine.Option('e', "evaluate")]
-        public bool Evaluate
+        [Option('e', null, HelpText="evaluate ruby script.")]
+        public string Evaluate
         {
-            get
-            {
-                return true;
-            }
-            set
-            {
-            }
+            get;
+            set;
         }
 
-        [CommandLine.Option('h', "help")]
-        public bool Help
+        [HelpOption]
+        public string GetUsage()
         {
-            get
+            var help = new HelpText
             {
-                Console.WriteLine("LP version {0}", 0.1);
-                Console.WriteLine("-h --help print help ");
-                Console.WriteLine("-v --version print version info ");
-                Console.WriteLine("-e --evalueate evaluate script ");
-                return true;
-            }
-            set
-            {
-            }
+                Heading = new HeadingInfo("LP", (0.1).ToString() ),
+                Copyright = new CopyrightInfo("baban", 2014),
+                AdditionalNewLineAfterOption = true,
+                AddDashesToOption = true
+            };
+            help.AddOptions(this);
+            return help;
         }
 
+        [ValueList(typeof(List<string>))]
+        public IList<string> InputFiles
+        {
+            get;
+            set;
+        }
     }
 }

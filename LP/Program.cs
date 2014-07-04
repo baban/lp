@@ -12,45 +12,38 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            var opts = new Options();
+            if (args.Length == 0) {
+                consoleReadFile();
+            }
+
+            var options = new Options();
             //コマンドライン引数を解析する
-            bool isSuccess = CommandLine.Parser.Default.ParseArguments(args, opts);
+            bool isSuccess = CommandLine.Parser.Default.ParseArguments(args, options);
             if (isSuccess)
             {
-                //解析に成功した時は、解析結果を表示
-                //Console.WriteLine("OutputFile: {0}", opts.OutputFile);
-                Console.WriteLine("", opts.Version);
-                Console.WriteLine("", opts.Help);
-            }
-            else
-            {
-                sysInit("", args, 0);
-
-                initEnv();
-
-                if (args.Length == 0)
+                if (options.Verbose)
                 {
-                    consoleReadFile();
+                    printVersion();
                     return;
                 }
-                else
+
+                if ( options.Evaluate != "" )
                 {
-                    runNode(new string[] { });
+                    printVersion();
+                    Console.WriteLine( options.Evaluate );
                     return;
                 }
+
+                if (options.InputFiles.Count>0) {
+                    sysInit("", args, 0);
+                    runNode(options.InputFiles.ToArray());
+                }
             }
-
         }
 
-        // parse command line options
-        // long argc, char **argv, struct cmdline_options *opt, int envopt
-        static long procOptions( string args, string[] argv, int enviroment ) {
-            return 0;
-        }
-
-        //  TODO: initialize system
         static long sysInit(string args, string[] argv, int enviroment)
         {
+            initEnv();
             return 0;
         }
 
@@ -85,15 +78,9 @@ namespace LP
             return 0;
         }
 
-        static void showSystemMessage()
-        {
-            var message = " LP version 0.1 ";
-            Console.WriteLine( message );
-        }
-
         static void consoleReadFile()
         {
-            Console.WriteLine("LP version {0}", 0.1);
+            printVersion();
             //Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
             //Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
 
@@ -159,6 +146,11 @@ namespace LP
             Object.LpQuote.initialize();
             Object.LpString.initialize();
             Object.LpSymbol.initialize();
+        }
+
+        private static void printVersion()
+        {
+            Console.WriteLine(string.Format("LP version {0}", 0.1));
         }
     }
 }
