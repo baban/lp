@@ -8,7 +8,7 @@ namespace LP.Object
 {
     class LpQuasiQuote : LpBase
     {
-        static string className = "Quote";
+        static string className = "QuasiQuote";
 
         public static LpObject initialize()
         {

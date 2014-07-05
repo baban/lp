@@ -313,7 +313,7 @@ namespace LP
                                                   select new object[]{ NodeType.QUOTE, toNode( s ).toSource() };
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
                                                         from s in STMT
-                                                        select new object[]{ NodeType.QUOTE, toNode( s ).toSource() };
+                                                        select new object[]{ NodeType.QUASI_QUOTE, toNode( s ).toSource() };
         // TODO: 変数展開を入れる
         static readonly Parser<object[]> QUESTION_QUOTE = from m in Parse.String("?").Text()
                                                           from s in Primary

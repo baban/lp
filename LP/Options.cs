@@ -10,6 +10,8 @@ namespace LP
 {
     class Options
     {
+        string script = null;
+
         [Option('v', null, HelpText = "Print details during execution.")]
         public bool Verbose
         {
@@ -20,8 +22,13 @@ namespace LP
         [Option('e', null, HelpText="evaluate ruby script.")]
         public string Evaluate
         {
-            get;
-            set;
+            get {
+                return this.script;
+            }
+            set {
+                if(value.Length!=0)
+                    this.script = value;
+            }
         }
 
         [HelpOption]

@@ -67,7 +67,7 @@ namespace LP.Object
             // TODO: sleep
             //obj.methods["while"] = new LpMethod( new BinMethod(print) ); // マクロで再現
             // TODO: until(マクロで再現
-            // TODO: p
+            obj.methods["p"] = new LpMethod(new BinMethod(p_), 1);
 
             // Lv2
             // TODO: callcc
@@ -182,6 +182,12 @@ namespace LP.Object
         {
             var o = args[0];
             return o.funcall("display", null, null);
+        }
+
+        private static LpObject p_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var o = args[0];
+            return o.funcall("inspect",null,null).funcall("display", null, null);
         }
 
         // TODO: 全く未実装

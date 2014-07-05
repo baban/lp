@@ -13,6 +13,7 @@ namespace LP
         static void Main(string[] args)
         {
             if (args.Length == 0) {
+                sysInit("", args, 0);
                 consoleReadFile();
             }
 
@@ -27,10 +28,10 @@ namespace LP
                     return;
                 }
 
-                if ( options.Evaluate != "" )
+                if ( options.Evaluate != null )
                 {
-                    printVersion();
-                    Console.WriteLine( options.Evaluate );
+                    sysInit("", args, 0);
+                    LpParser.execute(options.Evaluate);
                     return;
                 }
 
@@ -52,7 +53,6 @@ namespace LP
             return 0;
         }
 
-        // TODO; start program
         static long runNode(string[] argv)
         {
             /*
