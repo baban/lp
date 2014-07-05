@@ -16,7 +16,6 @@ namespace LP
     // TODO: class定義、module定義
     // TODO: 構文エラー処理
     // TODO: エラー処理
-    // TODO: nil
     // TODO: Block読み出し
     // TODO: インスタンス変数
     // TODO: グローバル変数
@@ -564,10 +563,11 @@ namespace LP
                     return new Ast.LpAstLeaf((string)node[1], "QUASI_QUOTE");
                 case NodeType.FUNCTION_CALL:
                     object[] vals = (object[])node[1];
+                    object[] blkf = vals[2] as object[];
                     return new Ast.LpAstFuncall(
                         (string)vals[0],
                         (Ast.LpAstNode[])((object[])vals[1]).Select( (n) => toNode((object[])n) ).ToArray(),
-                        null);
+                        ((blkf == null) ? null : toNode(blkf)) );
                 case NodeType.LAMBDA:
                     var blk = (object[])node[1];
                     return new Ast.LpAstLambda(
@@ -613,9 +613,10 @@ namespace LP
             //Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
             //Console.WriteLine(pobj);
-            var nodes = toNode(pobj);
+            var node = toNode(pobj);
             //Console.WriteLine(nodes);
-            var o = nodes.Evaluate();
+            var o = node.Evaluate();
+
             //Console.WriteLine(o.class_name);
             //Console.WriteLine( o.doubleValue);
             return o;

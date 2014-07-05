@@ -67,10 +67,10 @@ namespace LP.Object
             // TODO: sleep
             //obj.methods["while"] = new LpMethod( new BinMethod(print) ); // マクロで再現
             // TODO: until(マクロで再現
-            obj.methods["p"] = new LpMethod(new BinMethod(p_), 1);
 
             // Lv2
             // TODO: callcc
+            obj.methods["p"] = new LpMethod(new BinMethod(p_), 1);
         }
 
         // TODO: 全く未実装
@@ -82,8 +82,9 @@ namespace LP.Object
         // TODO: 全く未実装
         private static LpObject break_(LpObject self, LpObject[] args, LpObject block = null)
         {
-            control_status = (int)CONTROL_CODE.BREAK;
-            return LpNl.initialize();
+            var ret = LpNl.initialize();
+            ret.controlStatus = ControlCode.BREAK;
+            return ret;
         }
 
         // 末尾再帰の実装できるかわからないので、便利な道具を優先する
@@ -141,23 +142,22 @@ namespace LP.Object
         private static LpObject loop(LpObject self, LpObject[] args, LpObject block = null)
         {
             LpObject ret = LpNl.initialize();
-
             if (block == null) return ret;
 
             while (true)
             {
                 ret = block.funcall("call", args, null);
                 // break文
-                if (control_status == (int)LpBase.CONTROL_CODE.BREAK)
+                if (ret.controlStatus == ControlCode.BREAK)
                 {
-                    control_status = (int)LpBase.CONTROL_CODE.NONE;
+                    ret.controlStatus = ControlCode.NONE;
                     break;
-                } 
+                }
                 // next文
-                if (control_status == (int)LpBase.CONTROL_CODE.NEXT)
+                if (ret.controlStatus == ControlCode.NEXT)
                 {
-                    control_status = (int)LpBase.CONTROL_CODE.NONE;
-                    continue;
+                    ret.controlStatus = ControlCode.NONE;
+                    break;
                 }
             }
             return ret;
@@ -166,15 +166,17 @@ namespace LP.Object
         // TODO: 全く未実装
         private static LpObject next_(LpObject self, LpObject[] args, LpObject block = null)
         {
-            control_status = (int)CONTROL_CODE.NEXT;
-            return LpNl.initialize();
+            var ret = LpNl.initialize();
+            ret.controlStatus = ControlCode.NEXT;
+            return ret;
         }
 
         // TODO: 全く未実装
         private static LpObject return_(LpObject self, LpObject[] args, LpObject block = null)
         {
-            control_status = (int)CONTROL_CODE.RETURN;
-            return LpNl.initialize();
+            var ret = LpNl.initialize();
+            ret.controlStatus = ControlCode.RETURN;
+            return ret;
         }
 
         private static LpObject print(LpObject self, LpObject[] args, LpObject block = null)
@@ -198,7 +200,7 @@ namespace LP.Object
         // TODO: 全く未実装
         private static LpObject yield_(LpObject self, LpObject[] args, LpObject block = null)
         {
-            control_status = (int)CONTROL_CODE.BREAK;
+            //control_status = (int)CONTROL_CODE.BREAK;
             return LpNl.initialize();
         }
 

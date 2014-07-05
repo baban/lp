@@ -16,7 +16,7 @@ namespace LP.Ast
         public override Object.LpObject DoEvaluate()
         {
             Object.LpObject ret = Object.LpNl.initialize();
-            ChildNodes.ForEach((node) => { ret = node.Evaluate(); });
+            ChildNodes.ForEach((node) =>{ ret = node.Evaluate(); });
             return ret;
         }
 
