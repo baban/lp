@@ -90,7 +90,7 @@ namespace LP
                 Console.Write(" >> ");
                 line = Console.ReadLine();
                 try {
-                    LpParser.execute(line).funcall("display",null,null);
+                    LpParser.execute(line).funcall("inspect",null,null).funcall("display",null,null);
                 } catch( Error.LpError e ){
                     printError( e );
                 } catch ( Sprache.ParseException e ) {

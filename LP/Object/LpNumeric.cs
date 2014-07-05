@@ -72,11 +72,11 @@ namespace LP.Object
             obj.methods["==="]      = new LpMethod( new BinMethod(eq), 1 );
             obj.methods["between?"] = new LpMethod( new BinMethod(between) );
 
-            obj.methods["to_i"] = new LpMethod( new BinMethod(to_i) );
-            obj.methods["to_f"] = new LpMethod( new BinMethod(to_f) );
-            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s) );
-            obj.methods["display"] = new LpMethod( new BinMethod(display) );
-            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
+            obj.methods["to_i"] = new LpMethod( new BinMethod(to_i), 0 );
+            obj.methods["to_f"] = new LpMethod( new BinMethod(to_f), 0 );
+            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s), 0 );
+            obj.methods["display"] = new LpMethod( new BinMethod(display), 0 );
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect), 0 );
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)

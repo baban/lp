@@ -67,7 +67,7 @@ namespace LP.Object
 
         protected static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return self;
+            return LpString.initialize(string.Format(":{0}", self.stringValue));
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)

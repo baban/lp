@@ -51,8 +51,8 @@ namespace LP.Object
             obj.methods["break"] = new LpMethod( new BinMethod(break_) );
             // TODO: caller
             // TODO: exec
-            obj.methods["eval"] = new LpMethod(new BinMethod(eval));
-            obj.methods["exit"] = new LpMethod(new BinMethod(exit));
+            obj.methods["eval"] = new LpMethod(new BinMethod(eval), 1);
+            obj.methods["exit"] = new LpMethod(new BinMethod(exit), 0);
             obj.methods["cond"] = new LpMethod(new BinMethod(cond), -1);
             obj.methods["loop"] = new LpMethod(new BinMethod(loop), 0);
             //obj.methods["next"] = new LpMethod( new BinMethod(next_) );
@@ -108,8 +108,7 @@ namespace LP.Object
         // TODO: 全く未実装
         private static LpObject eval(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return null;
-            //return LpParser.PROGRAM.Parse(args[0].stringValue);
+            return LpParser.toNode(LpParser.PROGRAM.Parse(args[0].stringValue)).DoEvaluate();
         }
 
         private static LpObject if_(LpObject self, LpObject[] args, LpObject block = null)

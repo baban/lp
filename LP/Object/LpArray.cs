@@ -101,7 +101,7 @@ namespace LP.Object
 
         static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("to_s", null).stringValue.ToString()).ToArray();
+            var vs = self.arrayValues.Select<LpObject, string>((a, b) => a.funcall("inspect", null).stringValue.ToString()).ToArray();
             var s = string.Join(", ", vs);
             return LpString.initialize("[" + s + "]");
         }

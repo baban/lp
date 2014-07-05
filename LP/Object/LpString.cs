@@ -46,17 +46,17 @@ namespace LP.Object
 
         private static void setMethods(LpObject obj)
         {
-            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect) );
-            obj.methods["to_s"]    = new LpMethod( new BinMethod(to_s) );
-            obj.methods["display"] = new LpMethod( new BinMethod(display) );
-            obj.methods["size"] = new LpMethod(new BinMethod(size));
-            obj.methods["len"] = new LpMethod( new BinMethod(size) );
+            obj.methods["inspect"] = new LpMethod( new BinMethod(inspect), 0 );
+            obj.methods["to_s"]    = new LpMethod( new BinMethod(to_s), 0 );
+            obj.methods["display"] = new LpMethod( new BinMethod(display), 0 );
+            obj.methods["size"] = new LpMethod(new BinMethod(size), 0 );
+            obj.methods["len"] = new LpMethod( new BinMethod(size), 0 );
 
-            obj.methods["<<"] = new LpMethod( new BinMethod(add) );
-            obj.methods["+"]  = new LpMethod( new BinMethod(plus) );
+            obj.methods["<<"] = new LpMethod( new BinMethod(add), 1 );
+            obj.methods["+"]  = new LpMethod( new BinMethod(plus),1 );
 
-            obj.methods["=="] = new LpMethod( new BinMethod(equal) );
-            obj.methods["==="] = new LpMethod( new BinMethod(eq) );
+            obj.methods["=="] = new LpMethod( new BinMethod(equal),1 );
+            obj.methods["==="] = new LpMethod( new BinMethod(eq), 1 );
         }
 
         protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
@@ -89,6 +89,7 @@ namespace LP.Object
 
         protected static LpObject plus(LpObject self, LpObject[] args, LpObject block = null)
         {
+            Console.WriteLine("aaaa");
             var v = args[0];
             return init(self.stringValue + v.stringValue);
         }
