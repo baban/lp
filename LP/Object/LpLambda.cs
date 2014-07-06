@@ -64,7 +64,7 @@ namespace LP.Object
             }
         }
 
-         private static void setMethods(LpObject obj)
+        private static void setMethods(LpObject obj)
         {
             // TODO: display
             // TODO: inspect
@@ -103,6 +103,8 @@ namespace LP.Object
             foreach (Ast.LpAstNode stmt in self.statements)
             {
                 ret = stmt.Evaluate();
+
+                if (ret.controlStatus == LpBase.ControlCode.RETURN) break;
             }
             Util.LpIndexer.pop();
             return ret;
