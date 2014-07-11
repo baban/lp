@@ -47,12 +47,18 @@ namespace LP.Object
         private static void setMethods(LpObject obj)
         {
             obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
+            obj.methods["inspect"] = new LpMethod(new BinMethod(inspect), 0);
             obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
         }
 
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpString.initialize(self.stringValue);
+        }
+
+        private static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpString.initialize(string.Format("`{0}", self.stringValue));
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)

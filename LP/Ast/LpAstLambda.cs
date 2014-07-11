@@ -35,5 +35,13 @@ namespace LP.Ast
         {
             return string.Format("({0})", string.Join(",", this.args.ToArray()));
         }
+
+        public static LpAstLambda toNode( object[] nodes ){
+            var blk = nodes;
+            return new Ast.LpAstLambda(
+                LpParser.toNode((object[])blk[2]).ChildNodes,
+                (string[])blk[0],
+                (bool)blk[1]);
+        }
     }
 }

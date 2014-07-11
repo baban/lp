@@ -49,7 +49,9 @@ namespace LP.Ast
                 case "QUOTE":
                     return Object.LpQuote.initialize( leaf );
                 case "QUASI_QUOTE":
-                    return Object.LpQuote.initialize( leaf );
+                    return Object.LpQuasiQuote.initialize( leaf );
+                case "QUESTION_QUOTE":
+                    return Object.LpString.initialize( leaf );
                 case "VARIABLE_CALL":
                     return Util.LpIndexer.varsearch( leaf );
                 default:
@@ -64,8 +66,26 @@ namespace LP.Ast
                     return string.Format("'{0}", leaf);
                 case "QUASI_QUOTE":
                     return string.Format("`{0}", leaf);
+                case "QUESTION_QUOTE":
+                    return string.Format("?{0}", leaf);
                 default:
                     return leaf;
+            }
+        }
+
+        public static  LpAstLeaf toNode( string leaf, string type ){
+            switch (type) {
+                case "NL":
+                case "NUMERIC":
+                case "STRING":
+                case "BOOL":
+                case "SYMBOL":
+                case "VARIABLE_CALL":
+                case "QUOTE":
+                case "QUASI_QUOTE":
+                    return new Ast.LpAstLeaf(leaf, type);
+                default:
+                    return null;
             }
         }
     }

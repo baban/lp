@@ -102,15 +102,15 @@ namespace LP
                                                 select qmark+idf;
 
         // Macro Values
-        static readonly Parser<string> Quote = Parse.String("'").Text().Then((qmark) => from idf in Stmt
-                                                                                        select qmark + idf);
-        static readonly Parser<string> QuasiQuote = Parse.String("`").Text().Then( (qmark) => from idf in Stmt
-                                                                                              select qmark+idf );
-        /*
+        static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
+                                               from idf in Stmt
+                                               select qmark + idf;
+        static readonly Parser<string> QuasiQuote =  from qmark in Parse.String("`").Text()
+                                                     from idf in Stmt
+                                                     select qmark+idf;
         static readonly Parser<string> QuestionQuote = from qmark in Parse.String("?").Text()
-                                                       from idf in PRIMARY
-                                                       select idf.stringValue;
-         */
+                                                       from idf in Stmt
+                                                       select qmark+idf;
         // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = Parse.Ref(() => ArgList).Contained(Parse.Char('('),Parse.Char(')'));
         static readonly Parser<string[]> FenceArgs = Parse.Ref(() => ArgList).Contained(Parse.Char('|'),Parse.Char('|'));
@@ -161,7 +161,7 @@ namespace LP
                                                  from blk in Block.Token().Optional()
                                                  select string.Format("{0}({1}){2}", idf, string.Join(", ", args.ToArray()), (blk.IsEmpty ? "" : " " + blk.Get()));
 
-        static readonly Parser<string> Primary = new Parser<string>[] { Nl, Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
+        static readonly Parser<string> Primary = new Parser<string>[] { Nl, Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote, QuestionQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
                                                  from v in Expr
@@ -308,17 +308,16 @@ namespace LP
                                                 from b in Parse.String("}").Text().Token()
                                                 select makeHash(pairs.ToArray());
         static readonly Parser<object[]> QUOTE = from m in Parse.String("'").Text()
-                                                  from s in STMT
-                                                  select new object[]{ NodeType.QUOTE, toNode( s ).toSource() };
+                                                 from stmt in EXPR
+                                                 select new object[] { NodeType.QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
-                                                        from s in STMT
-                                                        select new object[]{ NodeType.QUASI_QUOTE, toNode( s ).toSource() };
-        // TODO: 変数展開を入れる
+                                                       from stmt in EXPR
+                                                       select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUESTION_QUOTE = from m in Parse.String("?").Text()
-                                                          from s in Primary
-                                                          select new object[] { NodeType.QUESTION_QUOTE, toNode(STMT.Parse(s)).DoEvaluate().ToString() };
+                                                          from stmt in Varname
+                                                          select new object[] { NodeType.QUESTION_QUOTE, stmt };
 
-        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK, QUOTE, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
+        public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK, QUOTE, QUASI_QUOTE, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<object[]> EXP_VAL = (from a in Parse.Char('(').Token()
                                                     from s in STMT
@@ -546,61 +545,39 @@ namespace LP
             switch ((NodeType)node[0])
             {
                 case NodeType.NL:
-                    return new Ast.LpAstLeaf((string)node[1], "NL");
+                    return Ast.LpAstLeaf.toNode((string)node[1], "NL");
                 case NodeType.NUMERIC:
-                    return new Ast.LpAstLeaf((string)node[1], "NUMERIC");
+                    return Ast.LpAstLeaf.toNode((string)node[1], "NUMERIC");
                 case NodeType.STRING:
-                    return new Ast.LpAstLeaf((string)node[1], "STRING");
-                case NodeType.BOOL: 
-                    return new Ast.LpAstLeaf((string)node[1], "BOOL");
+                    return Ast.LpAstLeaf.toNode((string)node[1], "STRING");
+                case NodeType.BOOL:
+                    return Ast.LpAstLeaf.toNode((string)node[1], "BOOL");
                 case NodeType.SYMBOL:
-                    return new Ast.LpAstLeaf((string)node[1], "SYMBOL");
+                    return Ast.LpAstLeaf.toNode((string)node[1], "SYMBOL");
                 case NodeType.VARIABLE_CALL:
-                    return new Ast.LpAstLeaf((string)node[1], "VARIABLE_CALL");
+                    return Ast.LpAstLeaf.toNode((string)node[1], "VARIABLE_CALL");
                 case NodeType.QUOTE:
-                    return new Ast.LpAstLeaf((string)node[1], "QUOTE");
+                    return Ast.LpAstLeaf.toNode((string)node[1], "QUOTE");
                 case NodeType.QUASI_QUOTE:
-                    return new Ast.LpAstLeaf((string)node[1], "QUASI_QUOTE");
+                    return Ast.LpAstLeaf.toNode((string)node[1], "QUASI_QUOTE");
+                case NodeType.QUESTION_QUOTE:
+                    return Ast.LpAstLeaf.toNode((string)node[1], "QUESTION_QUOTE");
                 case NodeType.FUNCTION_CALL:
-                    object[] vals = (object[])node[1];
-                    object[] blkf = vals[2] as object[];
-                    return new Ast.LpAstFuncall(
-                        (string)vals[0],
-                        (Ast.LpAstNode[])((object[])vals[1]).Select( (n) => toNode((object[])n) ).ToArray(),
-                        ((blkf == null) ? null : toNode(blkf)) );
+                    return Ast.LpAstFuncall.toNode((object[])node[1]);
                 case NodeType.LAMBDA:
-                    var blk = (object[])node[1];
-                    return new Ast.LpAstLambda(
-                        toNode((object[])blk[2]).ChildNodes,
-                        (string[])blk[0],
-                        (bool)blk[1] );
+                    return Ast.LpAstLambda.toNode((object[])node[1]);
                 case NodeType.BLOCK:
-                    var blk2 = (object[])node[1];
-                    return new Ast.LpAstBlock(
-                        toNode((object[])blk2[2]).ChildNodes,
-                        (string[])blk2[0],
-                        (bool)blk2[1]);
+                    return Ast.LpAstBlock.toNode((object[])node[1]);
                 case NodeType.FUNCALL:
-                    object[] fvals = (object[])node[1];
-                    object[] block = fvals[3] as object[];
-                    return new Ast.LpAstMethodCall(
-                        (string)fvals[0],
-                        toNode((object[])fvals[1]),
-                        (Ast.LpAstNode[])((object[])fvals[2]).Select( (n) => toNode((object[])n) ).ToArray(),
-                        ((block == null) ? null : toNode(block)));
+                    return Ast.LpAstFuncall.toNode((object[])node[1]);
                 case NodeType.EXPR:
                     return toNode( (object[])node[1] );
                 case NodeType.STMTS:
-                     var stmts = ((List<object[]>)node[1]).Select((o) => toNode(o)).ToList();
-                    return new Ast.LpAstStmts( stmts );
+                    return Ast.LpAstStmts.toNode( (List<object[]>)node[1] );
                 case NodeType.ARRAY:
-                    return new Ast.LpAstArray(((List<object[]>)node[1]).Select((o) => toNode(o)).ToList());
+                    return Ast.LpAstArray.toNode((List<object[]>)node[1]);
                 case NodeType.HASH:
-                    var pairs = ((object[])node[1]).Select((pair) => {
-                        var pr = (object[])pair;
-                        return new Ast.LpAstNode[] { toNode((object[])pr[0]), toNode((object[])pr[1]) };
-                    } ).ToList();
-                    return new Ast.LpAstHash( pairs );
+                    return Ast.LpAstHash.toNode((object[])node[1]);
                 default:
                     return null;
             }
@@ -608,13 +585,13 @@ namespace LP
          
         public static Object.LpObject execute(string ctx)
         {
-            //Console.WriteLine(ctx);
+            Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
-            //Console.WriteLine(str);
+            Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
-            //Console.WriteLine(pobj);
+            Console.WriteLine(pobj);
             var node = toNode(pobj);
-            //Console.WriteLine(nodes);
+            Console.WriteLine(node);
             var o = node.Evaluate();
 
             //Console.WriteLine(o.class_name);

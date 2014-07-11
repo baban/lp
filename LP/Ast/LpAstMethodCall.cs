@@ -36,7 +36,7 @@ namespace LP.Ast
                 ( this.block==null ? null : this.block.DoEvaluate()) );
         }
 
-        public virtual string toSource()
+        public override string toSource()
         {
             return string.Format("{0}.{1}({2}){3}",
                 lft.toSource(),

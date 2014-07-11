@@ -31,5 +31,14 @@ namespace LP.Ast
                 }).ToArray() ) +
                    " }";
         }
+
+        public static LpAstHash toNode( object[] nodes ) {
+            var pairs = nodes.Select((pair) =>
+            {
+                var pr = (object[])pair;
+                return new Ast.LpAstNode[] { LpParser.toNode((object[])pr[0]), LpParser.toNode((object[])pr[1]) };
+            }).ToList();
+            return new Ast.LpAstHash(pairs);
+        }
     }
 }

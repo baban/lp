@@ -24,5 +24,10 @@ namespace LP.Ast
         {
             return string.Join("; ", ChildNodes.Select((node) => node.toSource()));
         }
+
+        public static LpAstStmts toNode( List<object[]> nodes ) {
+            var stmts = (nodes).Select((o) => LpParser.toNode(o)).ToList();
+            return new Ast.LpAstStmts(stmts);
+        }
     }
 }
