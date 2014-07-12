@@ -23,18 +23,13 @@ namespace LP.Ast
             return ret;
         }
 
-        public override string toSource()
+        public override string toSource( bool expand=false )
         {
             return "{ " +
                 string.Join(", ", pairs.Select((pair) => {
-                    return string.Join( " : ", pair.Select((node) => node.toSource()) );
+                    return string.Join(" : ", pair.Select((node) => node.toSource(expand)));
                 }).ToArray() ) +
                    " }";
-        }
-
-        public override string expand()
-        {
-            return toSource();
         }
 
         public static LpAstHash toNode(object[] nodes)

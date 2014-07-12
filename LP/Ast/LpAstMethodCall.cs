@@ -36,23 +36,23 @@ namespace LP.Ast
                 ( this.block==null ? null : this.block.DoEvaluate()) );
         }
 
-        public override string toSource()
+        public override string toSource( bool expand=false )
         {
             return string.Format("{0}.{1}({2}){3}",
                 lft.toSource(),
                 this.name,
-                this.toSourceArgs(),
-                this.toSourceBlock() );
+                this.toSourceArgs(expand),
+                this.toSourceBlock(expand) );
         }
 
-        private string toSourceArgs(){
-            return string.Join(", ", this.args.Select((o) => o.toSource()).ToArray());
+        private string toSourceArgs(bool expand){
+            return string.Join(", ", this.args.Select((o) => o.toSource(expand)).ToArray());
         }
 
-        private string toSourceBlock()
+        private string toSourceBlock(bool expand)
         {
             if (this.block == null) return "";
-            return " "+this.block.toSource();
+            return " "+this.block.toSource(expand);
         }
 
         public static LpAstMethodCall toNode( object[] nodes ) {

@@ -109,7 +109,7 @@ namespace LP
                                                      from idf in Expr
                                                      select qmark+idf;
         static readonly Parser<string> QuestionQuote = from qmark in Parse.String("?").Text()
-                                                       from idf in Stmt
+                                                       from idf in ExpVal
                                                        select qmark+idf;
         // Block,Lambda
         static readonly Parser<string[]> BlaketArgs = Parse.Ref(() => ArgList).Contained(Parse.Char('('),Parse.Char(')'));
@@ -312,9 +312,9 @@ namespace LP
                                                  select new object[] { NodeType.QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
                                                        from stmt in STMT
-                                                       select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).expand() };
+                                                       select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource(true) };
         static readonly Parser<object[]> QUESTION_QUOTE = from m in Parse.String("?").Text()
-                                                          from stmt in Varname
+                                                          from stmt in ExpVal
                                                           select new object[] { NodeType.QUESTION_QUOTE, stmt };
 
         public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK, QUOTE, QUASI_QUOTE, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));

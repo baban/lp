@@ -19,14 +19,9 @@ namespace LP.Ast
             return Object.LpArray.initialize( ChildNodes.Select( (node) => node.DoEvaluate() ).ToArray() );
         }
 
-        public override string toSource()
+        public override string toSource( bool expand=false )
         {
-            return string.Format("[{0}]", string.Join(", ", ChildNodes.Select((node) => node.toSource())));
-        }
-
-        public override string expand()
-        {
-            return toSource();
+            return string.Format("[{0}]", string.Join(", ", ChildNodes.Select((node) => node.toSource(expand))));
         }
 
         public static LpAstArray toNode(List<object[]> nodes)

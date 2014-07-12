@@ -29,23 +29,18 @@ namespace LP.Ast
                 (this.block == null ? null : this.block.DoEvaluate()));
         }
 
-        public override string toSource()
+        public override string toSource( bool expand=false )
         {
             return string.Format("{0}({1}){2}",
                 this.name,
-                string.Join(", ", args.Select((node)=>node.toSource()).ToArray()),
-                toSourceBlock());
+                string.Join(", ", args.Select((node) => node.toSource(expand)).ToArray()),
+                toSourceBlock(expand));
         }
 
-        private string toSourceBlock()
+        private string toSourceBlock(bool expand )
         {
             if (this.block == null) return "";
-            return " " + this.block.toSource();
-        }
-
-        public override string expand()
-        {
-            return toSource();
+            return " " + this.block.toSource(expand);
         }
 
         public static LpAstFuncall toNode(object[] vals)

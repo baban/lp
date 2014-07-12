@@ -59,7 +59,7 @@ namespace LP.Ast
             }
         }
         
-        public override string toSource()
+        public override string toSource( bool expand=false )
         {
             switch (type) {
                 case "QUOTE":
@@ -67,15 +67,14 @@ namespace LP.Ast
                 case "QUASI_QUOTE":
                     return string.Format("`{0}", leaf);
                 case "QUESTION_QUOTE":
-                    return string.Format("?{0}", leaf);
+                    Console.WriteLine("QUESTION_QUOTE");
+                    Console.WriteLine(expand);
+                    return expand ?
+                        LpParser.toNode(LpParser.PROGRAM.Parse( leaf )).DoEvaluate().funcall("to_s",null,null).stringValue:
+                        string.Format("?{0}", leaf);
                 default:
                     return leaf;
             }
-        }
-
-        public override string expand()
-        {
-            return toSource();
         }
 
         public static LpAstLeaf toNode(string leaf, string type)

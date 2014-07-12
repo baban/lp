@@ -24,21 +24,16 @@ namespace LP.Ast
             return Object.LpLambda.initialize(ChildNodes, args, loose);
         }
 
-        public override string toSource()
+        public override string toSource( bool expand=false )
         {
             return string.Format("->{0} do {1} end",
                 toSourceArgs(),
-                string.Join("; ", ChildNodes.Select((node) => node.toSource())));
+                string.Join("; ", ChildNodes.Select((node) => node.toSource(expand))));
         }
 
         private string toSourceArgs()
         {
             return string.Format("({0})", string.Join(",", this.args.ToArray()));
-        }
-
-        public override string expand()
-        {
-            return toSource();
         }
 
         public static LpAstLambda toNode(object[] nodes)

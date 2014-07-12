@@ -28,22 +28,17 @@ namespace LP.Ast
             return Object.LpBlock.initialize( ChildNodes, args );
         }
 
-        public override string toSource()
+        public override string toSource( bool expand=false )
         {
             return string.Format("do {0}{1} end",
                 toSourceArgs(),
-                string.Join("; ", ChildNodes.Select((node) => node.toSource())) );
+                string.Join("; ", ChildNodes.Select((node) => node.toSource(expand))));
         }
 
         private string toSourceArgs()
         {
             if (this.args.Count() == 0) return "";
             return string.Format( "|{0}| ", string.Join(",", this.args.ToArray()));
-        }
-
-        public override string expand()
-        {
-            return toSource();
         }
 
         public static LpAstBlock toNode(object[] nodes)
