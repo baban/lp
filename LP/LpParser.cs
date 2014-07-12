@@ -103,10 +103,10 @@ namespace LP
 
         // Macro Values
         static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
-                                               from idf in Stmt
+                                               from idf in Expr
                                                select qmark + idf;
         static readonly Parser<string> QuasiQuote =  from qmark in Parse.String("`").Text()
-                                                     from idf in Stmt
+                                                     from idf in Expr
                                                      select qmark+idf;
         static readonly Parser<string> QuestionQuote = from qmark in Parse.String("?").Text()
                                                        from idf in Stmt
@@ -308,10 +308,10 @@ namespace LP
                                                 from b in Parse.String("}").Text().Token()
                                                 select makeHash(pairs.ToArray());
         static readonly Parser<object[]> QUOTE = from m in Parse.String("'").Text()
-                                                 from stmt in EXPR
+                                                 from stmt in STMT
                                                  select new object[] { NodeType.QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
-                                                       from stmt in EXPR
+                                                       from stmt in STMT
                                                        select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUESTION_QUOTE = from m in Parse.String("?").Text()
                                                           from stmt in Varname
@@ -360,7 +360,7 @@ namespace LP
                                                  select new object[] { NodeType.STMTS, stmts };
         public static readonly Parser<object[]> PROGRAM = STMTS;
 
-        static Parser<T> OperandsChainCallStart<T,T2,TOp>(
+         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
           Parser<T> operand,
           Parser<T2> operand2,
@@ -468,7 +468,13 @@ namespace LP
         // 単体テスト時にアクセスしやすいように
         static Ast.LpAstNode parseToNode(Parser<object[]> psr, string ctx)
         {
-            return toNode(psr.Parse(ctx));
+            var p = psr.Parse(ctx);
+            Console.WriteLine("p");
+            Console.WriteLine(p);
+            var o = toNode(p);
+            Console.WriteLine("o");
+            Console.WriteLine(o);
+            return o;
         }
 
         // 単体テスト時にアクセスしやすいように
@@ -569,7 +575,7 @@ namespace LP
                 case NodeType.BLOCK:
                     return Ast.LpAstBlock.toNode((object[])node[1]);
                 case NodeType.FUNCALL:
-                    return Ast.LpAstFuncall.toNode((object[])node[1]);
+                    return Ast.LpAstMethodCall.toNode((object[])node[1]);
                 case NodeType.EXPR:
                     return toNode( (object[])node[1] );
                 case NodeType.STMTS:

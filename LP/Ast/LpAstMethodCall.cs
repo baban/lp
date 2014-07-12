@@ -54,5 +54,15 @@ namespace LP.Ast
             if (this.block == null) return "";
             return " "+this.block.toSource();
         }
+
+        public static LpAstMethodCall toNode( object[] nodes ) {
+            var vals = nodes;
+            object[] blkf = vals[3] as object[];
+            return new Ast.LpAstMethodCall(
+                (string)vals[0],
+                LpParser.toNode( (object[])vals[1] ),
+                (Ast.LpAstNode[])((object[])vals[2]).Select((n) => LpParser.toNode((object[])n)).ToArray(),
+                ((blkf == null) ? null : LpParser.toNode(blkf)));
+        }
     }
 }

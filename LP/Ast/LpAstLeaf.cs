@@ -58,7 +58,7 @@ namespace LP.Ast
                     return null;
             }
         }
-
+        
         public override string toSource()
         {
             switch (type) {
@@ -83,6 +83,7 @@ namespace LP.Ast
                 case "VARIABLE_CALL":
                 case "QUOTE":
                 case "QUASI_QUOTE":
+                case "QUESTION_QUOTE":
                     return new Ast.LpAstLeaf(leaf, type);
                 default:
                     return null;
