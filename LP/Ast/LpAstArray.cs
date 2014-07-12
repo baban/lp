@@ -24,7 +24,13 @@ namespace LP.Ast
             return string.Format("[{0}]", string.Join(", ", ChildNodes.Select((node) => node.toSource())));
         }
 
-        public static LpAstArray toNode( List<object[]> nodes ) {
+        public override string expand()
+        {
+            return toSource();
+        }
+
+        public static LpAstArray toNode(List<object[]> nodes)
+        {
             return new Ast.LpAstArray(nodes.Select((o) => LpParser.toNode(o)).ToList());
         }
     }

@@ -16,11 +16,14 @@ namespace LP.Ast
         public EvaluateMethod Evaluate;
         public delegate string toSourceMethod();
         public toSourceMethod Source;
+        public delegate string expandMethod();
+        public expandMethod Expand;
 
         public LpAstNode()
         {
             this.Evaluate = DoEvaluate;
             this.Source = toSource;
+            this.Expand = expand;
         }
 
         public virtual Object.LpObject DoEvaluate()
@@ -31,6 +34,11 @@ namespace LP.Ast
         public virtual string toSource()
         {
             return null;
+        }
+
+        public virtual string expand()
+        {
+            return toSource();
         }
     }
 }

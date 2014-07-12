@@ -73,7 +73,13 @@ namespace LP.Ast
             }
         }
 
-        public static  LpAstLeaf toNode( string leaf, string type ){
+        public override string expand()
+        {
+            return toSource();
+        }
+
+        public static LpAstLeaf toNode(string leaf, string type)
+        {
             switch (type) {
                 case "NL":
                 case "NUMERIC":

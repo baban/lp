@@ -20,9 +20,14 @@ namespace LP.Ast
             return ret;
         }
 
-        public virtual string toSource()
+        public override string toSource()
         {
             return string.Join("; ", ChildNodes.Select((node) => node.toSource()));
+        }
+
+        public override string expand()
+        {
+            return toSource();
         }
 
         public static LpAstStmts toNode( List<object[]> nodes ) {

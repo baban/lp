@@ -41,7 +41,13 @@ namespace LP.Ast
             return string.Format( "|{0}| ", string.Join(",", this.args.ToArray()));
         }
 
-        public static LpAstBlock toNode( object[] nodes ) {
+        public override string expand()
+        {
+            return toSource();
+        }
+
+        public static LpAstBlock toNode(object[] nodes)
+        {
             var blk2 = nodes;
             return new Ast.LpAstBlock(
                 LpParser.toNode((object[])blk2[2]).ChildNodes,

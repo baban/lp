@@ -32,7 +32,13 @@ namespace LP.Ast
                    " }";
         }
 
-        public static LpAstHash toNode( object[] nodes ) {
+        public override string expand()
+        {
+            return toSource();
+        }
+
+        public static LpAstHash toNode(object[] nodes)
+        {
             var pairs = nodes.Select((pair) =>
             {
                 var pr = (object[])pair;

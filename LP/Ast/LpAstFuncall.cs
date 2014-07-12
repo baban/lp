@@ -43,7 +43,13 @@ namespace LP.Ast
             return " " + this.block.toSource();
         }
 
-        public static LpAstFuncall toNode( object[] vals ) {
+        public override string expand()
+        {
+            return toSource();
+        }
+
+        public static LpAstFuncall toNode(object[] vals)
+        {
             object[] blkf = vals[2] as object[];
             return new Ast.LpAstFuncall(
                 (string)vals[0],
