@@ -122,12 +122,27 @@ namespace LP.Object
             LpMethod m = null;
             if (null != methods[name])
             {
-                if ( null!= (m = methods[name] as LpMethod)){
+                if (null != (m = methods[name] as LpMethod))
+                {
                     return m.funcall(self, args, block);
-                }else{
+                }
+                else
+                {
+                    var klass = (methods[name] as LpObject);
                     var dstArgs = LpArray.initialize();
                     dstArgs.arrayValues = args.ToList();
-                    return Object.LpLambda.call((LpObject)methods[name], new LpObject[] { dstArgs }, block);
+                    Console.WriteLine("klass.class_name");
+                    Console.WriteLine(klass.class_name);
+                    switch (klass.class_name)
+                    {
+                        case "Macro":
+                            return Object.LpMacro.call((LpObject)methods[name], new LpObject[] { dstArgs }, block);
+                        case "Lambda":
+                        case "Block":
+                            return Object.LpLambda.call((LpObject)methods[name], new LpObject[] { dstArgs }, block);
+                        default:
+                            return null;
+                    }
                 }
             }
 

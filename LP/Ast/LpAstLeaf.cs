@@ -67,8 +67,6 @@ namespace LP.Ast
                 case "QUASI_QUOTE":
                     return string.Format("`{0}", leaf);
                 case "QUESTION_QUOTE":
-                    Console.WriteLine("QUESTION_QUOTE");
-                    Console.WriteLine(expand);
                     return expand ?
                         LpParser.toNode(LpParser.PROGRAM.Parse( leaf )).DoEvaluate().funcall("to_s",null,null).stringValue:
                         string.Format("?{0}", leaf);

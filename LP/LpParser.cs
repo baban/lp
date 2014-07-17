@@ -577,11 +577,11 @@ namespace LP
                 case NodeType.FUNCALL:
                     return Ast.LpAstMethodCall.toNode((object[])node[1]);
                 case NodeType.EXPR:
-                    return toNode( (object[])node[1] );
+                    return toNode( (object[])node[1] ); 
                 case NodeType.STMTS:
                     return Ast.LpAstStmts.toNode( (List<object[]>)node[1] );
                 case NodeType.ARRAY:
-                    return Ast.LpAstArray.toNode((List<object[]>)node[1]);
+                    return Ast.LpAstArray.toNode((List<object[]>)node[1]); 
                 case NodeType.HASH:
                     return Ast.LpAstHash.toNode((object[])node[1]);
                 default:
@@ -591,13 +591,13 @@ namespace LP
          
         public static Object.LpObject execute(string ctx)
         {
-            //Console.WriteLine(ctx);
+            Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
-            //Console.WriteLine(str);
+            Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
-            //Console.WriteLine(pobj);
+            Console.WriteLine(pobj);
             var node = toNode(pobj);
-            //Console.WriteLine(node);
+            Console.WriteLine(node);
             var o = node.Evaluate();
 
             //Console.WriteLine(o.class_name);

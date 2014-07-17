@@ -14,7 +14,7 @@ namespace LP.Ast
 
         public delegate Object.LpObject EvaluateMethod();
         public EvaluateMethod Evaluate;
-        public delegate string toSourceMethod( bool expand=false );
+        public delegate string toSourceMethod( bool expand );
         public toSourceMethod Source;
 
         public LpAstNode()

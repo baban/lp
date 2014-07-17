@@ -125,6 +125,7 @@ namespace LP
             LP.Util.LpIndexer.initialize();
             Util.LpIndexer.push(Object.LpKernel.initialize());
             initializeBuiltInClasses();
+            initializeMacros();
             return;
         }
 
@@ -146,6 +147,12 @@ namespace LP
             Object.LpQuote.initialize();
             Object.LpString.initialize();
             Object.LpSymbol.initialize();
+            Object.LpMacro.initialize();
+        }
+
+        static void initializeMacros() {
+            //string untilMacro = "def mac(name,func) name=(`10); end";
+            //LpParser.execute(untilMacro);
         }
 
         private static void printVersion()
