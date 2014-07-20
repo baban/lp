@@ -28,7 +28,7 @@ namespace LP.Ast
             this.Source = toSource;
         }
 
-        public override Object.LpObject DoEvaluate()
+        public override Object.LpObject DoEvaluate(bool expand = false)
         {
             return lft.DoEvaluate().funcall(
                 this.name,

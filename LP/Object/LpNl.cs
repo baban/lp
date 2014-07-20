@@ -35,7 +35,7 @@ namespace LP.Object
         {
             if (classes.ContainsKey(className))
             {
-                return classes[className].Clone();
+                return classes[className].Clone(); 
             }
             else
             {

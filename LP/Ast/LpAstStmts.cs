@@ -13,10 +13,10 @@ namespace LP.Ast
             this.Evaluate = DoEvaluate;
         }
 
-        public override Object.LpObject DoEvaluate()
+        public override Object.LpObject DoEvaluate(bool expand = false)
         {
             Object.LpObject ret = Object.LpNl.initialize();
-            ChildNodes.ForEach((node) =>{ ret = node.Evaluate(); });
+            ChildNodes.ForEach((node) =>{ ret = node.Evaluate(true); });
             return ret;
         }
 
@@ -26,7 +26,7 @@ namespace LP.Ast
         }
 
         public static LpAstStmts toNode( List<object[]> nodes ) {
-            var stmts = (nodes).Select((o) => LpParser.toNode(o)).ToList();
+            var stmts = nodes.Select((o) => LpParser.toNode(o)).ToList();
             return new Ast.LpAstStmts(stmts);
         }
     }

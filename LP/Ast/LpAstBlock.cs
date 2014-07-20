@@ -23,7 +23,7 @@ namespace LP.Ast
             this.Source = toSource;
         }
 
-        public override Object.LpObject DoEvaluate()
+        public override Object.LpObject DoEvaluate(bool expand = false)
         {
             return Object.LpBlock.initialize( ChildNodes, args );
         }

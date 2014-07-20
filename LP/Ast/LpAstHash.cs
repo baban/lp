@@ -17,7 +17,7 @@ namespace LP.Ast
             this.Evaluate = DoEvaluate;
         }
 
-        public override Object.LpObject DoEvaluate()
+        public override Object.LpObject DoEvaluate(bool expand = false)
         {
             Object.LpObject ret = Object.LpHash.initialize( this.pairs );
             return ret;

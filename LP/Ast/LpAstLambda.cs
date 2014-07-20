@@ -19,7 +19,7 @@ namespace LP.Ast
             this.Evaluate = DoEvaluate;
         }
 
-        public override Object.LpObject DoEvaluate()
+        public override Object.LpObject DoEvaluate(bool expand = false)
         {
             return Object.LpLambda.initialize(ChildNodes, args, loose);
         }

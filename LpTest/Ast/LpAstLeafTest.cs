@@ -106,7 +106,7 @@ namespace LpTest.Ast
             Type t = initParser();
             var p = t.InvokeMember("QUASI_QUOTE", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var node = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "`(print(10))" });
-            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { true });
+            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { false });
             Assert.AreEqual("`print(10)", s);
         }
 
@@ -116,7 +116,7 @@ namespace LpTest.Ast
             Type t = initParser();
             var p = t.InvokeMember("QUASI_QUOTE", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var node = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "`(10.(>)(5))" });
-            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { true });
+            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { false });
             Assert.AreEqual("`10.(>)(5)", s);
         }
 
@@ -126,8 +126,8 @@ namespace LpTest.Ast
             Type t = initParser();
             var p = t.InvokeMember("QUASI_QUOTE", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var node = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "`(10.(+)(?5))" });
-            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { true });
-            Assert.AreEqual("`10.(+)(5)", s);
+            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { false });
+            Assert.AreEqual("`10.(+)(?5)", s);
         }
 
         [Test]
@@ -136,8 +136,8 @@ namespace LpTest.Ast
             Type t = initParser();
             var p = t.InvokeMember("QUASI_QUOTE", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, t, null);
             var node = t.GetMethod("parseToNode", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { p, "`(10.(+)(?(10.(+)(2))))" });
-            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { true });
-            Assert.AreEqual("`10.(+)(12)", s);
+            var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { false });
+            Assert.AreEqual("`10.(+)(?(10.(+)(2)))", s);
         }
 
         [Test]

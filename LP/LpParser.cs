@@ -312,7 +312,7 @@ namespace LP
                                                  select new object[] { NodeType.QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
                                                        from stmt in STMT
-                                                       select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource(true) };
+                                                       select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUESTION_QUOTE = from m in Parse.String("?").Text()
                                                           from stmt in ExpVal
                                                           select new object[] { NodeType.QUESTION_QUOTE, stmt };
@@ -591,13 +591,13 @@ namespace LP
          
         public static Object.LpObject execute(string ctx)
         {
-            Console.WriteLine(ctx);
+            //Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
-            Console.WriteLine(str);
+            //Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
-            Console.WriteLine(pobj);
+            //Console.WriteLine(pobj);
             var node = toNode(pobj);
-            Console.WriteLine(node);
+            //Console.WriteLine(node);
             var o = node.Evaluate();
 
             //Console.WriteLine(o.class_name);

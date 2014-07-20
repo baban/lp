@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sprache;
 
 namespace LP.Object
 {
@@ -23,7 +24,7 @@ namespace LP.Object
         private static LpObject init(string s)
         {
             LpObject obj = createClassTemplate();
-            obj.stringValue = s;
+            obj.stringValue = LpParser.toNode(LpParser.PROGRAM.Parse(s)).toSource();
             return obj;
         }
 

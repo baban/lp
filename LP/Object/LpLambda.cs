@@ -102,7 +102,7 @@ namespace LP.Object
             LpObject ret = Object.LpNl.initialize();
             foreach (Ast.LpAstNode stmt in self.statements)
             {
-                ret = stmt.Evaluate();
+                ret = stmt.Evaluate(true);
 
                 if (ret.controlStatus == LpBase.ControlCode.RETURN) break;
             }

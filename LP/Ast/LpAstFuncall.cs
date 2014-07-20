@@ -20,7 +20,7 @@ namespace LP.Ast
             this.Evaluate = DoEvaluate;
         }
 
-        public override Object.LpObject DoEvaluate()
+        public override Object.LpObject DoEvaluate(bool expand = false)
         {
             var lft = Util.LpIndexer.last();
             return lft.funcall(
