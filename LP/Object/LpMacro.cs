@@ -58,7 +58,7 @@ namespace LP.Object
                 throw new Error.LpArgumentError();
 
             var obj = self.Clone();
-            //obj.statements = block.statements;
+            obj.statements = block.statements;
             obj.arguments = block.arguments;
             return obj;
         }
@@ -71,7 +71,7 @@ namespace LP.Object
             LpObject ret = Object.LpNl.initialize();
             foreach (Ast.LpAstNode stmt in self.statements)
             {
-                ret = stmt.Evaluate();
+                ret = stmt.Evaluate(true);
                 if (ret.class_name == "Quote" || ret.class_name == "QuasiQuote")
                     ret = LpParser.execute(ret.stringValue);
             }

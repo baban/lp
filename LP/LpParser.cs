@@ -143,6 +143,17 @@ namespace LP
                                                   from c in Parse.String("end")
                                                   select string.Format("->({0}) do {1} end.bind(:{2})", string.Join(", ", args.ToArray()), 
                                                   string.Join("; ", stmts.ToArray()), fname );
+        static readonly Parser<string> DefMacro = from a in Parse.String("mac").Token()
+                                                  from fname in Fname
+                                                  from args in ArgDecl
+                                                  from b in Term
+                                                  from stmts in Stmts
+                                                  from c in Parse.String("end")
+                                                  select string.Format(
+                                                            "Macro.new() do |{1}| {2} end.bind(:{0})",
+                                                            fname,
+                                                            string.Join(", ", args.ToArray()),
+                                                            string.Join("; ", stmts.ToArray()));
 
         static readonly Parser<string> DefClass = from a in Parse.String("class").Token().Text()
                                                   from cname in Fname
@@ -178,7 +189,7 @@ namespace LP
         // []
         static readonly Parser<string> ExpArrayAt = (from expr in ExpMethodcall
                                                      from v in Stmt.Contained(Parse.Char('['), Parse.Char(']'))
-                                                     select string.Format("{0}.([])({1})", expr, v)).Or(ExpMethodcall);
+                                                      select string.Format("{0}.([])({1})", expr, v)).Or(ExpMethodcall);
         // ２項演算子一覧
         static readonly Parser<string> ChainExprs = makeExpressions(operandTable, ExpArrayAt);
         // =(+=, -= ... )
@@ -245,7 +256,7 @@ namespace LP
                                                                 select new string[]{})
                                                 select string.Format("_if({0},do {1} end,do {2} end)", expr, string.Join("; ", stmts1), string.Join("; ", stmts2));
 
-        static readonly Parser<string> StatCollection = DefClass.Or(Function).Or(IfStmt);
+        static readonly Parser<string> StatCollection = DefMacro.Or(DefClass).Or(Function).Or(IfStmt);
         static readonly Parser<string> StatList = StatCollection.Or(Expr);
 
         static readonly Parser<string> Stmt = (from s in StatList
@@ -591,13 +602,13 @@ namespace LP
          
         public static Object.LpObject execute(string ctx)
         {
-            //Console.WriteLine(ctx);
+            Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
-            //Console.WriteLine(str);
+            Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
-            //Console.WriteLine(pobj);
+            Console.WriteLine(pobj);
             var node = toNode(pobj);
-            //Console.WriteLine(node);
+            Console.WriteLine(node);
             var o = node.Evaluate();
 
             //Console.WriteLine(o.class_name);
