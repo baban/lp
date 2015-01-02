@@ -89,7 +89,6 @@ namespace LP.Object
 
         protected static LpObject plus(LpObject self, LpObject[] args, LpObject block = null)
         {
-            Console.WriteLine("aaaa");
             var v = args[0];
             return init(self.stringValue + v.stringValue);
         }
@@ -104,7 +103,7 @@ namespace LP.Object
         private static LpObject eq(LpObject self, LpObject[] args, LpObject block = null)
         {
             var o = args[0];
-            return LpBool.initialize(self.stringValue == o.stringValue );
+            return LpBool.initialize( self.stringValue == o.stringValue );
         }
     }
 }

@@ -26,7 +26,7 @@ namespace LP.Ast
         }
 
         public static LpAstStmts toNode( List<object[]> nodes ) {
-            var stmts = nodes.Select((o) => LpParser.toNode(o)).ToList();
+            var stmts = nodes.Select((node) => LpParser.toNode(node)).ToList();
             return new Ast.LpAstStmts(stmts);
         }
     }

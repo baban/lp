@@ -58,11 +58,20 @@ namespace LP.Util
             return null;
         }
 
-        public static Object.LpObject varsearch( string name ){
-            foreach (var o in contextStack)
+        public static Object.LpObject macrocall(string name) {
+            foreach (var ctx in contextStack)
             {
-                var ret = o.varcall(name);
-                if (ret != null) return ret;
+                var ret = ctx.varcall(name);
+                return ret;
+            }
+            return null;
+        }
+
+        public static Object.LpObject varcall( string name ){
+            foreach (var ctx in contextStack)
+            {
+                var ret = ctx.varcall(name);
+                return ret;
             }
             throw new Error.NameError();
         }

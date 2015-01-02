@@ -16,6 +16,13 @@ namespace LP.Object
             return init();
         }
 
+        public static LpObject initialize(string[] args)
+        {
+            var o = init();
+            o.arrayValues = args.Select( (arg) => LpParser.parseStmtObject(arg) ).ToList();
+            return o;
+        }
+
         public static LpObject initialize(LpObject[] args)
         {
             var o = init();

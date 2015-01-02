@@ -19,7 +19,7 @@ namespace LP.Ast
 
         public LpAstLeaf(string n, string type)
         {
-            leaf = n;
+            this.leaf = n;
             this.type = type;
             init();
         }
@@ -53,7 +53,7 @@ namespace LP.Ast
                 case "QUESTION_QUOTE":
                     return LpParser.toNode(LpParser.PROGRAM.Parse(leaf)).DoEvaluate().funcall("to_s", null, null);
                 case "VARIABLE_CALL":
-                    return Util.LpIndexer.varsearch( leaf );
+                    return Util.LpIndexer.varcall(leaf);
                 default:
                     return null;
             }

@@ -22,11 +22,22 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
-            var lft = Util.LpIndexer.last();
-            return lft.funcall(
-                this.name,
-                args.Select((arg) => arg.DoEvaluate()).ToArray(),
-                (this.block == null ? null : this.block.DoEvaluate()));
+            var macro = Util.LpIndexer.macrocall(this.name);
+            if (macro != null && macro.is_macro == true)
+            {
+                // macro call
+                var node = macro.macroexpand(args, this.block);
+                return node.DoEvaluate();
+            }
+            else
+            {
+                // function call
+                var ctx = Util.LpIndexer.last();
+                return ctx.funcall(
+                    this.name,
+                    args.Select((arg) => arg.DoEvaluate()).ToArray(),
+                    (this.block == null ? null : this.block.DoEvaluate()) );
+            }
         }
 
         public override string toSource( bool expand=false )

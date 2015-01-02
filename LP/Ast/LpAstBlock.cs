@@ -32,6 +32,7 @@ namespace LP.Ast
         {
             return string.Format("do {0}{1} end",
                 toSourceArgs(),
+        
                 string.Join("; ", ChildNodes.Select((node) => node.toSource(expand))));
         }
 

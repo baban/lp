@@ -9,6 +9,19 @@ using System.Diagnostics;
 
 namespace LP
 {
+    /*
+     mac(until) do |test,&body|
+       `while(?test) &body
+     end
+     
+     until(test) &body
+     
+     until(i<10) do
+       i++;
+       print(i);
+     end
+     */
+
     // TODO: 引数の改良
     // TODO: ハッシュ作成
     // TODO: case文
@@ -272,6 +285,7 @@ namespace LP
             NL, INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, VARIABLE_CALL, LAMBDA, BLOCK, PRIMARY,
             ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH, QUOTE, QUASI_QUOTE, QUESTION_QUOTE
         };
+
         static readonly Parser<object[]> NL = from s in Nl
                                                 select new object[] { NodeType.NL, s };
         static readonly Parser<object[]> INT = from n in Int
@@ -318,9 +332,11 @@ namespace LP
                                                 from pairs in Assoc.Many()
                                                 from b in Parse.String("}").Text().Token()
                                                 select makeHash(pairs.ToArray());
+
         static readonly Parser<object[]> QUOTE = from m in Parse.String("'").Text()
                                                  from stmt in STMT
                                                  select new object[] { NodeType.QUOTE, toNode(stmt).toSource() };
+
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
                                                        from stmt in STMT
                                                        select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource() };
@@ -335,7 +351,7 @@ namespace LP
                                                     from b in Parse.Char(')').Token()
                                                     select s).Or(PRIMARY);
         static readonly Parser<object[]> ARGS = from args in Args
-                                                select args.Select((arg) => ((object[])STMT.Parse(arg))).ToArray();
+                                                select args.Select((arg) => (object[])STMT.Parse(arg) ).ToArray();
         static readonly Parser<object[]> ARGS_CALL = from a in Parse.Char('(').Token()
                                                      from args in Args
                                                      from b in Parse.Char(')').Token()
@@ -371,7 +387,7 @@ namespace LP
                                                  select new object[] { NodeType.STMTS, stmts };
         public static readonly Parser<object[]> PROGRAM = STMTS;
 
-         static Parser<T> OperandsChainCallStart<T,T2,TOp>(
+        static Parser<T> OperandsChainCallStart<T,T2,TOp>(
           Parser<TOp> op,
           Parser<T> operand,
           Parser<T2> operand2,
@@ -481,7 +497,7 @@ namespace LP
         {
             var p = psr.Parse(ctx);
             //Console.WriteLine("p");
-            //Console.WriteLine(p);
+            //Console.WriteLine(p);        
             var o = toNode(p);
             //Console.WriteLine("o");
             //Console.WriteLine(o);
@@ -491,6 +507,7 @@ namespace LP
         // 単体テスト時にアクセスしやすいように
         static Object.LpObject parseToObject(Parser<object[]> psr, string ctx)
         {
+            Console.WriteLine("parseToObject");
             var p = psr.Parse(ctx);
             Console.WriteLine("p");
             Console.WriteLine(p);
@@ -500,10 +517,11 @@ namespace LP
             return o.Evaluate();
         }
 
-        // 単体テスト時にアクセスしやすいように
-        static Object.LpObject parseObject(Parser<Object.LpObject> psr, string ctx)
+        public static Object.LpObject parseStmtObject(string ctx)
         {
-            return psr.Parse(ctx);
+            var p = STMT.Parse(ctx);
+            var o = toNode(p);
+            return o.Evaluate();
         }
 
         static Object.LpObject parseArrObject(Parser<Object.LpObject> psr, string ctx)
@@ -514,9 +532,12 @@ namespace LP
 
         static Object.LpObject[] parseArgsObject(string ctx)
         {
-            return ARGS.Parse(ctx).Select( (node) => toNode((object[])node).Evaluate() ).ToArray();
+            return Args.Parse(ctx).ToList().Select( (arg) => {
+                var node = STMT.Parse(arg);
+                return toNode((object[])node).Evaluate();
+            }).ToArray();
         }
-
+         
         static void benchmarkString(Parser<string> psr, string ctx, int max=1000)
         {
             Console.WriteLine("benckmark:start");
@@ -599,9 +620,18 @@ namespace LP
                     return null;
             }
         }
-         
+
+        public static Ast.LpAstNode createNode(string ctx)
+        {
+            var str = Program.Parse(ctx);
+            var pobj = PROGRAM.Parse(str);
+            var node = toNode(pobj);
+            return node;
+        }
+
         public static Object.LpObject execute(string ctx)
         {
+            /*
             Console.WriteLine(ctx);
             var str = Program.Parse(ctx);
             Console.WriteLine(str);
@@ -609,8 +639,9 @@ namespace LP
             Console.WriteLine(pobj);
             var node = toNode(pobj);
             Console.WriteLine(node);
+            */
+            var node = createNode(ctx);
             var o = node.Evaluate();
-
             //Console.WriteLine(o.class_name);
             //Console.WriteLine( o.doubleValue);
             return o;

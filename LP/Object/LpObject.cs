@@ -110,7 +110,12 @@ namespace LP.Object
             return null;
         }
 
-        public LpObject funcall(string name, LpObject[] args, LpObject block=null )
+        public Ast.LpAstNode macroexpand(Ast.LpAstNode[] args, Ast.LpAstNode block = null)
+        {
+            return LpParser.createNode(stringValue);
+        }
+
+        public LpObject funcall(string name, LpObject[] args, LpObject block = null)
         {
             return funcall(name, this, args, block);
         }
@@ -131,8 +136,6 @@ namespace LP.Object
                     var klass = (methods[name] as LpObject);
                     var dstArgs = LpArray.initialize();
                     dstArgs.arrayValues = args.ToList();
-                    Console.WriteLine("klass.class_name");
-                    Console.WriteLine(klass.class_name);
                     switch (klass.class_name)
                     {
                         case "Macro":
@@ -283,6 +286,11 @@ namespace LP.Object
         protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpString.initialize(self.ToString());
+        }
+
+        internal LpObject macrocall(string p, Ast.LpAstNode[] args, LpObject lpObject)
+        {
+            throw new NotImplementedException();
         }
     }
 }

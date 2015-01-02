@@ -44,7 +44,8 @@ namespace LP.Object
             }
         }
 
-        private static void setMethods( LpObject obj ) {
+        private static void setMethods( LpObject obj )
+        {
             obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
             obj.methods["inspect"] = new LpMethod(new BinMethod(inspect), 0);
             obj.methods["display"] = new LpMethod(new BinMethod(display), 0);

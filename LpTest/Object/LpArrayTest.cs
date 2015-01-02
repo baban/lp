@@ -54,24 +54,13 @@ namespace LpTest.Object
         }
 
         [Test]
-        public void initialize2()
-        {
-            Type ot = initModule();
-            Type t = initArrayModule();
-            var types = new Type[] { typeof(string[]) };
-            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new object[] { args });
-            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
-        }
-
-        [Test]
         public void push()
         {
             Type ot = initModule();
             Type t = initArrayModule();
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, null);
-            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
+            var o = initParser().GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[]" });
 
+            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
             var so = t.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
             var ary = so.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
         }
@@ -81,86 +70,82 @@ namespace LpTest.Object
         {
             Type ot = initModule();
             Type t = initArrayModule();
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, null);
-            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
-
-            var so = t.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
-            var ary = so.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
-
-            var so2 = t.GetMethod("first", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { so, null, null });
-            Assert.AreEqual("LP.Object.LpObject", so2.GetType().ToString());
+            var o = initParser().GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[3]" });
+            var ro = t.GetMethod("first", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
+            Assert.AreEqual("LP.Object.LpObject", ro.GetType().ToString());
         }
 
-        /*
         [Test]
         public void at()
         {
-            Type ot = initModule();
-            Type nt = initNumericModule();
-            Type at = initArgumentsModule();
+            var p = initParser();
             Type t = initArrayModule();
 
             // 配列作成
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { "20.0" } });
+            var o = p.GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[20.0]" });
 
             // 引数作成
-            var args = at.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[]{ new string[]{ "0.0" } } );
+            var args = p.GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "0" });
 
             // メソッド呼び出し
-            var so2 = t.GetMethod("at", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args });
-            Assert.AreEqual(20.0, so2.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so2, null));
+            var ret = t.GetMethod("at", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
+            Assert.AreEqual(20.0, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
 
         [Test]
         public void len()
         {
+            var p = initParser();
             Type ot = initModule();
-            Type nt = initNumericModule();
-            Type at = initArgumentsModule();
             Type t = initArrayModule();
 
             // 配列作成
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, null);
+            var o = p.GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[]" });
 
             // メソッド呼び出し
-            o = t.GetMethod("len", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            o = t.GetMethod("len", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual(0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
 
-            o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { "10" } });
-            o = t.GetMethod("len", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+        [Test]
+        public void len2()
+        {
+            var p = initParser();
+            Type t = initArrayModule();
+
+            // 配列作成
+            var o = p.GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[10]" });
+
+            // メソッド呼び出し
+            o = t.GetMethod("len", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual(1, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
         [Test]
         public void last()
         {
-            Type ot = initModule();
-            Type nt = initNumericModule();
-            Type at = initArgumentsModule();
+            var p = initParser();
             Type t = initArrayModule();
 
             // 配列作成
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { "10", "15", "20" } });
+            var o = p.GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[10,15,20]" });
 
-            o = t.GetMethod("last", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            o = t.GetMethod("last", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
             Assert.AreEqual(20.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
         [Test]
         public void concat()
         {
-            Type ot = initModule();
-            Type nt = initNumericModule();
-            Type at = initArgumentsModule();
+            var p = initParser();
             Type t = initArrayModule();
 
             // 配列作成
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { "1","2","3" } });
+            var o = p.GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[1,2,3]" });
+            var args = p.GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "[4,5,6]" });
 
-            var args = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { "[4,5,6]" } });
-
-            o = t.GetMethod("concat", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args });
-            o = t.GetMethod("len", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args });
+            o = t.GetMethod("concat", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
+            o = t.GetMethod("len", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
 
             Assert.AreEqual(6.0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
@@ -168,18 +153,14 @@ namespace LpTest.Object
         [Test]
         public void to_s()
         {
-            Type ot = initModule();
-            Type nt = initNumericModule();
-            Type at = initArgumentsModule();
+            var p = initParser();
             Type t = initArrayModule();
 
             // 配列作成
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null).Invoke(null, new object[] { new string[] { "1", "2", "3" } });
-
-            o = t.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null });
+            var o = p.GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[1,2,3]" });
+            o = t.GetMethod("to_s", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, null, null });
 
             Assert.AreEqual("[1, 2, 3]", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
-        */
     }
 }

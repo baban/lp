@@ -47,6 +47,7 @@ namespace LP.Object
                 setMethods(obj);
                 obj.superclass = LpObject.initialize();
                 obj.class_name = className;
+                obj.is_macro = true;
                 classes[className] = obj;
                 return obj.Clone();
             }

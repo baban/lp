@@ -55,6 +55,7 @@
     <Compile Include="Ast\LpAstLambdaTest.cs" />
     <Compile Include="Ast\LpAstLeafTest.cs" />
     <Compile Include="Ast\LpAstMethodCallTest.cs" />
+    <Compile Include="Ast\LpAstQuoteTest.cs" />
     <Compile Include="Ast\LpAstStmtsTest.cs" />
     <Compile Include="Benchmark\Parser.cs" />
     <Compile Include="Object\LpClassTest.cs" />
