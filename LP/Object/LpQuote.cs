@@ -23,8 +23,6 @@ namespace LP.Object
         private static LpObject init( string s )
         {
             LpObject obj = createClassTemplate();
-            obj.is_macro = true;
-            obj.stringValue = "";
             obj.statements = new List<Ast.LpAstNode>() { LpParser.createNode(s) };
             return obj;
         }
@@ -40,7 +38,9 @@ namespace LP.Object
                 LpObject obj = new LpObject();
                 setMethods(obj);
                 obj.superclass = LpObject.initialize();
-                obj.class_name = className; 
+                obj.class_name = className;
+                obj.is_macro = true;
+                obj.stringValue = "";
                 classes[className] = obj;
                 return obj.Clone();
             }
