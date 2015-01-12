@@ -23,7 +23,9 @@ namespace LP.Object
         private static LpObject init( string s )
         {
             LpObject obj = createClassTemplate();
-            obj.stringValue = s;
+            obj.is_macro = true;
+            obj.stringValue = "";
+            obj.statements = new List<Ast.LpAstNode>() { LpParser.createNode(s) };
             return obj;
         }
 
@@ -38,7 +40,7 @@ namespace LP.Object
                 LpObject obj = new LpObject();
                 setMethods(obj);
                 obj.superclass = LpObject.initialize();
-                obj.class_name = className;
+                obj.class_name = className; 
                 classes[className] = obj;
                 return obj.Clone();
             }
@@ -53,17 +55,17 @@ namespace LP.Object
 
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize( self.stringValue );
+            return LpString.initialize( self.statements.First().toSource() );
         }
 
         private static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize(string.Format("'{0}", self.stringValue));
+            return LpString.initialize(string.Format("'{0}", self.statements.First().toSource()));
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
-            Console.WriteLine(self.stringValue);
+            Console.WriteLine( to_s(self, args, block).stringValue );
             return LpNl.initialize();
         }
     }

@@ -58,6 +58,15 @@ namespace LP.Util
             return null;
         }
 
+        public static Object.LpObject loadfunc(string name) {
+            foreach (var ctx in contextStack)
+            {
+                var ret = ctx.varcall(name);
+                return ret;
+            }
+            return null;
+        }
+
         public static Object.LpObject macrocall(string name) {
             foreach (var ctx in contextStack)
             {

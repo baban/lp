@@ -112,7 +112,7 @@ namespace LP.Object
 
         public Ast.LpAstNode macroexpand(Ast.LpAstNode[] args, Ast.LpAstNode block = null)
         {
-            return LpParser.createNode(stringValue);
+            return statements.First();
         }
 
         public LpObject funcall(string name, LpObject[] args, LpObject block = null)
@@ -237,6 +237,7 @@ namespace LP.Object
             self.methods[name] = LpMethod.initialize( block.arguments, block.statements.ToList() );
             return LpSymbol.initialize( name );
         }
+
 
         protected static LpObject hash(LpObject self, LpObject[] args, LpObject block = null)
         {

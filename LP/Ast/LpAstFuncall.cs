@@ -22,11 +22,14 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
-            var macro = Util.LpIndexer.macrocall(this.name);
-            if (macro != null && macro.is_macro == true)
+            // 文脈取得
+            // 取得文脈から関数、macro検索
+            var func = Util.LpIndexer.loadfunc(this.name);
+            
+            if (func != null && func.is_macro == true)
             {
                 // macro call
-                var node = macro.macroexpand(args, this.block);
+                var node = func.macroexpand(args, this.block);
                 return node.DoEvaluate();
             }
             else

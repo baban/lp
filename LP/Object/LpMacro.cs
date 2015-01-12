@@ -89,7 +89,9 @@ namespace LP.Object
 
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize(self.stringValue);
+            var stmt = self.statements.First();
+            var str = self.statements.First().toSource();
+            return LpString.initialize(str);
         }
          
         private static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
