@@ -46,6 +46,7 @@ namespace LP.Object
             }
         }
 
+        
         private static void setMethods( LpObject obj )
         {
             obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
