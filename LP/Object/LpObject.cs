@@ -134,15 +134,13 @@ namespace LP.Object
                 else
                 {
                     var klass = (methods[name] as LpObject);
-                    var dstArgs = LpArray.initialize();
-                    dstArgs.arrayValues = args.ToList();
                     switch (klass.class_name)
                     {
                         case "Macro":
-                            return Object.LpMacro.call((LpObject)methods[name], new LpObject[] { dstArgs }, block);
+                            return Object.LpMacro.call((LpObject)methods[name], args, block);
                         case "Lambda":
                         case "Block":
-                            return Object.LpLambda.call((LpObject)methods[name], new LpObject[] { dstArgs }, block);
+                            return Object.LpLambda.call((LpObject)methods[name], args, block);
                         default:
                             return null;
                     }

@@ -96,8 +96,9 @@ namespace LP.Object
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
             Util.LpIndexer.push(self);
-            var dstArgs = (null == args || args.Count() == 0) ? new LpObject[] { } : args.First().arrayValues.ToArray();
+            var dstArgs = (null == args) ? new LpObject[] { } : args;
             self.arguments.setVariables(self, dstArgs, block);
+            //self.arguments.putVariables(args, block);
 
             LpObject ret = Object.LpNl.initialize();
             foreach (Ast.LpAstNode stmt in self.statements)

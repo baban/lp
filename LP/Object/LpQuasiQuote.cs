@@ -7,6 +7,13 @@ using Sprache;
 
 namespace LP.Object
 {
+    // `10 => `10
+    // `(10+5) => `10.(+)(5)
+    // a = (10+5)
+    // `(?(6+a)+5) => `21.(+)(5)
+    // `?x => unbound variable x
+    // ?実行する => ?文字列化 => マクロに押し込み
+
     class LpQuasiQuote : LpBase
     {
         static string className = "QuasiQuote";

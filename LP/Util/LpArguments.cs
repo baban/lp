@@ -70,7 +70,8 @@ namespace LP.Util
 
         public Object.LpObject setVariables(Object.LpObject self, Object.LpObject[] args, Object.LpObject block)
         {
-            for( int i = 0; i < arguments.Count(); i++ ){
+            for (int i = 0; i < arguments.Count(); i++)
+            {
                 self.variables[arguments[i]] = args[i];
             }
             return self;

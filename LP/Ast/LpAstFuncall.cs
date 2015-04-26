@@ -24,10 +24,13 @@ namespace LP.Ast
         {
             // 文脈取得
             // 取得文脈から関数、macro検索
-            var func = Util.LpIndexer.loadfunc(this.name);
-            
+            //var func = Util.LpIndexer.loadfunc(this.name);
+            //if (func != null && func.is_macro == true)
+            var ctx = Util.LpIndexer.last();
+            var func = ctx.variables[this.name] as Object.LpObject;
             if (func != null && func.is_macro == true)
             {
+                Console.WriteLine("macro");
                 // macro call
                 var node = func.macroexpand(args, this.block);
                 return node.DoEvaluate();
@@ -35,7 +38,6 @@ namespace LP.Ast
             else
             {
                 // function call
-                var ctx = Util.LpIndexer.last();
                 return ctx.funcall(
                     this.name,
                     args.Select((arg) => arg.DoEvaluate()).ToArray(),

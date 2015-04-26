@@ -84,9 +84,7 @@ namespace LP.Object
         public LpObject funcall(LpObject self, LpObject[] args, LpObject block = null)
         {
             var dstArgs = arguments.putVariables(args, block);
-            return (method != null) ?
-                method(self, dstArgs, block) :
-                evalStatements(self, dstArgs, block);
+            return method(self, dstArgs, block);
         }
 
         private LpObject evalStatements(LpObject self, LpObject[] args, LpObject block = null)
