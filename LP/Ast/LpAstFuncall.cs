@@ -24,25 +24,23 @@ namespace LP.Ast
         {
             // 文脈取得
             // 取得文脈から関数、macro検索
-            //var func = Util.LpIndexer.loadfunc(this.name);
-            //if (func != null && func.is_macro == true)
-            var ctx = Util.LpIndexer.last();
-            var func = ctx.variables[this.name] as Object.LpObject;
-            if (func != null && func.is_macro == true)
+
+            // マクロ実行
+            var macro = Util.LpIndexer.loadmacro(this.name);
+            if (macro != null)
             {
-                Console.WriteLine("macro");
                 // macro call
-                var node = func.macroexpand(args, this.block);
+                var node = macro.macroexpand(args, this.block);
                 return node.DoEvaluate();
             }
-            else
-            {
-                // function call
-                return ctx.funcall(
-                    this.name,
-                    args.Select((arg) => arg.DoEvaluate()).ToArray(),
-                    (this.block == null ? null : this.block.DoEvaluate()) );
-            }
+
+            // 関数呼び出し実行
+            var ctx = Util.LpIndexer.last();
+            // function call
+            return ctx.funcall(
+                this.name,
+                args.Select((arg) => arg.DoEvaluate()).ToArray(),
+                (this.block == null ? null : this.block.DoEvaluate()) );
         }
 
         public override string toSource( bool expand=false )
