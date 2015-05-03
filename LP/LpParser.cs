@@ -87,12 +87,19 @@ namespace LP
                                                     from b in Parse.String("}")
                                                     select "(" + stmt + ").to_s";
 
-        static readonly Parser<string> StringContent = from s in (Parse.Char('\\').Once().Concat(Parse.Char('"').Once())).Or(Parse.CharExcept('"').Once()).Text().Except(StringStmt).Many()
-                                                       select '"' + string.Join("", s.ToArray()) + '"';
-        static readonly Parser<string> String = (from a in Parse.Char('"')
-                                                 from s in StringContent.Or(StringStmt).Many()
-                                                 from b in Parse.Char('"')
-                                                 select "(" + string.Join(").(+)(",s.ToArray()) +")").Named("string");
+        static readonly Parser<string> DoubleStringContent = from s in (Parse.Char('\\').Once().Concat(Parse.Char('"').Once())).Or(Parse.CharExcept('"').Once()).Text().Except(StringStmt).Many()
+                                                             select '"' + string.Join("", s.ToArray()) + '"';
+        static readonly Parser<string> DoubleQuoteString = (from a in Parse.Char('"')
+                                                            from s in DoubleStringContent.Or(StringStmt).Many()
+                                                            from b in Parse.Char('"')
+                                                 select "(" + string.Join(").(+)(", s.ToArray()) + ")").Named("double quoted string");
+        static readonly Parser<string> SingleStringContent = from s in (Parse.Char('\\').Once().Concat(Parse.Char('\'').Once())).Or(Parse.CharExcept('\'').Once()).Text().Except(StringStmt).Many()
+                                                             select '"' + string.Join("", s.ToArray()) + '"';
+        static readonly Parser<string> SingleQuoteString = (from a in Parse.String("'")
+                                                            from s in SingleStringContent.Or(StringStmt).Many()
+                                                            from b in Parse.String("'")
+                                                            select "(" + string.Join(").(+)(", s.ToArray()) + ")").Named("single quoted string");
+        static readonly Parser<string> String = DoubleQuoteString.Or(SingleQuoteString).Named("string");
         // Comment
         static readonly Parser<string> InlineComment = Parse.Regex("//.*?\n").Return("").Named("lnline comment");
         static readonly Parser<string> BlockComment = Parse.Regex(@"/\*.*?\*/").Return("").Named("block comment");
