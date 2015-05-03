@@ -88,12 +88,11 @@ namespace LP
                                                     select "(" + stmt + ").to_s";
 
         static readonly Parser<string> StringContent = from s in (Parse.Char('\\').Once().Concat(Parse.Char('"').Once())).Or(Parse.CharExcept('"').Once()).Text().Except(StringStmt).Many()
-                                                       select string.Join("", s.ToArray());
-        // TODO: 変数展開実装
+                                                       select '"' + string.Join("", s.ToArray()) + '"';
         static readonly Parser<string> String = (from a in Parse.Char('"')
                                                  from s in StringContent.Or(StringStmt).Many()
                                                  from b in Parse.Char('"')
-                                                 select '"' + string.Join("+",s.ToArray()) + '"').Named("string");
+                                                 select "(" + string.Join(").(+)(",s.ToArray()) +")").Named("string");
         // Comment
         static readonly Parser<string> InlineComment = Parse.Regex("//.*?\n").Return("").Named("lnline comment");
         static readonly Parser<string> BlockComment = Parse.Regex(@"/\*.*?\*/").Return("").Named("block comment");
@@ -649,6 +648,7 @@ namespace LP
         public static Ast.LpAstNode createNode(string ctx)
         {
             var str = Program.Parse(ctx);
+            //Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
             var node = toNode(pobj);
             return node;
