@@ -325,10 +325,12 @@ namespace LP
                                                    select new object[] { NodeType.NUMERIC, n };
         static readonly Parser<object[]> BOOL = from b in Bool
                                                 select new object[] { NodeType.BOOL, b };
+        static readonly Parser<string> STRING_QUOTE = from s in Parse.Char('\\').Once().Concat(Parse.Char('"').Once()).Text()
+                                                      select "\"";
         static readonly Parser<object[]> STRING = from a in Parse.Char('"')
-                                                  from s in Parse.CharExcept('"').Many().Text()
+                                                  from s in (STRING_QUOTE).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                   from b in Parse.Char('"')
-                                                  select new object[]{ NodeType.STRING, s };
+                                                  select new object[]{ NodeType.STRING, string.Join("",s.ToArray()) };
         static readonly Parser<object[]> SYMBOL = from m in Parse.String(":").Text()
                                                   from s in Identifier
                                                   select new object[] { NodeType.SYMBOL, s };
@@ -655,7 +657,7 @@ namespace LP
         public static Ast.LpAstNode createNode(string ctx)
         {
             var str = Program.Parse(ctx);
-            //Console.WriteLine(str);
+            Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
             var node = toNode(pobj);
             return node;
