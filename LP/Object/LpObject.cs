@@ -44,6 +44,8 @@ namespace LP.Object
             // TODO: method_matching
             // TODO: define_operand
             // TODO: super
+            // TODO: set variable
+            // TODO: get variable
             obj.methods["__send__"] = new LpMethod(new BinMethod(send), -1);
             obj.methods["alias"] = new LpMethod(new BinMethod(alias), 2);
             obj.methods["class"] = new LpMethod(new BinMethod(class_), 0);

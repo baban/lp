@@ -80,6 +80,19 @@ namespace LP.Util
         }
 
         public static Object.LpObject varcall( string name ){
+            switch (name) {
+                case "@@@":
+                    Console.WriteLine("@@@");
+                    return contextStack.First();
+                case "@@":
+                    return contextStack.First();
+                case "@":
+                    return contextStack.First();
+                case "$":
+                    return contextStack.Last();
+            }
+
+
             foreach (var ctx in contextStack)
             {
                 var ret = ctx.varcall(name);

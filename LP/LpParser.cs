@@ -23,7 +23,6 @@ namespace LP
      */
 
     // TODO: 引数の改良
-    // TODO: ハッシュ作成
     // TODO: case文
     // TODO: メソッド定義
     // TODO: class定義、module定義
@@ -77,11 +76,24 @@ namespace LP
         static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+");
         static readonly Parser<string> Int = Parse.Regex(@"\d+");
         static readonly Parser<string> Numeric = Decimal.Or(Int).Named("numeric");
+        static readonly Parser<string> CurrentContext = Parse.Regex("@@@").Named("current context");
+        static readonly Parser<string> CurrentClass = Parse.Regex("@@").Named("current class");
+        static readonly Parser<string> CurrentInstance = Parse.Regex("@").Named("current instance");
+        static readonly Parser<string> GlobalInstance = Parse.Regex("$").Named("global instance");
+        static readonly Parser<string> ContextVarname = CurrentContext.Or(CurrentClass).Or(CurrentInstance).Or(GlobalInstance);
+
+        static readonly Parser<string> StringStmt = from a in Parse.String("#{")
+                                                    from stmt in Stmt
+                                                    from b in Parse.String("}")
+                                                    select "(" + stmt + ").to_s";
+
+        static readonly Parser<string> StringContent = from s in (Parse.Char('\\').Once().Concat(Parse.Char('"').Once())).Or(Parse.CharExcept('"').Once()).Text().Except(StringStmt).Many()
+                                                       select string.Join("", s.ToArray());
         // TODO: 変数展開実装
         static readonly Parser<string> String = (from a in Parse.Char('"')
-                                                 from s in ( Parse.Char('\\').Once().Concat( Parse.Char('"').Once() )).Or(Parse.CharExcept('"').Once()).Text().Many()
+                                                 from s in StringContent.Or(StringStmt).Many()
                                                  from b in Parse.Char('"')
-                                                 select '"' + string.Join("", s.ToArray()) + '"').Named("string");
+                                                 select '"' + string.Join("+",s.ToArray()) + '"').Named("string");
         // Comment
         static readonly Parser<string> InlineComment = Parse.Regex("//.*?\n").Return("").Named("lnline comment");
         static readonly Parser<string> BlockComment = Parse.Regex(@"/\*.*?\*/").Return("").Named("block comment");
@@ -176,9 +188,22 @@ namespace LP
                                                   select string.Format("Class.new(:{1}) do {0} end",
                                                                     string.Join("; ", stmts),cname);
 
+
+        static readonly Parser<string> GlobalVarname = from h in Parse.String("$")
+                                                       from name in Varname
+                                                       select string.Format("{0}.{1}", h, name);
+
+        static readonly Parser<string> InstanceVarname = from h in Parse.String("@")
+                                                         from name in Varname
+                                                         select string.Format("{0}.{1}", h, name);
+        
+        static readonly Parser<string> ClassVarname = from h in Parse.String("@@")
+                                                      from name in Varname
+                                                      select string.Format("{0}.{1}", h, name);
+
         static readonly Parser<string> Funcall0 = from idf in Fname
                                                   select idf + "()";
-        static readonly Parser<string> Varcall = Varname.Token();
+        static readonly Parser<string> Varcall = Varname.Or(GlobalVarname).Token();
 
         static readonly Parser<string> Funcall = from idf in Fname
                                                  from args in Args.Contained(Parse.Char('(').Once(), Parse.Char(')').Once())
@@ -301,7 +326,7 @@ namespace LP
         static readonly Parser<object[]> SYMBOL = from m in Parse.String(":").Text()
                                                   from s in Identifier
                                                   select new object[] { NodeType.SYMBOL, s };
-        static readonly Parser<object[]> VARIABLE_CALL = from varname in Varname
+        static readonly Parser<object[]> VARIABLE_CALL = from varname in Varname.Or(ContextVarname)
                                                          select new object[] { NodeType.VARIABLE_CALL, varname };
         static readonly Parser<object[]> ARRAY = from a in Parse.String("[").Text().Token()
                                                  from elms in SepElm.Many()
