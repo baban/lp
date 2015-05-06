@@ -55,16 +55,42 @@ namespace LP
         };
 
         static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or", "=" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();
-
+        //\e
+        //\s
+        //\nnn
+        //\xnn
+        //\C-x
+        //\M-x
+        //\M-\C-x
+        //\x
+        //\unnnn Unicode 文字
+        //\u{nnnn}
         static readonly List<char[]> EscapeCharacters = new List<char[]> {
-           new char[]{ 'n', '\n' },
-           new char[]{ 't', '\t' },
-           new char[]{ 'r', '\r' },
-           new char[]{ 'f', '\f' },
            new char[]{ '\\' , '\\' },
+           new char[]{ '0', '\0' }, // null
+           new char[]{ 'a', '\a' }, // beep
+           new char[]{ 'b', '\b' }, // back space
+           new char[]{ 'f', '\f' }, // form feed
+           new char[]{ 'n', '\n' }, // line change
+           new char[]{ 'r', '\r' }, // carigde return
+           new char[]{ 't', '\t' }, // tab
+           new char[]{ 'v', '\v' }, // vartical return
         };
 
-        static readonly Parser<string> EscapeSequence = EscapeCharacters.Select((pair) => makeEscapePerser(pair[0], pair[1])).Aggregate((a, b) => a.Or(b));
+        static readonly Parser<string> AsciiCharacter = from a in Parse.String(@"\x")
+                                                          from b in Parse.Regex(@"[0-9a-fA-F]{2}")
+                                                          select ((char)Convert.ToInt32(b, 16)).ToString();
+        static readonly Parser<string> UnicodeCharacter = from a in Parse.String(@"\u")
+                                                          from b in Parse.Regex(@"[0-9a-fA-F]{4}")
+                                                          select ((char)Convert.ToInt32(b, 16)).ToString();
+        static readonly Parser<string> UnicodeCharacter2 = from a in Parse.String(@"\u{")
+                                                           from b in Parse.Regex(@"[0-9a-fA-F]{4}")
+                                                           from c in Parse.Regex(@"}")
+                                                           select ((char)Convert.ToInt32(b, 16)).ToString();
+
+        static readonly Parser<string> CodeEscapes = UnicodeCharacter.Or(UnicodeCharacter2).Or(AsciiCharacter);
+
+        static readonly Parser<string> EscapeSequence = CodeEscapes.Or(EscapeCharacters.Select((pair) => makeEscapePerser(pair[0], pair[1])).Aggregate((a, b) => a.Or(b)));
 
         // 基本文字一覧
         static readonly Parser<string> Term = Parse.Regex("^[;\n]");
