@@ -55,16 +55,14 @@ namespace LP
         };
 
         static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or", "=" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();
+        // TODO:
         //\e
         //\s
         //\nnn
-        //\xnn
         //\C-x
         //\M-x
         //\M-\C-x
         //\x
-        //\unnnn Unicode 文字
-        //\u{nnnn}
         static readonly List<char[]> EscapeCharacters = new List<char[]> {
            new char[]{ '\\' , '\\' },
            new char[]{ '0', '\0' }, // null
@@ -111,7 +109,16 @@ namespace LP
         static readonly Parser<string> Bool = Parse.Regex("true|false").Named("boolean");
         static readonly Parser<string> Decimal = Parse.Regex(@"\d+\.\d+");
         static readonly Parser<string> Int = Parse.Regex(@"\d+");
-        static readonly Parser<string> Numeric = Decimal.Or(Int).Named("numeric");
+        static readonly Parser<string> BinaryInt = from a in Parse.String("0b")
+                                                   from b in Parse.Regex(@"[01]+")
+                                                   select Convert.ToInt32(b, 2).ToString();
+        static readonly Parser<string> OctetInt = from a in Parse.String("0o")
+                                                  from b in Parse.Regex(@"[0-7]+")
+                                                  select Convert.ToInt32(b, 8).ToString();
+        static readonly Parser<string> DigitInt = from a in Parse.String("0x")
+                                                  from b in Parse.Regex(@"[0-9a-z]+")
+                                                  select Convert.ToInt32(b, 16).ToString();
+        static readonly Parser<string> Numeric = BinaryInt.Or(OctetInt).Or(DigitInt).Or(Decimal).Or(Int).Named("numeric");
         static readonly Parser<string> CurrentContext = Parse.Regex("@@@").Named("current context");
         static readonly Parser<string> CurrentClass = Parse.Regex("@@").Named("current class");
         static readonly Parser<string> CurrentInstance = Parse.Regex("@").Named("current instance");
