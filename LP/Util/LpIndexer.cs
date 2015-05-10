@@ -67,17 +67,22 @@ namespace LP.Util
             return null;
         }
 
-        public static Object.LpObject loadmacro(string name) {
-            Object.LpObject macro = null;
+        public static Object.LpObject loadMethod(string name)
+        {
+            Object.LpObject ret = null;
             foreach (var ctx in contextStack)
             {
-                macro = ctx.variables[name] as Object.LpObject;
-                
-                if (macro != null && macro.is_macro == true)
-                    return macro;
+                ret = ctx.variables[name] as Object.LpObject;
+
+                if (ret != null) return ctx;
+
+                ret = ctx.methods[name] as Object.LpObject;
+
+                if (ret != null) return ctx;
             }
             return null;
         }
+
 
         public static Object.LpObject varcall( string name ){
             switch (name) {

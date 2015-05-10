@@ -32,6 +32,19 @@ namespace LP
     // TODO: インスタンス変数
     // TODO: グローバル変数
     // TODO: コメントはできるだけあとに残す
+    // TODO: 文字列のこれ以上細かいところは後日実装する
+    //\e
+    //\s
+    //\nnn
+    //\C-x
+    //\M-x
+    //\M-\C-x
+    //\x
+
+    // メソッドの呼び出し順序
+    // 1.まずブロックを手繰る
+    // 2.それで見つからなければ継承関係を手繰る
+    // 3. 見つからなければKernelのメソッドを探す
     class LpParser
     {
         // Expressions
@@ -55,14 +68,7 @@ namespace LP
         };
 
         static readonly Parser<string> OperandMarks = new string[] { "**", "*", "/", "%", "+", "-", "<<", ">>", "&", "|", ">=", ">", "<=", "<", "<=>", "===", "==", "!=", "=~", "!~", "&&", "||", "and", "or", "=" }.Select(op => Parse.String(op)).Aggregate((op1, op2) => op1.Or(op2)).Text();
-        // TODO:
-        //\e
-        //\s
-        //\nnn
-        //\C-x
-        //\M-x
-        //\M-\C-x
-        //\x
+
         static readonly List<char[]> EscapeCharacters = new List<char[]> {
            new char[]{ '\\' , '\\' },
            new char[]{ '0', '\0' }, // null

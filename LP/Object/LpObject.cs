@@ -125,35 +125,17 @@ namespace LP.Object
         public LpObject funcall(string name, LpObject self, LpObject[] args, LpObject block )
         {
             name = trueFname(name);
-            // normal search
-            LpMethod m = null;
-            if (null != methods[name])
-            {
-                if (null != (m = methods[name] as LpMethod))
-                {
-                    return m.funcall(self, args, block);
-                }
-                else
-                {
-                    var klass = (methods[name] as LpObject);
-                    switch (klass.class_name)
-                    {
-                        case "Macro":
-                            return Object.LpMacro.call((LpObject)methods[name], args, block);
-                        case "Lambda":
-                        case "Block":
-                            return Object.LpLambda.call((LpObject)methods[name], args, block);
-                        default:
-                            return null;
-                    }
-                }
-            }
 
+            LpObject ret = execMethod(name, self, args, block);
+
+            if (ret != null) return ret;
+
+            LpMethod m = null;
             // method_missing
             m = methods["method_missing"] as LpMethod;
             if ( null != m )
                 return m.funcall(self, args, block);
-
+                
             // superclass
             if (null != superclass)
                 return superclass.funcall(name, self, args, block);
@@ -161,7 +143,54 @@ namespace LP.Object
             throw new Error.LpNoMethodError();
         }
 
-        private string trueFname(string name) {
+        public bool isMethodExist(string name, LpObject self, LpObject[] args, LpObject block) {
+            if(methods[name] != null) return true;
+            if(methods["method_missing"] != null) return false;
+            return false;
+        }
+
+        /// <summary>
+        /// 現在の文脈中にあるメソッドを実行する
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="self"></param>
+        /// <param name="args"></param>
+        /// <param name="block"></param>
+        /// <returns></returns>
+        public LpObject execMethod(string name, LpObject self, LpObject[] args, LpObject block)
+        {
+            if (null == methods[name]) return null;
+
+            return doMethod(methods[name], self, args, block);
+        }
+
+
+        public LpObject doMethod(System.Object method, LpObject self, LpObject[] args, LpObject block)
+        {
+            LpMethod m = null;
+
+            if (null != (m = method as LpMethod))
+            {
+                return m.funcall(self, args, block);
+            }
+            else
+            {
+                var klass = (method as LpObject);
+                switch (klass.class_name)
+                {
+                    case "Macro":
+                        return Object.LpMacro.call((LpObject)method, args, block);
+                    case "Lambda":
+                    case "Block":
+                        return Object.LpLambda.call((LpObject)method, args, block);
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        private string trueFname(string name)
+        {
             if (name[0] == '(') name = name.Replace("(", "").Replace(")", "");
 
             return name;

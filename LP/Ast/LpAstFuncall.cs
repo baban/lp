@@ -22,25 +22,51 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
-            // 文脈取得
+            // get context
             // 取得文脈から関数、macro検索
+            var ctx = Util.LpIndexer.loadMethod(this.name);
 
-            // マクロ実行
-            var macro = Util.LpIndexer.loadmacro(this.name);
-            if (macro != null)
+            var newArgs = args.Select((arg) => arg.DoEvaluate()).ToArray();
+            var newBlock = (this.block == null ? null : this.block.DoEvaluate());
+
+            if (ctx != null)
             {
-                // macro call
-                var node = macro.macroexpand(args, this.block);
-                return node.DoEvaluate();
+                if (ctx.is_macro == true)
+                {
+                    // macro call
+                    var node = ctx.macroexpand(args, this.block);
+                    return node.DoEvaluate();
+                }
+                else
+                {
+                    // function call
+                    return ctx.execMethod(this.name,ctx,newArgs,newBlock);
+                }
             }
+            else
+            {
+                // 現在のクラスから継承関係を遡ってメソッド呼び出し
+                var cls = Util.LpIndexer.last();
 
-            // 関数呼び出し実行
-            var ctx = Util.LpIndexer.last();
-            // function call
-            return ctx.funcall(
-                this.name,
-                args.Select((arg) => arg.DoEvaluate()).ToArray(),
-                (this.block == null ? null : this.block.DoEvaluate()) );
+                while (false == cls.isMethodExist(name,cls,newArgs, newBlock))
+                {
+                    cls = cls.superclass;
+                    
+                    if (cls == null) break;
+                }
+
+                if (cls == null)
+                {
+                    throw new Error.LpNoMethodError();
+                }
+                else {
+                    return cls.execMethod(
+                        name,
+                        cls,
+                        args.Select((arg) => arg.DoEvaluate()).ToArray(),
+                        (this.block == null ? null : this.block.DoEvaluate()));
+                }
+            }
         }
 
         public override string toSource( bool expand=false )
@@ -51,7 +77,7 @@ namespace LP.Ast
                 toSourceBlock(expand));
         }
 
-        private string toSourceBlock(bool expand )
+        private string toSourceBlock( bool expand )
         {
             if (this.block == null) return "";
             return " " + this.block.toSource(expand);
