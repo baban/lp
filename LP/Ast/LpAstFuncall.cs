@@ -22,13 +22,12 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
-            // get context
-            // 取得文脈から関数、macro検索
-            var ctx = Util.LpIndexer.loadMethod(this.name);
-
             var newArgs = args.Select((arg) => arg.DoEvaluate()).ToArray();
             var newBlock = (this.block == null ? null : this.block.DoEvaluate());
 
+            // get context
+            // 取得文脈から関数、macro検索
+            var ctx = Util.LpIndexer.loadMethod(this.name);
             if (ctx != null)
             {
                 if (ctx.is_macro == true)
@@ -40,7 +39,7 @@ namespace LP.Ast
                 else
                 {
                     // function call
-                    return ctx.execMethod(this.name,ctx,newArgs,newBlock);
+                    return ctx.execMethod(this.name, ctx, newArgs, newBlock);
                 }
             }
             else
@@ -48,7 +47,7 @@ namespace LP.Ast
                 // 現在のクラスから継承関係を遡ってメソッド呼び出し
                 var cls = Util.LpIndexer.last();
 
-                while (false == cls.isMethodExist(name,cls,newArgs, newBlock))
+                while (false == cls.isMethodExist(name, cls, newArgs, newBlock))
                 {
                     cls = cls.superclass;
                     
@@ -60,11 +59,7 @@ namespace LP.Ast
                     throw new Error.LpNoMethodError();
                 }
                 else {
-                    return cls.execMethod(
-                        name,
-                        cls,
-                        args.Select((arg) => arg.DoEvaluate()).ToArray(),
-                        (this.block == null ? null : this.block.DoEvaluate()));
+                    return cls.execMethod(name, cls, newArgs, newBlock);
                 }
             }
         }

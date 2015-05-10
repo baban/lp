@@ -69,16 +69,16 @@ namespace LP.Util
 
         public static Object.LpObject loadMethod(string name)
         {
-            Object.LpObject ret = null;
+            Object.LpObject fun = null;
             foreach (var ctx in contextStack)
             {
-                ret = ctx.variables[name] as Object.LpObject;
+                fun = ctx.variables[name] as Object.LpObject;
 
-                if (ret != null) return ctx;
+                if (fun != null) return ctx;
 
-                ret = ctx.methods[name] as Object.LpObject;
+                fun = ctx.methods[name] as Object.LpObject;
 
-                if (ret != null) return ctx;
+                if (fun != null) return ctx;
             }
             return null;
         }

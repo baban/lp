@@ -157,7 +157,7 @@ namespace LP
 
         private static void printVersion()
         {
-            Console.WriteLine(string.Format("LP version {0}", 0.1));
+            Console.WriteLine(string.Format("LP version {0}", "0.1"));
         }
     }
 }
