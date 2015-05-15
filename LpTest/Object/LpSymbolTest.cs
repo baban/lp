@@ -1,15 +1,15 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using System.Reflection;
 
 
 namespace LpTest.Object
 {
-    [TestFixture]
+    [TestClass]
     class LpSymbolTest
     {
         private Type initParser()
@@ -38,16 +38,17 @@ namespace LpTest.Object
             return getModule("LP.Util.LpIndexer");
         }
 
-        [Test]
+        [TestMethod]
         public void initialize1()
         {
             Type t = getModule("LP.Object.LpSymbol");
-            var types = new Type[] { typeof(string) };
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, new string[] { "bbb" });
+            var pt = new PrivateType(t);
+            var o = pt.InvokeStatic("initialize", new string[] { "bbb" });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
             Assert.AreEqual("bbb", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
 
+        /*
         [Test]
         public void initializeSymbols()
         {
@@ -112,5 +113,6 @@ namespace LpTest.Object
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, new object[] { "==", args, null });
             Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
+         * */
     }
 }

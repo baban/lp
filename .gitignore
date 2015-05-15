@@ -4,3 +4,6 @@
 
 /LpTest/bin/Release
 /LP/bin
+/.nuget
+/packages
+/LpTest/bin

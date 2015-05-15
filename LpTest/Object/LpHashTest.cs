@@ -1,15 +1,15 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using NUnit.Framework;
 using System.Text.RegularExpressions;
 
 namespace LpTest.Object
 {
-    [TestFixture]
+    [TestClass]
     class LpHashTest
     {
         private Type getModule(string name)
@@ -40,8 +40,7 @@ namespace LpTest.Object
             return getModule("LP.Object.LpHash");
         }
 
-        /*
-        [Test]
+        [TestMethod]
         public void initialize()
         {
             Type ot = initModule();
@@ -49,6 +48,38 @@ namespace LpTest.Object
             var types = new Type[] { };
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, null);
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+        }
+    }
+    /*
+    [TestFixture]
+    class LpHashTest
+    {
+        private Type getModule(string name)
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType(name);
+            return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
+        }
+
+        private Type initNumericModule()
+        {
+            return getModule("LP.Object.LpNumeric");
+        }
+
+        private Type initStringModule()
+        {
+            return getModule("LP.Object.LpString");
+        }
+
+        private Type initHashModule()
+        {
+            return getModule("LP.Object.LpHash");
         }
 
         [Test]
@@ -86,6 +117,6 @@ namespace LpTest.Object
             var h = so.GetType().InvokeMember("hashValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
             Assert.NotNull(h);
         }
-         */
     }
+*/
 }

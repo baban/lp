@@ -25,13 +25,14 @@ namespace LP
     // TODO: 引数の改良
     // TODO: case文
     // TODO: メソッド定義
-    // TODO: class定義、module定義
+    // TODO: module定義
     // TODO: 構文エラー処理
     // TODO: エラー処理
     // TODO: Block読み出し
     // TODO: インスタンス変数
     // TODO: グローバル変数
     // TODO: コメントはできるだけあとに残す
+    // TODO: エラー行表示
     // TODO: 文字列のこれ以上細かいところは後日実装する
     //\e
     //\s
@@ -243,6 +244,13 @@ namespace LP
                                                   select string.Format("Class.new(:{1}) do {0} end",
                                                                     string.Join("; ", stmts),cname);
 
+        static readonly Parser<string> DefModule = from a in Parse.String("module").Token().Text()
+                                                   from cname in Fname
+                                                   from b in Term
+                                                   from stmts in Stmt.Many().Except(Parse.String("end"))
+                                                   from c in Parse.String("end").Token()
+                                                   select string.Format("Module.new(:{1}) do {0} end",
+                                                                     string.Join("; ", stmts), cname);
 
         static readonly Parser<string> GlobalVarname = from h in Parse.String("$")
                                                        from name in Varname
@@ -349,7 +357,7 @@ namespace LP
                                                                 select new string[]{})
                                                 select string.Format("_if({0},do {1} end,do {2} end)", expr, string.Join("; ", stmts1), string.Join("; ", stmts2));
 
-        static readonly Parser<string> StatCollection = DefMacro.Or(DefClass).Or(Function).Or(IfStmt);
+        static readonly Parser<string> StatCollection = DefMacro.Or(DefClass).Or(DefModule).Or(Function).Or(IfStmt);
         static readonly Parser<string> StatList = StatCollection.Or(Expr);
 
         static readonly Parser<string> Stmt = (from s in StatList

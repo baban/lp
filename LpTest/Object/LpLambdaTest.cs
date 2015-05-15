@@ -1,14 +1,51 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using NUnit.Framework;
 using System.Text.RegularExpressions;
 
 namespace LpTest.Object
 {
+    [TestClass]
+    class LpLambdaTest
+    {
+        private Type getModule(string name)
+        {
+            return Assembly.LoadFrom("LP.exe").GetModule("LP.exe").GetType(name);
+        }
+
+        private Type initParser()
+        {
+            return getModule("LP.LpParser");
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
+        }
+
+        private Type initSymbolModule()
+        {
+            return getModule("LP.Object.LpSymbol");
+        }
+
+        private Type initLambdaModule()
+        {
+            return getModule("LP.Object.LpLambda");
+        }
+
+        [TestMethod]
+        public void initialize()
+        {
+            Type t = initLambdaModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, new object[] { });
+            Assert.AreEqual(o.GetType().ToString(), "LP.Object.LpObject");
+        }
+    }
+    /*
     [TestFixture]
     class LpLambdaTest
     {
@@ -41,14 +78,6 @@ namespace LpTest.Object
         private Type initLambdaModule()
         {
             return getModule("LP.Object.LpLambda");
-        }
-
-        [Test]
-        public void initialize()
-        {
-            Type t = initLambdaModule();
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] {  }, null).Invoke(null, new object[] {  });
-            Assert.AreEqual( o.GetType().ToString(), "LP.Object.LpObject");
         }
 
         [Test]
@@ -87,4 +116,5 @@ namespace LpTest.Object
             Assert.AreEqual(o.GetType().ToString(), "LP.Object.LpObject");
         }
     }
+     * */
 }

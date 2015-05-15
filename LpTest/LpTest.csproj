@@ -1,16 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F58559F1-33B9-4D2F-9D68-0D9074284464}</ProjectGuid>
+    <ProjectGuid>{898D450A-FAC3-456B-989A-F6175E7D2A98}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LpTest</RootNamespace>
     <AssemblyName>LpTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,41 +35,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LP">
-      <HintPath>..\LP\bin\Debug\LP.exe</HintPath>
-    </Reference>
-    <Reference Include="nunit.core">
-      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\nunit.core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="nunit.core.interfaces">
-      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\nunit.core.interfaces.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.mocks, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
-    <Reference Include="nunit.util">
-      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\nunit.util.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="NUnit.VisualStudio.TestAdapter">
-      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Sprache, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\Sprache-master\bin\Sprache.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
     <Compile Include="Ast\LpAstArrayTest.cs" />
     <Compile Include="Ast\LpAstBlockTest.cs" />
@@ -75,38 +59,58 @@
     <Compile Include="Ast\LpAstMethodCallTest.cs" />
     <Compile Include="Ast\LpAstQuoteTest.cs" />
     <Compile Include="Ast\LpAstStmtsTest.cs" />
-    <Compile Include="Benchmark\Parser.cs" />
-    <Compile Include="Object\LpClassTest.cs" />
     <Compile Include="Error\LpErrorTest.cs" />
+    <Compile Include="Object\LpArrayTest.cs" />
+    <Compile Include="Object\LpBlockTest.cs" />
+    <Compile Include="Object\LpBoolTest.cs" />
+    <Compile Include="Object\LpClassTest.cs" />
     <Compile Include="Object\LpFileTest.cs" />
+    <Compile Include="Object\LpHashTest.cs" />
     <Compile Include="Object\LpIndexTest.cs" />
     <Compile Include="Object\LpKernelTest.cs" />
     <Compile Include="Object\LpLambdaTest.cs" />
-    <Compile Include="Object\LpNlTest.cs" />
-    <Compile Include="Object\LpQuoteTest.cs" />
-    <Compile Include="Object\LpUnquoteTest.cs" />
-    <Compile Include="TestTest.cs" />
-    <Compile Include="Object\LpArrayTest.cs" />
-    <Compile Include="Object\LpBlockTest.cs" />
-    <Compile Include="LpParsetTest.cs" />
-    <Compile Include="Object\LpBoolTest.cs" />
-    <Compile Include="Object\LpHashTest.cs" />
     <Compile Include="Object\LpMethodTest.cs" />
+    <Compile Include="Object\LpModuleTest.cs" />
+    <Compile Include="Object\LpNlTest.cs" />
     <Compile Include="Object\LpNumericTest.cs" />
     <Compile Include="Object\LpObjectTest.cs" />
+    <Compile Include="Object\LpQuoteTest.cs" />
     <Compile Include="Object\LpStringTest.cs" />
     <Compile Include="Object\LpSymbolTest.cs" />
+    <Compile Include="Object\LpUnquoteTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\LpArgumentsTest.cs" />
     <Compile Include="Util\LpIndexerTest.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <ProjectReference Include="..\LP\LP.csproj">
+      <Project>{29f03fff-df58-4a73-b60e-58ccdea58682}</Project>
+      <Name>LP</Name>
+    </ProjectReference>
   </ItemGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

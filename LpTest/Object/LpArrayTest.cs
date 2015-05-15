@@ -1,14 +1,53 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using NUnit.Framework;
 using System.Text.RegularExpressions;
 
 namespace LpTest.Object
 {
+    [TestClass]
+    public class LpArrayTest
+    {
+        private Type getModule(string name)
+        {
+            return Assembly.LoadFrom("LP.exe").GetModule("LP.exe").GetType(name);
+        }
+
+        private Type initParser()
+        {
+            return getModule("LP.LpParser");
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
+        }
+
+        private Type initNumericModule()
+        {
+            return getModule("LP.Object.LpNumeric");
+        }
+
+        private Type initArrayModule()
+        {
+            return getModule("LP.Object.LpArray");
+        }
+
+        [TestMethod]
+        public void initialize()
+        {
+            Type ot = initModule();
+            Type t = initArrayModule();
+
+            PrivateType pt = new PrivateType(t);
+            Assert.IsInstanceOfType(pt.InvokeStatic("initialize"), ot);
+        }
+    }
+    /*
     [TestFixture]
     class LpArrayTest
     {
@@ -43,15 +82,6 @@ namespace LpTest.Object
             return getModule("LP.Object.LpArray");
         }
 
-        [Test]
-        public void initialize()
-        {
-            Type ot = initModule();
-            Type t = initArrayModule();
-            var types = new Type[] {};
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, types, null).Invoke(null, null);
-            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
-        }
 
         [Test]
         public void push()
@@ -163,4 +193,5 @@ namespace LpTest.Object
             Assert.AreEqual("[1, 2, 3]", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
     }
+    */
 }

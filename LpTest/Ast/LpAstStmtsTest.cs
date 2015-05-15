@@ -1,15 +1,14 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using System.Reflection;
-using Sprache;
 
 namespace LpTest.Ast
 {
-    [TestFixture]
+    [TestClass]
     class LpAstStmtsTest
     {
         private Type initParser()
@@ -20,7 +19,7 @@ namespace LpTest.Ast
             return t;
         }
 
-        [Test]
+        [TestMethod]
         public void toSource()
         {
             Type t = initParser();

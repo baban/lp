@@ -1,14 +1,14 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using NUnit.Framework;
 
 namespace LpTest.Object
 {
-    [TestFixture]
+    [TestClass]
     class LpQuoteTest
     {
         private Type getModule(string name)
@@ -19,17 +19,13 @@ namespace LpTest.Object
             return t;
         }
 
-        private Type initModule()
-        {
-            return getModule("LP.Object.LpObject");
-        }
-
-        [Test]
+        [TestMethod]
         public void initialize1()
         {
-            Type ot = initModule();
+            Type ot = getModule("LP.Object.LpObject");
             Type t = getModule("LP.Object.LpQuote");
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string) }, null).Invoke(null, new string[] { "bbb" });
+            var pt = new PrivateType(t);
+            var o = pt.InvokeStatic("initialize", new string[] { "bbb" });
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
             Assert.AreEqual("bbb", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }

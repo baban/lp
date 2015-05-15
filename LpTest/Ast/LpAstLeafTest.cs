@@ -1,15 +1,14 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using System.Reflection;
-using Sprache;
 
 namespace LpTest.Ast
 {
-    [TestFixture]
+    [TestClass]
     class LpAstLeafTest
     {
         private Type initParser()
@@ -20,7 +19,7 @@ namespace LpTest.Ast
             return t;
         }
 
-        [Test]
+        [TestMethod]
         public void toSourcetoBool()
         {
             Type t = initParser();
@@ -29,7 +28,7 @@ namespace LpTest.Ast
             var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[]{ false });
             Assert.AreEqual("true",s);
         }
-
+        /*
         [Test]
         public void toSourcetoNumeric()
         {
@@ -169,5 +168,6 @@ namespace LpTest.Ast
             var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { true });
             Assert.AreEqual("3", s);
         }
+        */
     }
 }

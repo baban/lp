@@ -1,13 +1,58 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using System.Reflection;
 
 namespace LpTest.Object
 {
+    [TestClass]
+    class LpNlTest
+    {
+        private Type initParser()
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.LpParser");
+            return t;
+        }
+
+        private Type getModule(string name)
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType(name);
+            return t;
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
+        }
+
+        private Type initSymbolModule()
+        {
+            return getModule("LP.Object.LpSymbol");
+        }
+
+        private Type initNlModule()
+        {
+            return getModule("LP.Object.LpNl");
+        }
+
+        [TestMethod]
+        public void initialize()
+        {
+            Type ot = initModule();
+            Type t = initNlModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+            Assert.AreEqual("Nl", o.GetType().InvokeMember("class_name", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+    }
+    /*
     [TestFixture]
     class LpNlTest
     {
@@ -42,15 +87,6 @@ namespace LpTest.Object
             return getModule("LP.Object.LpNl");
         }
 
-        [Test]
-        public void initialize()
-        {
-            Type ot = initModule();
-            Type t = initNlModule();
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
-            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
-            Assert.AreEqual("Nl", o.GetType().InvokeMember("class_name", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
-        }
 
         [Test]
         public void display()
@@ -114,4 +150,5 @@ namespace LpTest.Object
             Assert.AreEqual(true, so.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
     }
+    */
 }

@@ -1,14 +1,46 @@
 ﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using NUnit.Framework;
 using System.Text.RegularExpressions;
 
 namespace LpTest.Object
 {
+    [TestClass]
+    public class LpBlockTest
+    {
+        private Type getModule(string name)
+        {
+            return Assembly.LoadFrom("LP.exe").GetModule("LP.exe").GetType(name);
+        }
+
+        private Type initParser()
+        {
+            return getModule("LP.LpParser");
+        }
+
+        private Type initModule()
+        {
+            return getModule("LP.Object.LpObject");
+        }
+
+        private Type initBlockModule()
+        {
+            return getModule("LP.Object.LpBlock");
+        }
+
+        [TestMethod]
+        public void initialize()
+        {
+            Type t = initBlockModule();
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+        }
+    }
+    /*
     [TestFixture]
     class LpBlockTest
     {
@@ -45,7 +77,7 @@ namespace LpTest.Object
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
         }
-        /*
+     
         [Test]
         public void to_s()
         {
@@ -84,6 +116,6 @@ namespace LpTest.Object
             var so = o.GetType().InvokeMember("funcall", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, o, prms);
             Assert.AreEqual(10.0, so.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null));
         }
-        */
     }
+    */
 }
