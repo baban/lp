@@ -1,14 +1,15 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LpTest.Object
 {
     [TestClass]
-    class LpUnquoteTest
+    public class LpUnQuoteTest
     {
+        [TestMethod]
+        public void TestMethod1()
+        {
+            Assert.AreEqual(1, 1);
+        }
     }
 }

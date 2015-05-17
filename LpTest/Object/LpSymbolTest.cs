@@ -6,11 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-
 namespace LpTest.Object
 {
     [TestClass]
-    class LpSymbolTest
+    public class LpSymbolTest
     {
         private Type initParser()
         {
@@ -47,7 +46,6 @@ namespace LpTest.Object
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
             Assert.AreEqual("bbb", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
-
         /*
         [Test]
         public void initializeSymbols()

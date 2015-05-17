@@ -52,7 +52,7 @@ namespace LpTest.Object
         {
             Type ot = initModule();
             Type t = initStringModule();
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            var o = new PrivateType(t).InvokeStatic("initialize");
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
             Assert.AreEqual("", o.GetType().InvokeMember("stringValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }

@@ -9,7 +9,7 @@ using System.Reflection;
 namespace LpTest.Object
 {
     [TestClass]
-    class LpNlTest
+    public class LpNlTest
     {
         private Type initParser()
         {

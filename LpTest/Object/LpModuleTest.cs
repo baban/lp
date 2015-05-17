@@ -9,9 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace LpTest.Object
 {
-    /*
-    [TestFixture]
-    class LpModuleTest
+    [TestClass]
+    public class LpModuleTest
     {
         private Type getModule(string name)
         {
@@ -35,6 +34,15 @@ namespace LpTest.Object
         {
             return getModule("LP.Object.LpModule");
         }
+
+        [TestMethod]
+        public void initialize0()
+        {
+            Type ot = initModule();
+            Type t = getModule("LP.Object.LpModule");
+            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
+            Assert.AreEqual(0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
     }
-     * */
 }

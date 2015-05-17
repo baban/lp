@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace LpTest.Object
 {
     [TestClass]
-    class LpLambdaTest
+    public class LpLambdaTest
     {
         private Type getModule(string name)
         {
@@ -41,6 +41,7 @@ namespace LpTest.Object
         public void initialize()
         {
             Type t = initLambdaModule();
+
             var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, new Type[] { }, null).Invoke(null, new object[] { });
             Assert.AreEqual(o.GetType().ToString(), "LP.Object.LpObject");
         }
@@ -118,3 +119,5 @@ namespace LpTest.Object
     }
      * */
 }
+
+
