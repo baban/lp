@@ -12,15 +12,16 @@ namespace LP.Object
 
         public static LpObject initialize()
         {
-            return init();
+            return init( className, new List<Ast.LpAstNode>());
         }
 
-        private static LpObject init()
+        private static LpObject init(string className, List<Ast.LpAstNode> stmts)
         {
-            LpObject obj = new LpObject();
-            setMethods(obj);
-            obj.superclass = LpObject.initialize();
-            obj.class_name = "Module";
+            LpObject obj = createClassTemplate(className);
+            obj.class_name = className;
+            obj.statements = stmts.ToList();
+
+            classes[obj.class_name] = obj;
             return obj;
         }
 
@@ -72,6 +73,7 @@ namespace LP.Object
                 kls.class_name = arg.stringValue;
                 classes[arg.stringValue] = kls;
             }
+
             LpObject klass = classes[arg.stringValue];
 
             if (null != block)

@@ -38,11 +38,20 @@ namespace LpTest.Object
         [TestMethod]
         public void initialize0()
         {
-            Type ot = initModule();
             Type t = getModule("LP.Object.LpModule");
-            var o = t.GetMethod("initialize", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null, null);
+            var o = new PrivateType(t).InvokeStatic("initialize");
             Assert.AreEqual("LP.Object.LpObject", o.GetType().ToString());
-            Assert.AreEqual(0, o.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
+        }
+
+        [TestMethod]
+        public void new_()
+        {
+            Type t = getModule("LP.Object.LpModule");
+            var pt = new PrivateType(t);
+            var o = pt.InvokeStatic("initialize");
+            var args = new PrivateType(initParser()).InvokeStatic("parseArgsObject", new object[] { ":Hoge" });
+            var so = pt.InvokeStatic("new_", new object[]{ o, args, null });
+            Assert.AreEqual("LP.Object.LpObject", so.GetType().ToString());
         }
     }
 }

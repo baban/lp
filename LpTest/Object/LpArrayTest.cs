@@ -46,6 +46,18 @@ namespace LpTest.Object
             PrivateType pt = new PrivateType(t);
             Assert.IsInstanceOfType(pt.InvokeStatic("initialize"), ot);
         }
+
+        [TestMethod]
+        public void push()
+        {
+            Type ot = initModule();
+            Type t = initArrayModule();
+            var o = initParser().GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[]" });
+
+            var args = new PrivateType(initParser()).InvokeStatic("parseArgsObject", new object[] { "3" });
+            var so = new PrivateType(t).InvokeStatic("push", new object[] { o, args, null });
+            var ary = so.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
+        }
     }
     /*
     [TestFixture]
@@ -83,17 +95,6 @@ namespace LpTest.Object
         }
 
 
-        [Test]
-        public void push()
-        {
-            Type ot = initModule();
-            Type t = initArrayModule();
-            var o = initParser().GetMethod("execute", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { "[]" });
-
-            var args = initParser().GetMethod("parseArgsObject", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { "3" });
-            var so = t.GetMethod("push", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { o, args, null });
-            var ary = so.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
-        }
 
         [Test]
         public void first()

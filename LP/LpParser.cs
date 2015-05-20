@@ -719,7 +719,7 @@ namespace LP
         public static Ast.LpAstNode createNode(string ctx)
         {
             var str = Program.Parse(ctx);
-            //Console.WriteLine(str);
+            // Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
             var node = toNode(pobj);
             return node;
