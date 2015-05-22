@@ -74,6 +74,7 @@
     <Compile Include="Object\LpNlTest.cs" />
     <Compile Include="Object\LpNumericTest.cs" />
     <Compile Include="Object\LpObjectTest.cs" />
+    <Compile Include="Object\LpParser.cs" />
     <Compile Include="Object\LpQuoteTest.cs" />
     <Compile Include="Object\LpStringTest.cs" />
     <Compile Include="Object\LpSymbolTest.cs" />

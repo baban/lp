@@ -109,6 +109,7 @@
     <Compile Include="Object\LpFile.cs" />
     <Compile Include="Object\LpHash.cs" />
     <Compile Include="Object\LpMacro.cs" />
+    <Compile Include="Object\LpParsec.cs" />
     <Compile Include="Object\LpQuasiQuote.cs" />
     <Compile Include="Object\LpQuote.cs" />
     <Compile Include="Object\LpUnquote.cs" />
