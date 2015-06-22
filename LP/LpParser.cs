@@ -83,8 +83,8 @@ namespace LP
         };
 
         static readonly Parser<string> AsciiCharacter = from a in Parse.String(@"\x")
-                                                          from b in Parse.Regex(@"[0-9a-fA-F]{2}")
-                                                          select ((char)Convert.ToInt32(b, 16)).ToString();
+                                                        from b in Parse.Regex(@"[0-9a-fA-F]{2}")
+                                                        select ((char)Convert.ToInt32(b, 16)).ToString();
         static readonly Parser<string> UnicodeCharacter = from a in Parse.String(@"\u")
                                                           from b in Parse.Regex(@"[0-9a-fA-F]{4}")
                                                           select ((char)Convert.ToInt32(b, 16)).ToString();

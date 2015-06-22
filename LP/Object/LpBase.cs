@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sprache;
 
 namespace LP.Object
 {
@@ -26,6 +27,7 @@ namespace LP.Object
         public string stringValue = null;
         public List<LpObject> arrayValues = null;
         public Dictionary<LpObject, LpObject> hashValues = null;
+        public Parser<object[]> parserValue = null;
 
         public bool is_macro = false;
         public List<Ast.LpAstNode> statements = null;
