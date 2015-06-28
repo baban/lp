@@ -76,7 +76,7 @@ namespace LpTest.Object
             try {
                 pt.InvokeStatic("funcall", new object[] { "to_s_error", null });
             }
-            catch (Exception ex)
+            catch
             {
                 return;
             }

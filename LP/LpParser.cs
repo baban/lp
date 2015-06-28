@@ -22,8 +22,9 @@ namespace LP
      end
      */
 
-    // TODO: 引数の改良
     // TODO: case文
+    // TODO: エラー行表示
+    // TODO: 引数の改良
     // TODO: メソッド定義
     // TODO: module定義
     // TODO: 構文エラー処理
@@ -31,9 +32,11 @@ namespace LP
     // TODO: Block読み出し
     // TODO: インスタンス変数
     // TODO: グローバル変数
+    //
     // TODO: コメントはできるだけあとに残す
-    // TODO: エラー行表示
     // TODO: 文字列のこれ以上細かいところは後日実装する
+    // TODO: マクロの変数をautogemsymする
+    // TODO: .Netとの相互運用性の向上
     //\e
     //\s
     //\nnn
@@ -355,10 +358,63 @@ namespace LP
                                                                 select stmts).Or(
                                                                 from c in IfEnd
                                                                 select new string[]{})
-                                                select string.Format("_if({0},do {1} end,do {2} end)", expr, string.Join("; ", stmts1), string.Join("; ", stmts2));
+                                                select string.Format(
+                                                    "__if({0},do {1} end,do {2} end)",
+                                                    expr,
+                                                    string.Join("; ", stmts1),
+                                                    string.Join("; ", stmts2));
+        
+        static readonly Parser<string> CaseStart = (from _case in Parse.String("case").Text().Token()
+                                                    from stmt in Stmt
+                                                    select stmt).Token();
+        static readonly Parser<string[][]> WhenStmt = from a in Parse.String("when").Text().Token()
+                                                   from expr in Stmt
+                                                   from stmts in Stmts
+                                                      select new string[][] { new string[] { expr }, stmts.ToArray() };
+        static readonly Parser<string[]> CaseElseStmts = from _else in Parse.String("else").Token()
+                                                         from stmts in Stmts
+                                                         select stmts;
+        static readonly Parser<string> CaseEnd = Parse.String("end").Text().Token();
+        static readonly Parser<string> CaseStmt1 = from _start in CaseStart
+                                                  from _end in CaseEnd
+                                                  select string.Format("cond( {0} )", _start);
+        static readonly Parser<string> CaseStmt2 = from _start in CaseStart
+                                                   from elsestmts in CaseElseStmts
+                                                   from _end in CaseEnd
+                                                   select string.Format(
+                                                     "cond( {0}, true, do {1} end )",
+                                                     _start,
+                                                     string.Join("; ", elsestmts));
+        static readonly Parser<string> CaseStmt3 = from _start in CaseStart
+                                                   from pairs in WhenStmt.Many()
+                                                   from _end in CaseEnd
+                                                   select string.Format(
+                                                    "cond( {0}, {1} )",
+                                                    _start,
+                                                    string.Join(", ",
+                                                        pairs.Select((pair) => {
+                                                            var expr = pair[0].First();
+                                                            var stmts = pair[1];
+                                                            return string.Format( "{0}, do {1} end", expr, string.Join( "; ", stmts ) );
+                                                    })));
+        static readonly Parser<string> CaseStmt4 = from _start in CaseStart
+                                                   from pairs in WhenStmt.Many()
+                                                   from elsestmt in CaseElseStmts
+                                                   from _end in CaseEnd
+                                                   select string.Format(
+                                                    "cond( {0}, {1}, true, do {2} end )",
+                                                    _start,
+                                                    string.Join(", ",
+                                                        pairs.Select((pair) =>
+                                                        {
+                                                            var expr = pair[0].First();
+                                                            var stmts = pair[1];
+                                                            return string.Format("{0}, do {1} end", expr, string.Join("; ", stmts));
+                                                        })),
+                                                    string.Join("; ", elsestmt) );
+        static readonly Parser<string> CaseStmt = CaseStmt1.Or(CaseStmt2).Or(CaseStmt3).Or(CaseStmt4);
 
-        static readonly Parser<string> StatCollection = DefMacro.Or(DefClass).Or(DefModule).Or(Function).Or(IfStmt);
-        static readonly Parser<string> StatList = StatCollection.Or(Expr);
+        static readonly Parser<string> StatList = DefMacro.Or(DefClass).Or(DefModule).Or(Function).Or(IfStmt).Or(CaseStmt).Or(Expr);
 
         static readonly Parser<string> Stmt = (from s in StatList
                                                from t in Term
@@ -719,7 +775,7 @@ namespace LP
         public static Ast.LpAstNode createNode(string ctx)
         {
             var str = Program.Parse(ctx);
-            // Console.WriteLine(str);
+            Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
             var node = toNode(pobj);
             return node;

@@ -57,8 +57,10 @@ namespace LP.Object
 
             // Lv1
             obj.methods["print"] = new LpMethod(new BinMethod(print), 1);
-            obj.methods["_if"] = new LpMethod(new BinMethod(if_), 3);
+            obj.methods["__if"] = new LpMethod(new BinMethod(if_), 3);
             obj.methods["if"] = new LpMethod(new BinMethod(if_), 3);
+            obj.methods["case"] = new LpMethod(new BinMethod(case_), -1);
+            obj.methods["__case"] = new LpMethod(new BinMethod(case_), -1);
             obj.methods["load"] = new LpMethod(new BinMethod(load), 1);
             obj.methods["require"] = new LpMethod(new BinMethod(require), 1);
             obj.methods["sleep"] = new LpMethod(new BinMethod(sleep), 1);
@@ -94,9 +96,15 @@ namespace LP.Object
         {
             Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
             Func<LpObject, bool> test = (stmt) => (bool)fun(stmt).funcall("nil?", null, null).boolValue;
-            for (int i = 0; args.Count() >= i + 2; i += 2)
-                if (test(args[i]))
-                    return fun(args[i + 1]);
+
+            var args2 = args.First().arrayValues;
+
+            if (args2.Count() < 1 || (args2.Count() % 2) == 1)
+                throw new Error.LpArgumentError();
+
+            for (int i = 0; args2.Count() >= i + 2; i += 2)
+                if (test(args2[i]))
+                    return fun(args2[i + 1]);
 
             return LpNl.initialize();
         }
@@ -130,6 +138,26 @@ namespace LP.Object
             {
                 return fun(args[2]);
             }
+        }
+
+        // case function can translate to macro.
+        // TODO: case function shoud test that change to macro.
+        private static LpObject case_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var caseArgs = args.First().arrayValues;
+
+            if (caseArgs.Count() < 1 )
+                throw new Error.LpArgumentError();
+
+            var expr = caseArgs[0];
+            for (int i = 1; i < caseArgs.Count(); i += 2) {
+                bool ret = (bool)expr.funcall("==", new LpObject[] { caseArgs[i] }, null).boolValue;
+                if (ret) {
+                    return caseArgs[i + 1].funcall("call", null, null);
+                }
+            }
+
+            return LpNl.initialize();
         }
 
         // TODO: 全く未実装

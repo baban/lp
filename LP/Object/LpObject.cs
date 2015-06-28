@@ -45,8 +45,8 @@ namespace LP.Object
             obj.methods["__send__"] = new LpMethod(new BinMethod(send), -1);
             obj.methods["alias"] = new LpMethod(new BinMethod(alias), 2);
             obj.methods["class"] = new LpMethod(new BinMethod(class_), 0);
-            obj.methods["eq?"] = new LpMethod(new BinMethod(eq), 0);
-            obj.methods["equal?"] = new LpMethod(new BinMethod(equal), 0);
+            obj.methods["eq?"] = new LpMethod(new BinMethod(eq), 1);
+            obj.methods["equal?"] = new LpMethod(new BinMethod(equal), 1);
             obj.methods["copy"] = new LpMethod(new BinMethod(copy), 0);
             obj.methods["define_method"] = new LpMethod(new BinMethod(define_method), 1);
             obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
@@ -62,8 +62,8 @@ namespace LP.Object
             // TODO: blank?
             // TODO: tap
             obj.methods["do"] = new LpMethod(new BinMethod(instance_eval), 0);
-            obj.methods["=="] = new LpMethod(new BinMethod(eq), 0);
-            obj.methods["==="] = new LpMethod(new BinMethod(equal), 0);
+            obj.methods["=="] = new LpMethod(new BinMethod(eq), 1);
+            obj.methods["==="] = new LpMethod(new BinMethod(equal), 1);
             obj.methods["is_a?"] = new LpMethod(new BinMethod(is_a), 1);
             obj.methods["kind_of?"] = new LpMethod(new BinMethod(is_a), 1 );
             obj.methods["send"] = new LpMethod(new BinMethod(send), -1);
