@@ -12,6 +12,8 @@ namespace LP.Ast
         private LpAstNode lft = null;
         private LpAstNode[] args = null;
         private LpAstNode block = null;
+        static Stack<string> programStack = new Stack<string>();
+
 
         public LpAstMethodCall( string name, LpAstNode lft, LpAstNode[] args, LpAstNode blk ) {
             this.name = name;
@@ -30,10 +32,22 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
-            return lft.DoEvaluate().funcall(
-                this.name,
-                args.Select( (arg) => arg.DoEvaluate() ).ToArray(),
-                ( this.block==null ? null : this.block.DoEvaluate()) );
+            programStack.Push(this.name);
+
+            try
+            {
+                var ret = lft.DoEvaluate().funcall(
+                    this.name,
+                    args.Select((arg) => arg.DoEvaluate()).ToArray(),
+                    (this.block == null ? null : this.block.DoEvaluate()));
+                programStack.Pop();
+                return ret;
+            }
+            catch( Error.LpError e )
+            {
+                e.BackTrace = programStack;
+                throw e;
+            }
         }
 
         public override string toSource( bool expand=false )

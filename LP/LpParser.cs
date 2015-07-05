@@ -22,7 +22,6 @@ namespace LP
      end
      */
 
-    // TODO: case文
     // TODO: エラー行表示
     // TODO: 引数の改良
     // TODO: メソッド定義
@@ -32,6 +31,7 @@ namespace LP
     // TODO: Block読み出し
     // TODO: インスタンス変数
     // TODO: グローバル変数
+    // TODO: load & require
     //
     // TODO: コメントはできるだけあとに残す
     // TODO: 文字列のこれ以上細かいところは後日実装する
@@ -51,6 +51,7 @@ namespace LP
     // 3. 見つからなければKernelのメソッドを探す
     class LpParser
     {
+        
         // Expressions
         static readonly List<object[]> operandTable = new List<object[]> {
             new object[]{ 3, new string[]{ "++", "--" } },
@@ -129,12 +130,11 @@ namespace LP
                                                   from b in Parse.Regex(@"[0-9a-z]+")
                                                   select Convert.ToInt32(b, 16).ToString();
         static readonly Parser<string> Numeric = BinaryInt.Or(OctetInt).Or(DigitInt).Or(Decimal).Or(Int).Named("numeric");
-        static readonly Parser<string> CurrentContext = Parse.Regex("@@@").Named("current context");
         static readonly Parser<string> CurrentClass = Parse.Regex("@@").Named("current class");
         static readonly Parser<string> CurrentInstance = Parse.Regex("@").Named("current instance");
         static readonly Parser<string> GlobalInstance = Parse.Regex("$").Named("global instance");
-        static readonly Parser<string> ContextVarname = CurrentContext.Or(CurrentClass).Or(CurrentInstance).Or(GlobalInstance);
-
+        static readonly Parser<string> ContextVarname = CurrentClass.Or(CurrentInstance).Or(GlobalInstance);
+        
         static readonly Parser<string> StringStmt = from a in Parse.String("#{")
                                                     from stmt in Stmt
                                                     from b in Parse.String("}")
@@ -510,7 +510,7 @@ namespace LP
                                                         select new object[] { fname, args, null });
         static readonly Parser<object[]> FUNCTION_CALL = from fvals in METHOD_CALL
                                                          select new object[] { NodeType.FUNCTION_CALL, fvals };
-        static readonly Parser<object[]> STARTER = EXP_VAL.Or(FUNCTION_CALL).Or(VARIABLE_CALL);
+        static readonly Parser<object[]> STARTER = new Parser<object[]>[] { EXP_VAL, FUNCTION_CALL, VARIABLE_CALL }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<object[]> FUNCALL = OperandsChainCallStart(Parse.String("."), STARTER, METHOD_CALL, (dot, op1, op2) => {
             return new object[] {
@@ -794,6 +794,24 @@ namespace LP
             */
             var node = createNode(ctx);
             var o = node.Evaluate();
+
+            /*
+            Input input = new Sprache.Input(ctx);
+            Console.WriteLine("input.Line");
+            Console.WriteLine(input.Line);
+            input.Advance();
+            input = input.Advance();
+            input = input.Advance();
+            Console.WriteLine(input.ToString());
+
+            Parser<Input> psr2 = from a in Parse.String("mage").Text()
+                                 select new Sprache.Input(a);
+            Parser<Input> psr = from a in Parse.String("hoge").Text()
+                                select new Sprache.Input(a);
+            var ret = psr.Parse("hogemage");
+            Console.WriteLine(ret.ToString());
+            */
+            
             //Console.WriteLine(o.class_name);
             //Console.WriteLine( o.doubleValue);
             return o;

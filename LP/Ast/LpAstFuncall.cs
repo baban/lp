@@ -34,12 +34,14 @@ namespace LP.Ast
                 {
                     // macro call
                     var node = ctx.macroexpand(args, this.block);
-                    return node.DoEvaluate();
+                    var ret = node.DoEvaluate();
+                    return ret;
                 }
                 else
                 {
                     // function call
-                    return ctx.execMethod(this.name, ctx, newArgs, newBlock);
+                    var ret = ctx.execMethod(this.name, ctx, newArgs, newBlock);
+                    return ret;
                 }
             }
             else
@@ -56,10 +58,13 @@ namespace LP.Ast
 
                 if (cls == null)
                 {
-                    throw new Error.LpNoMethodError();
+                    var e = new Error.LpNoMethodError();
+                    throw e;
+
                 }
                 else {
-                    return cls.execMethod(name, cls, newArgs, newBlock);
+                    var ret = cls.execMethod(name, cls, newArgs, newBlock);
+                    return ret;
                 }
             }
         }

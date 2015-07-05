@@ -9,39 +9,19 @@ namespace LP.Error
     class LpError : Exception
     {
         static string className = "Error";
-        /*
-        public static Object.LpObject initialize()
-        {
-            return init();
-        }
 
-        private static Object.LpObject Object.init()
-        {
-            Object.LpObject obj = createClassTemplate();
-            return obj;
-        }
+        private Stack<string> stackTrace = new Stack<string>();
 
-        private static void setMethods(Object.LpObject obj)
+        public Stack<string> BackTrace
         {
-            //obj.methods["to_s"] = new BinMethod(to_s);
-        }
-
-        private static Object.LpObject createClassTemplate()
-        {
-            if (LpBase.classes.ContainsKey(className))
+            get
             {
-                return LpBase.classes[className].Clone();
+                return stackTrace;
             }
-            else
+            set
             {
-                LpObject obj = new LpObject();
-                setMethods(obj);
-                obj.superclass = LpObject.initialize();
-                obj.class_name = className;
-                LpBase.classes[className] = obj;
-                return obj.Clone();
+                stackTrace = value;
             }
         }
-        */
     }
 }

@@ -99,7 +99,7 @@ namespace LP.Object
 
             // method
             try {
-                return funcall( name,null,null );
+                return funcall( name, null, null );
             } catch( Error.LpNoMethodError e ){
                 //throw new Error.NameError();
             }

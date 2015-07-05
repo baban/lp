@@ -94,12 +94,23 @@ namespace LP
                 } catch( Error.LpError e ){
                     printError( e );
                 } catch ( Sprache.ParseException e ) {
-                    printError( e );
+                    printException(e);
                 }
             } while (true);
         }
 
-        static void printError( Exception e ) {
+        static void printError( Error.LpError e ) {
+            Console.WriteLine("Message");
+            Console.WriteLine(e.Message);
+            Console.WriteLine("------------------------------------------");
+            Console.WriteLine(string.Join("", e.BackTrace.Select((o) => { return o.ToString() + "\n"; })));
+            Console.WriteLine("------------------------------------------");
+            e.BackTrace.Clear();
+            Console.WriteLine(e.StackTrace);
+        }
+
+        static void printException(Exception e)
+        {
             Console.WriteLine("Message");
             Console.WriteLine(e.Message);
             Console.WriteLine(e.StackTrace);
@@ -109,16 +120,10 @@ namespace LP
             if (!System.IO.File.Exists(filename))
                 return null;
 
-            StringBuilder strBuff = new StringBuilder();
-            System.IO.StreamReader sr = null;
-            sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
-            while (sr.Peek() >= 0)
-            {
-                 strBuff.Append( sr.ReadLine() );
-                 strBuff.Append("\n");
-            }
+            System.IO.StreamReader sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
+            var str = sr.ReadToEnd();
             sr.Close();
-            return strBuff.ToString();
+            return str;
         }
 
         static void initEnv(){
