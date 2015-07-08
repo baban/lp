@@ -8,9 +8,13 @@ namespace LP.Error
 {
     class LpError : Exception
     {
-        static string className = "Error";
-
         private Stack<string> stackTrace = new Stack<string>();
+
+        public LpError() { }
+
+        public LpError( string message, Exception e )
+        {
+        }
 
         public Stack<string> BackTrace
         {

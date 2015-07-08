@@ -774,7 +774,8 @@ namespace LP
 
         public static Ast.LpAstNode createNode(string ctx)
         {
-            var str = Program.Parse(ctx);
+            var str = Sprache.ParserExtensions.Parse(Program,ctx);
+
             Console.WriteLine(str);
             var pobj = PROGRAM.Parse(str);
             var node = toNode(pobj);
@@ -795,25 +796,6 @@ namespace LP
             var node = createNode(ctx);
             var o = node.Evaluate();
 
-            /*
-            Input input = new Sprache.Input(ctx);
-            Console.WriteLine("input.Line");
-            Console.WriteLine(input.Line);
-            input.Advance();
-            input = input.Advance();
-            input = input.Advance();
-            Console.WriteLine(input.ToString());
-
-            Parser<Input> psr2 = from a in Parse.String("mage").Text()
-                                 select new Sprache.Input(a);
-            Parser<Input> psr = from a in Parse.String("hoge").Text()
-                                select new Sprache.Input(a);
-            var ret = psr.Parse("hogemage");
-            Console.WriteLine(ret.ToString());
-            */
-            
-            //Console.WriteLine(o.class_name);
-            //Console.WriteLine( o.doubleValue);
             return o;
         }
     }
