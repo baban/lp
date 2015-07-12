@@ -228,12 +228,18 @@ namespace LP.Object
 
         private static LpObject print(LpObject self, LpObject[] args, LpObject block = null)
         {
+            if (args.Count() <= 0)
+                throw new Error.LpArgumentError();
+
             var o = args[0];
             return o.funcall("display", null, null);
         }
 
         private static LpObject p_(LpObject self, LpObject[] args, LpObject block = null)
         {
+            if (args.Count() <= 0)
+                throw new Error.LpArgumentError();
+
             var o = args[0];
             return o.funcall("inspect",null,null).funcall("display", null, null);
         }

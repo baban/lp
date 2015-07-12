@@ -98,7 +98,6 @@ namespace LP.Object
             Util.LpIndexer.push(self);
             var dstArgs = (null == args) ? new LpObject[] { } : args;
             self.arguments.setVariables(self, dstArgs, block);
-            //self.arguments.putVariables(args, block);
 
             LpObject ret = Object.LpNl.initialize();
             foreach (Ast.LpAstNode stmt in self.statements)

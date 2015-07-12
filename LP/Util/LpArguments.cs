@@ -25,9 +25,9 @@ namespace LP.Util
 
         public LpArguments( string[] args, bool loose = false )
         {
-            arrayArg = args.FirstOrDefault((s) => s[0] == '*');
-            blockArg = args.FirstOrDefault((s) => s[0] == '&');
-            arguments = args.TakeWhile((s) => s[0] != '*' && s[0] != '&' ).ToArray();
+            arguments = args.TakeWhile((s) => s[0] != '*' && s[0] != '&').ToArray();
+            arrayArg = args.Where((s) => s[0] == '*').Select((s)=>s.TrimStart('*')).FirstOrDefault();
+            blockArg = args.Where((s) => s[0] == '&').Select((s) => s.TrimStart('&')).FirstOrDefault();
             this.loose = loose;
         }
 
@@ -70,9 +70,20 @@ namespace LP.Util
 
         public Object.LpObject setVariables(Object.LpObject self, Object.LpObject[] args, Object.LpObject block)
         {
+            if (args.Count() < arguments.Count())
+                throw new Error.LpArgumentError();
+
             for (int i = 0; i < arguments.Count(); i++)
             {
                 self.variables[arguments[i]] = args[i];
+            }
+
+            if (arrayArg != null) {
+                self.variables[arrayArg] = Object.LpArray.initialize(args.Skip(arguments.Count()).ToArray());
+            }
+            if (blockArg != null)
+            {
+                self.variables[blockArg] = block;
             }
             return self;
         }

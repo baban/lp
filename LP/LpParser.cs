@@ -23,11 +23,9 @@ namespace LP
      */
 
     // TODO: エラー行表示
-    // TODO: 引数の改良
     // TODO: メソッド定義
     // TODO: module定義
     // TODO: 構文エラー処理
-    // TODO: エラー処理
     // TODO: Block読み出し
     // TODO: インスタンス変数
     // TODO: グローバル変数
@@ -317,22 +315,33 @@ namespace LP
                                                     from args in Args
                                                     from b in Parse.Char(')')
                                                     select args.ToArray();
-        static readonly Parser<string> AstArg = Parse.Char('*').Once().Then((ast) => from id in Varname
-                                                                                     select ast + id);
-        static readonly Parser<string> AmpArg = Parse.Char('&').Once().Then( (ast) => from id in Varname
-                                                                                      select ast+id );
-        static readonly Parser<IEnumerable<string>> SimpleArgList = Parse.DelimitedBy(Varname, Parse.Char(',').Token());
-        static readonly Parser<string[]> ArgList = from ags in
-                                                       (from args in SimpleArgList
-                                                        from amparg in AmpArg
-                                                        select args.Concat(new string[] { amparg })).Or(
-                                                        from args in SimpleArgList
-                                                        from amparg in AmpArg
-                                                        select args.Concat(new string[] { amparg })).Or(
-                                                        from args in SimpleArgList
-                                                        from astarg in AstArg
-                                                        select args.Concat(new string[] { astarg })).Or(SimpleArgList).Or(ZeroArgs)
-                                                   select ags.ToArray();
+        static readonly Parser<string> AstArg = from ast in Parse.Char('*')
+                                                                   from id in Varname
+                                                                   select ast + id;
+        static readonly Parser<string> AmpArg = from amp in Parse.Char('&')
+                                                                     from id in Varname
+                                                                     select amp + id;
+        static readonly Parser<string[]> SimpleArgList = from args in Parse.DelimitedBy(Varname, Parse.Char(',').Token())
+                                                                               select args.ToArray();
+        static readonly Parser<string[]> AstArgs = from arg in AstArg.Text()
+                                                                       select new string[] { arg };
+        static readonly Parser<string[]> AmpArgs = from arg in AmpArg.Text()
+                                                                         select new string[] { arg };
+        static readonly Parser<string[]> WithAmpArgs = from args in SimpleArgList
+                                                                                from dtr in Parse.Char(',').Token()
+                                                                                from amparg in AmpArg.Text()
+                                                                                select args.Concat(new string[] { amparg }).ToArray();
+        static readonly Parser<string[]> WithAstArgs = from args in SimpleArgList
+                                                                              from dtr in Parse.Char(',').Token()
+                                                                              from astarg in AstArg.Text()
+                                                                              select args.Concat(new string[] { astarg }).ToArray();
+        static readonly Parser<string[]> WithAstAmpArgs = from args in SimpleArgList
+                                                                                    from dtr1 in Parse.Char(',').Token()
+                                                                                    from astarg in AstArg.Text()
+                                                                                    from dtr2 in Parse.Char(',').Token()
+                                                                                    from amparg in AmpArg.Text()
+                                                                                    select args.Concat(new string[] { astarg, amparg }).ToArray();
+        static readonly Parser<string[]> ArgList = new Parser<string[]>[] { WithAstAmpArgs, WithAmpArgs, WithAstArgs, AmpArgs, AstArgs, SimpleArgList, ZeroArgs }.Aggregate((seed, nxt) => seed.Or(nxt));
         static readonly Parser<string[]> ArgDecl = ArgList.Contained(Parse.Char('('), Parse.Char(')'));
 
         // is Statements
