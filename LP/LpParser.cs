@@ -28,8 +28,8 @@ namespace LP
     // TODO: 構文エラー処理
     // TODO: Block読み出し
     // TODO: インスタンス変数
-    // TODO: グローバル変数
     // TODO: load & require
+    // TODO: マクロのデバッグ
     //
     // TODO: コメントはできるだけあとに残す
     // TODO: 文字列のこれ以上細かいところは後日実装する
@@ -128,10 +128,6 @@ namespace LP
                                                   from b in Parse.Regex(@"[0-9a-z]+")
                                                   select Convert.ToInt32(b, 16).ToString();
         static readonly Parser<string> Numeric = BinaryInt.Or(OctetInt).Or(DigitInt).Or(Decimal).Or(Int).Named("numeric");
-        static readonly Parser<string> CurrentClass = Parse.Regex("@@").Named("current class");
-        static readonly Parser<string> CurrentInstance = Parse.Regex("@").Named("current instance");
-        static readonly Parser<string> GlobalInstance = Parse.Regex("$").Named("global instance");
-        static readonly Parser<string> ContextVarname = CurrentClass.Or(CurrentInstance).Or(GlobalInstance);
         
         static readonly Parser<string> StringStmt = from a in Parse.String("#{")
                                                     from stmt in Stmt
@@ -180,7 +176,7 @@ namespace LP
                                               select a + string.Join(",", pairs.Select((pair) => pair[0] + " : " + pair[1])) + b;
 
         static readonly Parser<string> Symbol = from qmark in Parse.String(":").Text()
-                                                from idf in Varname
+                                                from idf in Varname.Or(GlobalVarname).Or(InstanceVarname)
                                                 select qmark+idf;
 
         // Macro Values
@@ -246,28 +242,28 @@ namespace LP
                                                                     string.Join("; ", stmts),cname);
 
         static readonly Parser<string> DefModule = from a in Parse.String("module").Token().Text()
-                                                   from cname in Fname
-                                                   from b in Term
-                                                   from stmts in Stmt.Many().Except(Parse.String("end"))
-                                                   from c in Parse.String("end").Token()
-                                                   select string.Format("Module.new(:{1}) do {0} end",
-                                                                     string.Join("; ", stmts), cname);
+                                                                        　from cname in Fname
+                                                                        　from b in Term
+                                                                        　from stmts in Stmt.Many().Except(Parse.String("end"))
+                                                                         　from c in Parse.String("end").Token()
+                                                                           select string.Format("Module.new(:{1}) do {0} end",
+                                                                        　　　　　　string.Join("; ", stmts), cname);
 
-        static readonly Parser<string> GlobalVarname = from h in Parse.String("$")
-                                                       from name in Varname
-                                                       select string.Format("{0}.{1}", h, name);
+        static readonly Parser<string> GlobalVarname = from h in Parse.String("$").Text()
+                                                                            　　from name in Varname
+                                                                            　　select string.Format("{0}{1}", h, name);
 
-        static readonly Parser<string> InstanceVarname = from h in Parse.String("@")
+        static readonly Parser<string> InstanceVarname = from h in Parse.String("@").Text()
                                                          from name in Varname
-                                                         select string.Format("{0}.{1}", h, name);
+                                                         select string.Format("{0}{1}", h, name);
         
-        static readonly Parser<string> ClassVarname = from h in Parse.String("@@")
+        static readonly Parser<string> ClassVarname = from h in Parse.String("@@").Text()
                                                       from name in Varname
-                                                      select string.Format("{0}.{1}", h, name);
+                                                      select string.Format("{0}{1}", h, name);
 
         static readonly Parser<string> Funcall0 = from idf in Fname
                                                   select idf + "()";
-        static readonly Parser<string> Varcall = Varname.Or(GlobalVarname).Token();
+        static readonly Parser<string> Varcall = Varname.Or(GlobalVarname).Or(InstanceVarname).Or(ClassVarname).Token();
 
         static readonly Parser<string> Funcall = from idf in Fname
                                                  from args in Args.Contained(Parse.Char('(').Once(), Parse.Char(')').Once())
@@ -298,7 +294,7 @@ namespace LP
         // TODO: 代入演算子作成
         static readonly Parser<string> ExpAssignment = ChainExprs;
         // =
-        static readonly Parser<string> ExpEqual = (from vname in Varname.Token()
+        static readonly Parser<string> ExpEqual = (from vname in Varname.Or(GlobalVarname).Or(InstanceVarname).Token()
                                                    from eq in Parse.String("=").Text().Token()
                                                    from v in ExpAssignment.Token()
                                                    select string.Format(":{0}.({1})({2})", vname, eq, v )).Or(ExpAssignment);
@@ -435,7 +431,8 @@ namespace LP
         static readonly Parser<string> Program = from stmts in Stmts
                                                  select string.Join( "; ", stmts.ToArray() );
         public enum NodeType {
-            NL, INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, VARIABLE_CALL, LAMBDA, BLOCK, PRIMARY,
+            NL, INT, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, GLOBAL_VARIABLE_CALL, INSTANCE_VARIABLE_CALL, VARIABLE_CALL, 
+            LAMBDA, BLOCK, PRIMARY,
             ARGS, FUNCALL, EXPR, EXP_VAL, FUNCTION_CALL, STMT, STMTS, PROGRAM, HASH, QUOTE, QUASI_QUOTE, QUESTION_QUOTE
         };
 
@@ -453,10 +450,16 @@ namespace LP
                                                   from b in Parse.Char('"')
                                                   select new object[]{ NodeType.STRING, string.Join("",s.ToArray()) };
         static readonly Parser<object[]> SYMBOL = from m in Parse.String(":").Text()
-                                                  from s in Identifier
+                                                  from s in Identifier.Or(GlobalVarname).Or(InstanceVarname)
                                                   select new object[] { NodeType.SYMBOL, s };
-        static readonly Parser<object[]> VARIABLE_CALL = from varname in Varname.Or(ContextVarname)
+        static readonly Parser<object[]> VARIABLE_CALL = from varname in Varname
                                                          select new object[] { NodeType.VARIABLE_CALL, varname };
+        static readonly Parser<object[]> INSTANCE_VARIABLE_CALL = from h in Parse.String("@")
+                                                                                                     from varname in Varname
+                                                                                                     select new object[] { NodeType.INSTANCE_VARIABLE_CALL, varname };
+        static readonly Parser<object[]> GLOBAL_VARIABLE_CALL = from h in Parse.String("$")
+                                                                                                  from varname in Varname
+                                                                                                  select new object[] { NodeType.GLOBAL_VARIABLE_CALL, varname };
         static readonly Parser<object[]> ARRAY = from a in Parse.String("[").Text().Token()
                                                  from elms in SepElm.Many()
                                                  from b in Parse.String("]").Text().Token()
@@ -519,7 +522,7 @@ namespace LP
                                                         select new object[] { fname, args, null });
         static readonly Parser<object[]> FUNCTION_CALL = from fvals in METHOD_CALL
                                                          select new object[] { NodeType.FUNCTION_CALL, fvals };
-        static readonly Parser<object[]> STARTER = new Parser<object[]>[] { EXP_VAL, FUNCTION_CALL, VARIABLE_CALL }.Aggregate((seed, nxt) => seed.Or(nxt));
+        static readonly Parser<object[]> STARTER = new Parser<object[]>[] { EXP_VAL, FUNCTION_CALL, GLOBAL_VARIABLE_CALL, INSTANCE_VARIABLE_CALL, VARIABLE_CALL }.Aggregate((seed, nxt) => seed.Or(nxt));
 
         static readonly Parser<object[]> FUNCALL = OperandsChainCallStart(Parse.String("."), STARTER, METHOD_CALL, (dot, op1, op2) => {
             return new object[] {
@@ -754,6 +757,10 @@ namespace LP
                     return Ast.LpAstLeaf.toNode((string)node[1], "SYMBOL");
                 case NodeType.VARIABLE_CALL:
                     return Ast.LpAstLeaf.toNode((string)node[1], "VARIABLE_CALL");
+                case NodeType.GLOBAL_VARIABLE_CALL:
+                    return Ast.LpAstLeaf.toNode((string)node[1], "GLOBAL_VARIABLE_CALL");
+                case NodeType.INSTANCE_VARIABLE_CALL:
+                    return Ast.LpAstLeaf.toNode((string)node[1], "INSTANCE_VARIABLE_CALL");
                 case NodeType.QUOTE:
                     return Ast.LpAstLeaf.toNode((string)node[1], "QUOTE");
                 case NodeType.QUASI_QUOTE:

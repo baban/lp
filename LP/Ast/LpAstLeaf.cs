@@ -54,6 +54,10 @@ namespace LP.Ast
                     return LpParser.toNode(LpParser.PROGRAM.Parse(leaf)).DoEvaluate().funcall("to_s", null, null);
                 case "VARIABLE_CALL":
                     return Util.LpIndexer.varcall(leaf);
+                case "GLOBAL_VARIABLE_CALL":
+                    return Util.LpGlobalIndexer.get(leaf);
+                case "INSTANCE_VARIABLE_CALL":
+                    return Util.LpGlobalIndexer.get(leaf);
                 default:
                     return null;
             }
@@ -84,6 +88,8 @@ namespace LP.Ast
                 case "BOOL":
                 case "SYMBOL":
                 case "VARIABLE_CALL":
+                case "GLOBAL_VARIABLE_CALL":
+                case "INSTANCE_VARIABLE_CALL":
                 case "QUOTE":
                 case "QUASI_QUOTE":
                 case "QUESTION_QUOTE":

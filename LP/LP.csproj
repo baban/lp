@@ -114,6 +114,7 @@
     <Compile Include="Object\LpQuote.cs" />
     <Compile Include="Object\LpUnquote.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="Util\LpGlobalIndexer.cs" />
     <Compile Include="Util\LpIndexer.cs" />
     <Compile Include="Object\LpKernel.cs" />
     <Compile Include="Object\LpLambda.cs" />

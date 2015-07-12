@@ -79,9 +79,15 @@ namespace LP.Object
         private static LpObject setOp(LpObject self, LpObject[] args, LpObject block = null)
         {
             var v = args[0];
-            var env = Util.LpIndexer.last();
-            var o = env.setVariable(self.stringValue, v);
-            return v;
+            if (self.stringValue[0]=='$') {
+                return Util.LpGlobalIndexer.set(self.stringValue.TrimStart('$'),v);
+            }
+            else
+            {
+                var env = Util.LpIndexer.last();
+                var o = env.setVariable(self.stringValue, v);
+                return v;
+            }
         }
 
         private static LpObject equal(LpObject self, LpObject[] args, LpObject block = null)
