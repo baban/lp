@@ -33,12 +33,35 @@ namespace LP.Util
 
         public int arity()
         {
-            if (null == arityNumber) {
-                int cnt = arguments.Count();
-                if (arrayArg != null) cnt = -1 * (cnt + 1);
-                arityNumber = cnt;
-            }
+            if (null == arityNumber)
+                arityNumber = calcArity();
+
             return (int)arityNumber;
+        }
+
+        private int calcArity()
+        {
+            int? cnt = searchEqualArg();
+            if (null != cnt)
+                // have equal '='
+                return -1 * (int)cnt;
+            else
+                // have not equal '='
+                if (arrayArg != null)
+                    // have have asterrisc '*'
+                    return -1 * arguments.Count();
+                else
+                    // have asterrisc '*'
+                    return arguments.Count();
+        }
+
+        private int? searchEqualArg()
+        {
+            for( int i=0; i < arguments.Count(); i++ ){
+                if(-1 != arguments[i].IndexOf('='))
+                    return i;
+            }
+            return null;
         }
 
         public bool check( Object.LpObject[] args )
@@ -70,22 +93,44 @@ namespace LP.Util
 
         public Object.LpObject setVariables(Object.LpObject self, Object.LpObject[] args, Object.LpObject block)
         {
-            if (args.Count() < arguments.Count())
+            if( !check( args ) )
                 throw new Error.LpArgumentError();
 
-            for (int i = 0; i < arguments.Count(); i++)
-            {
-                self.variables[arguments[i]] = args[i];
-            }
+            setBaseVariables( self, args );
 
-            if (arrayArg != null) {
+            // have asterisk '*'
+            if (arrayArg != null)
                 self.variables[arrayArg] = Object.LpArray.initialize(args.Skip(arguments.Count()).ToArray());
-            }
+
             if (blockArg != null)
-            {
                 self.variables[blockArg] = block;
-            }
+            
             return self;
+        }
+
+        private void setBaseVariables(Object.LpObject self, Object.LpObject[] args)
+        {
+            int? equalCnt = searchEqualArg();
+            if (equalCnt != null)
+            {
+                // have equal '='
+                for (int i = Math.Abs(arity()); i < arguments.Count(); i++)
+                {
+                    if (-1 != arguments[i].IndexOf("="))
+                    {
+                        var node = LpParser.createNode(arguments[i]);
+                        node.DoEvaluate();
+                    }
+                }
+                for (int i = 0; i < Math.Abs(arity()); i++)
+                    self.variables[arguments[i]] = args[i];
+            }
+            else
+            {
+                // have not equal '='
+                for (int i = 0; i < arguments.Count(); i++)
+                    self.variables[arguments[i]] = args[i];
+            }
         }
 
     }
