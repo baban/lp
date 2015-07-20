@@ -19,7 +19,7 @@ namespace LP.Object
         public static LpObject initialize(string[] args)
         {
             var o = init();
-            o.arrayValues = args.Select( (arg) => LpParser.parseStmtObject(arg) ).ToList();
+            o.arrayValues = args.Select( (arg) => Parser.BaseParser.parseStmtObject(arg) ).ToList();
             return o;
         }
 
