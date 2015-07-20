@@ -113,6 +113,7 @@
     <Compile Include="Object\LpQuote.cs" />
     <Compile Include="Object\LpUnquote.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="Parser\BaseParser.cs" />
     <Compile Include="Util\LpGlobalIndexer.cs" />
     <Compile Include="Util\LpIndexer.cs" />
     <Compile Include="Object\LpKernel.cs" />
@@ -148,9 +149,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Parser\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -49,9 +49,9 @@ namespace LP.Ast
                 case "QUOTE":
                     return Object.LpQuote.initialize( leaf );
                 case "QUASI_QUOTE":
-                    return Object.LpQuasiQuote.initialize(LpParser.toNode(LpParser.PROGRAM.Parse(leaf)).toSource(expand));
+                    return Object.LpQuasiQuote.initialize(LpParser.toNode(Parser.BaseParser.PROGRAM.Parse(leaf)).toSource(expand));
                 case "QUESTION_QUOTE":
-                    return LpParser.toNode(LpParser.PROGRAM.Parse(leaf)).DoEvaluate().funcall("to_s", null, null);
+                    return LpParser.execute(leaf).funcall("to_s", null, null);
                 case "VARIABLE_CALL":
                     return Util.LpIndexer.varcall(leaf);
                 case "GLOBAL_VARIABLE_CALL":
@@ -72,7 +72,7 @@ namespace LP.Ast
                     return string.Format("`{0}", leaf);
                 case "QUESTION_QUOTE":
                     return expand ?
-                        LpParser.toNode(LpParser.PROGRAM.Parse(leaf)).DoEvaluate().funcall("to_s",null,null).stringValue :
+                        LpParser.execute(leaf).funcall("to_s",null,null).stringValue :
                         string.Format("?{0}", leaf);
                 default:
                     return leaf;

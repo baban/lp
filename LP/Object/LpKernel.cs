@@ -123,7 +123,7 @@ namespace LP.Object
 
         private static LpObject eval(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpParser.toNode(LpParser.PROGRAM.Parse(args[0].stringValue)).DoEvaluate();
+            return LpParser.execute(args[0].stringValue);
         }
 
         private static LpObject if_(LpObject self, LpObject[] args, LpObject block = null)
