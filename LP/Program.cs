@@ -153,7 +153,6 @@ namespace LP
             Object.LpString.initialize();
             Object.LpSymbol.initialize();
             Object.LpMacro.initialize();
-            Object.LpParsec.initialize();
         }
 
         static void initializeMacros() {
