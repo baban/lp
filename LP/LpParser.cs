@@ -50,12 +50,12 @@ namespace LP
     class LpParser
     {
         public static Ast.LpAstNode toNode( object[] node ) {
-            return Parser.BaseParser.toNode(node);
+            return Parser.MainPerser.toNode(node);
         }
 
         public static Ast.LpAstNode createNode(string ctx)
         {
-            return Parser.BaseParser.createNode(ctx);
+            return Parser.MainPerser.createNode(ctx);
         }
 
         public static Object.LpObject execute(string ctx)
@@ -69,7 +69,7 @@ namespace LP
             var node = toNode(pobj);
             Console.WriteLine(node);
             */
-            var node = Parser.BaseParser.createNode(ctx);
+            var node = Parser.MainPerser.createNode(ctx);
             //var node = createNode(ctx);
             var o = node.Evaluate();
 

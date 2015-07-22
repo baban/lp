@@ -29,7 +29,7 @@ false
 ### if文
 
 ```
-if 1==1
+if(true)
   true
 else
   false

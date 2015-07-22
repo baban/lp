@@ -49,7 +49,7 @@ namespace LP.Ast
                 case "QUOTE":
                     return Object.LpQuote.initialize( leaf );
                 case "QUASI_QUOTE":
-                    return Object.LpQuasiQuote.initialize(LpParser.toNode(Parser.BaseParser.PROGRAM.Parse(leaf)).toSource(expand));
+                    return Object.LpQuasiQuote.initialize(LpParser.toNode(Parser.MainPerser.PROGRAM.Parse(leaf)).toSource(expand));
                 case "QUESTION_QUOTE":
                     return LpParser.execute(leaf).funcall("to_s", null, null);
                 case "VARIABLE_CALL":
