@@ -9,7 +9,7 @@ namespace LP.Parser
 {
     class StringParser 
     {
-        static readonly Parser<string> Stmt = MainPerser.Stmt;
+        //static readonly Parser<string> Stmt = MainPerser.Stmt;
 
         static readonly List<char[]> EscapeCharacters = new List<char[]> {
            new char[]{ '\\' , '\\' },
@@ -34,7 +34,7 @@ namespace LP.Parser
                                                            select ((char)Convert.ToInt32(b, 16)).ToString();
         static readonly Parser<string> CodeEscapes = UnicodeCharacter.Or(UnicodeCharacter2).Or(AsciiCharacter);
         static readonly Parser<string> EscapeSequence = CodeEscapes.Or(EscapeCharacters.Select((pair) => makeEscapePerser(pair[0], pair[1])).Aggregate((a, b) => a.Or(b)));
-
+        /*
         static readonly Parser<string> StringStmt = from a in Parse.String("#{")
                                                     from stmt in Stmt
                                                     from b in Parse.String("}")
@@ -52,6 +52,20 @@ namespace LP.Parser
                                                             from s in SingleStringContent.Or(StringStmt).Many()
                                                             from b in Parse.String("'")
                                                             select "(" + string.Join(").(+)(", s.ToArray()) + ")").Named("single quoted string");
+         */
+        static readonly Parser<string> SingleStringContent = from s in (Parse.Char('\\').Once().Concat(Parse.Char('\'').Once())).Or(Parse.CharExcept('\'').Once()).Text().Many()
+                                                             select '"' + string.Join("", s.ToArray()) + '"';
+        static readonly Parser<string> SingleQuoteString = (from a in Parse.String("'")
+                                                            from s in SingleStringContent.Many()
+                                                            from b in Parse.String("'")
+                                                            select "(" + string.Join(").(+)(", s.ToArray()) + ")").Named("single quoted string");
+        //public static readonly Parser<string> String = DoubleQuoteString.Or(SingleQuoteString).Named("string");
+        static readonly Parser<string> DoubleStringContent = from s in (Parse.Char('\\').Once().Concat(Parse.Char('"').Once())).Or(Parse.CharExcept('"').Once()).Text().Many()
+                                                             select '"' + string.Join("", s.ToArray()) + '"';
+        static readonly Parser<string> DoubleQuoteString = (from a in Parse.Char('"')
+                                                            from s in DoubleStringContent.Many()
+                                                            from b in Parse.Char('"')
+                                                            select "(" + string.Join(").(+)(", s.ToArray()) + ")").Named("double quoted string");
         public static readonly Parser<string> String = DoubleQuoteString.Or(SingleQuoteString).Named("string");
         public static readonly Parser<string> EnableString = from s in EscapeSequence.Or(makeEscapePerser('"', '\"')).Or(Parse.CharExcept('"').Once()).Text().Many()
                                                                                select string.Join("",s);

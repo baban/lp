@@ -9,7 +9,7 @@ namespace LP.Parser
 {
     class MainPerser : BaseParser
     {
-
+        /*
         // Expressions
         static readonly List<object[]> operandTable = new List<object[]> {
             new object[]{ 3, new string[]{ "++", "--" } },
@@ -353,103 +353,15 @@ namespace LP.Parser
         static readonly Parser<string> Program = from stmts in Stmts
                                                  select string.Join("; ", stmts.ToArray());
 
-        static readonly Parser<object[]> STRING = from a in Parse.Char('"')
-                                                  from s in EscapeSequence.Or(makeEscapePerser('"', '\"')).Or(Parse.CharExcept('"').Once()).Text().Many()
-                                                  from b in Parse.Char('"')
-                                                  select new object[] { NodeType.STRING, string.Join("", s.ToArray()) };
-        static readonly Parser<object[]> VARIABLE_CALL = from varname in Varname
-                                                         select new object[] { NodeType.VARIABLE_CALL, varname };
-        static readonly Parser<object[]> INSTANCE_VARIABLE_CALL = from h in Parse.String("@")
-                                                                  from varname in Varname
-                                                                  select new object[] { NodeType.INSTANCE_VARIABLE_CALL, varname };
-        static readonly Parser<object[]> GLOBAL_VARIABLE_CALL = from h in Parse.String("$")
-                                                                from varname in Varname
-                                                                select new object[] { NodeType.GLOBAL_VARIABLE_CALL, varname };
-        static readonly Parser<object[]> ARRAY = from a in Parse.String("[").Text().Token()
-                                                 from elms in SepElm.Many()
-                                                 from b in Parse.String("]").Text().Token()
-                                                 select new object[] { NodeType.ARRAY, elms.Select((elm) => STMT.Parse(elm)).ToList() };
-        static readonly Parser<object[]> BLOCK_START1 = from a in Parse.String("do").Token()
-                                                        select new object[] { new string[] { }, false };
-        static readonly Parser<object[]> BLOCK_START2 = from _do in Parse.String("do").Token()
-                                                        from args in FenceArgs.Token()
-                                                        select new object[] { args, true };
-        static readonly Parser<object[]> BLOCK_START3 = from args in BlaketArgs.Token()
-                                                        from _do in Parse.String("do").Token()
-                                                        select new object[] { args, false };
-        static readonly Parser<object[]> BLOCK_START = BLOCK_START3.Or(BLOCK_START2).Or(BLOCK_START1);
-        static readonly Parser<object[]> BLOCK_STMT = from argset in BLOCK_START
-                                                      from stmts in STMTS
-                                                      from b in Parse.String("end").Token()
-                                                      select new object[] { (string[])argset[0], (bool)argset[1], stmts };
-
-        static readonly Parser<object[]> LAMBDA = from head in Parse.String("->").Token()
-                                                  from blk in BLOCK_STMT.Token()
-                                                  select new object[] { NodeType.LAMBDA, blk };
-
-        static readonly Parser<object[]> BLOCK = from blk in BLOCK_STMT.Token()
-                                                 select new object[] { NodeType.BLOCK, blk };
-
-        static readonly Parser<object[]> HASH = from a in Parse.String("{").Text().Token()
-                                                from pairs in Assoc.Many()
-                                                from b in Parse.String("}").Text().Token()
-                                                select makeHash(pairs.ToArray());
-
-        static readonly Parser<object[]> QUOTE = from m in Parse.String("'").Text()
-                                                 from stmt in STMT
-                                                 select new object[] { NodeType.QUOTE, toNode(stmt).toSource() };
-
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
                                                        from stmt in STMT
                                                        select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource() };
         static readonly Parser<object[]> QUESTION_QUOTE = from m in Parse.String("?").Text()
                                                           from stmt in ExpVal
                                                           select new object[] { NodeType.QUESTION_QUOTE, stmt };
-
         public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK, QUOTE, QUASI_QUOTE, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
-
-        static readonly Parser<object[]> EXP_VAL = (from a in Parse.Char('(').Token()
-                                                    from s in STMT
-                                                    from b in Parse.Char(')').Token()
-                                                    select s).Or(PRIMARY);
-        static readonly Parser<object[]> ARGS = from args in Args
-                                                select args.Select((arg) => (object[])STMT.Parse(arg)).ToArray();
-        static readonly Parser<object[]> ARGS_CALL = from a in Parse.Char('(').Token()
-                                                     from args in Args
-                                                     from b in Parse.Char(')').Token()
-                                                     select args.Select((arg) => ((object[])STMT.Parse(arg))).ToArray();
-        static readonly Parser<object[]> METHOD_CALL = (from fname in Fname
-                                                        from args in ARGS_CALL
-                                                        from blk in BLOCK.Token()
-                                                        select new object[] { fname, args, blk }).Or(
-                                                        from fname in Fname
-                                                        from args in ARGS_CALL
-                                                        select new object[] { fname, args, null });
-        static readonly Parser<object[]> FUNCTION_CALL = from fvals in METHOD_CALL
-                                                         select new object[] { NodeType.FUNCTION_CALL, fvals };
-        static readonly Parser<object[]> STARTER = new Parser<object[]>[] { EXP_VAL, FUNCTION_CALL, GLOBAL_VARIABLE_CALL, INSTANCE_VARIABLE_CALL, VARIABLE_CALL }.Aggregate((seed, nxt) => seed.Or(nxt));
-
-        static readonly Parser<object[]> FUNCALL = OperandsChainCallStart(Parse.String("."), STARTER, METHOD_CALL, (dot, op1, op2) =>
-        {
-            return new object[] {
-                NodeType.FUNCALL,
-                new object[]{
-                    (string)op2[0],
-                    op1,
-                    (object[])op2[1],
-                    (object[])op2[2]
-                }
-            };
-        });
-        
-        static readonly Parser<object[]> EXPR = FUNCALL.Or(STARTER).Token();
-        static readonly Parser<object[]> STMT = (from expr in EXPR
-                                                 from t in Term
-                                                 select expr).Or(EXPR).Token();
-        static readonly Parser<object[]> STMTS = from stmts in STMT.Many().Token()
-                                                 select new object[] { NodeType.STMTS, stmts };
-        public static readonly Parser<object[]> PROGRAM = STMTS;
-
+        */
+        /*
         static Parser<T> OperandsChainCallStart<T, T2, TOp>(
           Parser<TOp> op,
           Parser<T> operand,
@@ -707,5 +619,6 @@ namespace LP.Parser
             var node = toNode(pobj);
             return node;
         }
+         */
     }
 }

@@ -149,10 +149,10 @@ namespace LP
             Object.LpNl.initialize();
             Object.LpNumeric.initialize();
             Object.LpObject.initialize();
-            Object.LpQuote.initialize();
+            //Object.LpQuote.initialize();
             Object.LpString.initialize();
             Object.LpSymbol.initialize();
-            Object.LpMacro.initialize();
+            //Object.LpMacro.initialize();
         }
 
         static void initializeMacros() {
