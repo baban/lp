@@ -10,64 +10,7 @@ namespace LP.Parser
     class MainPerser : BaseParser
     {
         /*
-        // Expressions
-        static readonly List<object[]> operandTable = new List<object[]> {
-            new object[]{ 3, new string[]{ "++", "--" } },
-            new object[]{ 2, new string[]{ "+", "!", "~" } },
-            new object[]{ 2, new string[]{ "not" } },
-            new object[]{ 1, new string[]{ "**" } },
-            new object[]{ 2, new string[]{ "-" } },
-            new object[]{ 1, new string[]{ "*","/", "%" } },
-            new object[]{ 1, new string[]{ "+","-" } },
-            new object[]{ 1, new string[]{ "<<",">>" } },
-            new object[]{ 1, new string[]{ "&" } },
-            new object[]{ 1, new string[]{ "|" } },
-            new object[]{ 1, new string[]{ ">=", ">", "<=", "<" } },
-            new object[]{ 1, new string[]{ "<=>", "===", "==", "!=", "=~", "!~" } },
-            new object[]{ 1, new string[]{ "&&" } },
-            new object[]{ 1, new string[]{ "||" } },
-            new object[]{ 1, new string[]{ "..", "^..", "..^", "^..^" } },
-            new object[]{ 1, new string[]{ "and", "or" } }
-        };
-
-
-        static readonly List<char[]> EscapeCharacters = new List<char[]> {
-           new char[]{ '\\' , '\\' },
-           new char[]{ '0', '\0' }, // null
-           new char[]{ 'a', '\a' }, // beep
-           new char[]{ 'b', '\b' }, // back space
-           new char[]{ 'f', '\f' }, // form feed
-           new char[]{ 'n', '\n' }, // line change
-           new char[]{ 'r', '\r' }, // carigde return
-           new char[]{ 't', '\t' }, // tab
-           new char[]{ 'v', '\v' }, // vartical return
-        };
-
-        static readonly Parser<string> AsciiCharacter = from a in Parse.String(@"\x")
-                                                        from b in Parse.Regex(@"[0-9a-fA-F]{2}")
-                                                        select ((char)Convert.ToInt32(b, 16)).ToString();
-        static readonly Parser<string> UnicodeCharacter = from a in Parse.String(@"\u")
-                                                          from b in Parse.Regex(@"[0-9a-fA-F]{4}")
-                                                          select ((char)Convert.ToInt32(b, 16)).ToString();
-        static readonly Parser<string> UnicodeCharacter2 = from a in Parse.String(@"\u{")
-                                                           from b in Parse.Regex(@"[0-9a-fA-F]{4}")
-                                                           from c in Parse.Regex(@"}")
-                                                           select ((char)Convert.ToInt32(b, 16)).ToString();
-
-        static readonly Parser<string> CodeEscapes = UnicodeCharacter.Or(UnicodeCharacter2).Or(AsciiCharacter);
-
-        static readonly Parser<string> EscapeSequence = CodeEscapes.Or(EscapeCharacters.Select((pair) => makeEscapePerser(pair[0], pair[1])).Aggregate((a, b) => a.Or(b)));
-
-        static readonly Parser<string> String = Parser.StringParser.String;
-
         // Array, Hash
-        static readonly Parser<string> SepElm = (from sep in Parse.Char(',').Token()
-                                                 from s in Parse.Ref(() => Stmt)
-                                                 select s).Or(Parse.Ref(() => Stmt));
-
-        static readonly Parser<string> Array = from elms in SepElm.Many().Contained(Parse.String("[").Text().Token(), Parse.String("]").Text().Token())
-                                               select "[" + string.Join(",", elms) + "]";
-
         static readonly Parser<string[]> AssocVal = from k in Parse.Ref(() => Stmt)
                                                     from sps in Parse.Char(':').Token()
                                                     from s in Parse.Ref(() => Stmt)
@@ -88,10 +31,6 @@ namespace LP.Parser
                                               from pairs in Assoc.Many()
                                               from b in Parse.String("}").Text().Token()
                                               select a + string.Join(",", pairs.Select((pair) => pair[0] + " : " + pair[1])) + b;
-
-        static readonly Parser<string> Symbol = from qmark in Parse.String(":").Text()
-                                                from idf in TotalVarname
-                                                select qmark + idf;
 
         // Macro Values
         static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
@@ -179,36 +118,6 @@ namespace LP.Parser
 
         static readonly Parser<string> Primary = new Parser<string>[] { Nl, Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote, QuestionQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
-        static readonly Parser<string> ExpVal = (from a in Parse.Char('(')
-                                                 from v in Expr
-                                                 from b in Parse.Char(')')
-                                                 select "(" + v + ")").Or(Primary).Token();
-        // ::
-        static readonly Parser<string> Classcall = OperandsChainCallStart(Parse.String("::"), ExpVal, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
-
-        static readonly Parser<string> ExpClasscall = Classcall.Or(ExpVal);
-
-        // .
-        static readonly Parser<string> MethodCall = OperandsChainCallStart(Parse.String(".").Text(), ExpClasscall, Funcall.Or(Funcall0), (opr, a, b) => a + opr + b);
-        static readonly Parser<string> ExpMethodcall = MethodCall.Or(ExpClasscall);
-        // []
-        static readonly Parser<string> ExpArrayAt = (from expr in ExpMethodcall
-                                                     from v in Stmt.Contained(Parse.Char('['), Parse.Char(']'))
-                                                     select string.Format("{0}.([])({1})", expr, v)).Or(ExpMethodcall);
-        // ２項演算子一覧
-        static readonly Parser<string> ChainExprs = makeExpressions(operandTable, ExpArrayAt);
-        // =(+=, -= ... )
-        // TODO: 代入演算子作成
-        static readonly Parser<string> ExpAssignment = ChainExprs;
-        // =
-        static readonly Parser<string> ExpEqualRaw = from vname in Varname.Or(GlobalVarname).Or(InstanceVarname).Token()
-                                                     from eq in Parse.String("=").Text().Token()
-                                                     from v in ExpAssignment.Token()
-                                                     select string.Format(":{0}.({1})({2})", vname, eq, v);
-        static readonly Parser<string> ExpEqual = ExpEqualRaw.Or(ExpAssignment);
-        // 演算子一覧
-        static readonly Parser<string> Expr = ExpEqual;
-
         // arguments
         static readonly Parser<string> Arg = Parse.Ref(() => Stmt);
         static readonly Parser<string[]> ZeroArgs = from sps in Parse.WhiteSpace.Many()
@@ -226,69 +135,6 @@ namespace LP.Parser
                                                     from args in Args
                                                     from b in Parse.Char(')')
                                                     select args.ToArray();
-        static readonly Parser<string> AstArg = from ast in Parse.Char('*')
-                                                from id in Varname
-                                                select ast + id;
-        static readonly Parser<string> AmpArg = from amp in Parse.Char('&')
-                                                from id in Varname
-                                                select amp + id;
-
-        static readonly Parser<string> ExpEqualRawDecl = from vname in TotalVarname
-                                                         from eq in Parse.String("=").Text().Token()
-                                                         from v in ExpAssignment.Token()
-                                                         select string.Format("{0}{1}{2}", vname, eq, v);
-        static readonly Parser<string[]> SimpleArgList = from args in Parse.DelimitedBy(ExpEqualRawDecl.Or(Varname), Parse.Char(',').Token())
-                                                         select args.ToArray();
-        static readonly Parser<string[]> AstArgs = from arg in AstArg.Text()
-                                                   select new string[] { arg };
-        static readonly Parser<string[]> AmpArgs = from arg in AmpArg.Text()
-                                                   select new string[] { arg };
-        static readonly Parser<string[]> WithAmpArgs = from args in SimpleArgList
-                                                       from dtr in Parse.Char(',').Token()
-                                                       from amparg in AmpArg.Text()
-                                                       select args.Concat(new string[] { amparg }).ToArray();
-        static readonly Parser<string[]> WithAstArgs = from args in SimpleArgList
-                                                       from dtr in Parse.Char(',').Token()
-                                                       from astarg in AstArg.Text()
-                                                       select args.Concat(new string[] { astarg }).ToArray();
-        static readonly Parser<string[]> WithAstAmpArgs = from args in SimpleArgList
-                                                          from dtr1 in Parse.Char(',').Token()
-                                                          from astarg in AstArg.Text()
-                                                          from dtr2 in Parse.Char(',').Token()
-                                                          from amparg in AmpArg.Text()
-                                                          select args.Concat(new string[] { astarg, amparg }).ToArray();
-        static readonly Parser<string[]> ArgList = new Parser<string[]>[] { WithAstAmpArgs, WithAmpArgs, WithAstArgs, AmpArgs, AstArgs, SimpleArgList, ZeroArgs }.Aggregate((seed, nxt) => seed.Or(nxt));
-        static readonly Parser<string[]> ArgDecl = ArgList.Contained(Parse.Char('('), Parse.Char(')'));
-
-        // is Statements
-        static readonly Parser<string> IfExpr = Parse.Ref(() => Stmt.Contained(Parse.Char('('), Parse.Char(')')).Or(
-                                                                  from stmt in Stmt
-                                                                  from b in Term
-                                                                  select stmt));
-        static readonly Parser<string> IfStart = (from _if in Parse.String("if")
-                                                  from expr in IfExpr
-                                                  select expr).Token();
-        static readonly Parser<string[]> ElseStmts = from els in Parse.String("else").Token()
-                                                     from stmts in Stmts
-                                                     select stmts;
-        static readonly Parser<string[][]> ElIfStmts = from els in Parse.String("elif")
-                                                       from expr in IfExpr
-                                                       from stmts in Stmts
-                                                       select new string[][] { new string[] { expr }, stmts };
-        static readonly Parser<string> IfEnd = Parse.String("end").Text().Token();
-        static readonly Parser<string> IfStmt = from expr in IfStart
-                                                from stmts1 in Stmts
-                                                from stmts2 in
-                                                    (from stmts in ElseStmts
-                                                     from c in IfEnd
-                                                     select stmts).Or(
-                                                     from c in IfEnd
-                                                     select new string[] { })
-                                                select string.Format(
-                                                    "__if({0},do {1} end,do {2} end)",
-                                                    expr,
-                                                    string.Join("; ", stmts1),
-                                                    string.Join("; ", stmts2));
         
         static readonly Parser<string> CaseStart = (from _case in Parse.String("case").Text().Token()
                                                     from stmt in Stmt
@@ -343,16 +189,6 @@ namespace LP.Parser
 
         static readonly Parser<string> StatList = DefMacro.Or(DefClass).Or(DefModule).Or(Function).Or(IfStmt).Or(CaseStmt).Or(Expr);
 
-        internal static readonly Parser<string> Stmt = (from s in StatList
-                                               from t in Term
-                                               select s).Or(StatList).Token().Except(Parse.String("end").Or(Parse.String(")")).Token());
-
-        internal static readonly Parser<string[]> Stmts = from stmts in Stmt.XMany()
-                                                 select stmts.ToArray();
-
-        static readonly Parser<string> Program = from stmts in Stmts
-                                                 select string.Join("; ", stmts.ToArray());
-
         static readonly Parser<object[]> QUASI_QUOTE = from m in Parse.String("`").Text()
                                                        from stmt in STMT
                                                        select new object[] { NodeType.QUASI_QUOTE, toNode(stmt).toSource() };
@@ -360,80 +196,7 @@ namespace LP.Parser
                                                           from stmt in ExpVal
                                                           select new object[] { NodeType.QUESTION_QUOTE, stmt };
         public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK, QUOTE, QUASI_QUOTE, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
-        */
-        /*
-        static Parser<T> OperandsChainCallStart<T, T2, TOp>(
-          Parser<TOp> op,
-          Parser<T> operand,
-          Parser<T2> operand2,
-          Func<TOp, T, T2, T> apply)
-        {
-            return operand.Then(first => OperandsChainCallRest(first, op, operand, operand2, apply));
-        }
 
-        static Parser<T> OperandsChainCallRest<T, T2, TOp>(
-            T firstOperand,
-            Parser<TOp> op,
-            Parser<T> operand,
-            Parser<T2> operand2,
-            Func<TOp, T, T2, T> apply)
-        {
-            return Parse.Or(op.Then(opvalue =>
-                          operand2.Then(operandValue => OperandsChainCallRest(apply(opvalue, firstOperand, operandValue), op, operand, operand2, apply))),
-                      Parse.Return(firstOperand));
-        }
-
-        static Parser<string> makeExpressionOperand(object[] row, Parser<string> start)
-        {
-            string[] operands = (string[])(row.Last());
-            switch ((int)(row.First()))
-            {
-                case 1:
-                    return makeChainOperator(operands, start);
-                case 2:
-                    return makeLeftUnary(operands, start);
-                case 3:
-                    return makeRightUnary(operands, start);
-                default:
-                    return null;
-            }
-        }
-
-        static Parser<string> makeExpressions(List<object[]> table, Parser<string> start)
-        {
-            foreach (object[] row in table.ToArray())
-            {
-                start = makeExpressionOperand(row, start);
-            }
-            return start;
-        }
-
-        static Parser<string> makeChainOperator(string[] operators, Parser<string> beforeExpr)
-        {
-            return Parse.ChainOperator(
-                operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2)),
-                beforeExpr,
-                (op, a, b) => string.Format("{0}.({1})({2})", a, op, b));
-        }
-
-        static Parser<string> makeLeftUnary(string[] operators, Parser<string> expr)
-        {
-            return (from h in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
-                    from v in expr
-                    select string.Format("{0}.({1}@)()", v, h)).Or(expr);
-        }
-
-        static Parser<string> makeRightUnary(string[] operators, Parser<string> expr)
-        {
-            return (from v in expr
-                    from t in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
-                    select string.Format("{0}.(@{1})()", v, t)).Or(expr);
-        }
-
-        static Parser<string> Operator(string operand)
-        {
-            return Parse.String(operand).Token().Text();
-        }
 
         static Object.LpObject defClass(string fname, List<Ast.LpAstNode> stmts)
         {
@@ -562,63 +325,354 @@ namespace LP.Parser
             Console.WriteLine(sw.Elapsed.TotalSeconds);
             Console.WriteLine("benckmark:end");
         }
+        */
 
-        public static Ast.LpAstNode toNode(object[] node)
-        {
-            switch ((NodeType)node[0])
+        enum OperandType { CHARIN_OPERATOR, OPERAND, LEFT_UNARY, RIGHT_UNARY };
+        // Expressions
+        static readonly List<object[]> operandTable = new List<object[]> {
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "++", "--" } },
+            new object[]{ OperandType.LEFT_UNARY,             new string[]{ "+", "!", "~" } },
+            new object[]{ OperandType.RIGHT_UNARY,          new string[]{ "not" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "**" } },
+            new object[]{ OperandType.LEFT_UNARY,             new string[]{ "-" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "*","/", "%" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "+","-" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "<<",">>" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "&" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "|" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ ">=", ">", "<=", "<" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "<=>", "===", "==", "!=", "=~", "!~" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "&&" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "||" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "..", "^..", "..^", "^..^" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "and", "or" } }
+        };
+
+        static readonly Parser<object[]> SIMPLE_EXP = EXP_VAL.Or(FUNCALL).Or(VARCALL).Or(PRIMARY);
+
+        // ::
+        /*
+        static readonly Parser<object[]> CLASS_CALL = OperandsChainCallStart(Parse.String("::"), SIMPLE_EXP, METHOD_CALL, (dot, op1, op2) =>
             {
-                case NodeType.NL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "NL");
-                case NodeType.NUMERIC:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "NUMERIC");
-                case NodeType.STRING:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "STRING");
-                case NodeType.BOOL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "BOOL");
-                case NodeType.SYMBOL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "SYMBOL");
-                case NodeType.VARIABLE_CALL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "VARIABLE_CALL");
-                case NodeType.GLOBAL_VARIABLE_CALL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "GLOBAL_VARIABLE_CALL");
-                case NodeType.INSTANCE_VARIABLE_CALL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "INSTANCE_VARIABLE_CALL");
-                case NodeType.QUOTE:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "QUOTE");
-                case NodeType.QUASI_QUOTE:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "QUASI_QUOTE");
-                case NodeType.QUESTION_QUOTE:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "QUESTION_QUOTE");
-                case NodeType.FUNCTION_CALL:
-                    return Ast.LpAstFuncall.toNode((object[])node[1]);
-                case NodeType.LAMBDA:
-                    return Ast.LpAstLambda.toNode((object[])node[1]);
-                case NodeType.BLOCK:
-                    return Ast.LpAstBlock.toNode((object[])node[1]);
-                case NodeType.FUNCALL:
-                    return Ast.LpAstMethodCall.toNode((object[])node[1]);
-                case NodeType.EXPR:
-                    return toNode((object[])node[1]);
-                case NodeType.STMTS:
-                    return Ast.LpAstStmts.toNode((List<object[]>)node[1]);
-                case NodeType.ARRAY:
-                    return Ast.LpAstArray.toNode((List<object[]>)node[1]);
-                case NodeType.HASH:
-                    return Ast.LpAstHash.toNode((object[])node[1]);
+                return new object[] {
+                NodeType.METHODS_CALL,
+                new object[]{
+                    (string)op2[0],
+                    op1,
+                    (object[])op2[1],
+                    (object[])op2[2]
+                }
+            };
+        });
+        */
+        static readonly Parser<object[]> EXP_CLASS_CALL = SIMPLE_EXP;
+
+        // .
+        static readonly Parser<object[]> EXP_METHOD_CALL = OperandsChainCallStart(Parse.String("."), EXP_CLASS_CALL, METHOD_CALL, (dot, op1, op2) =>
+        {
+            return new object[] {
+                NodeType.METHODS_CALL,
+                new object[]{
+                    (string)op2[0],
+                    op1,
+                    (object[])op2[1],
+                    (object[])op2[2]
+                }
+            };
+        });
+
+        // []
+        static readonly Parser<object[]> ARRAY_AT = from expr in EXP_METHOD_CALL
+                                                                                   from arg in STMT.Contained(Parse.Char('['), Parse.Char(']'))
+                                                                                   select new object[] { 
+                                                                                                  NodeType.METHODS_CALL,
+                                                                                                  new object[] { "([])", expr, new object[]{ arg }, null }
+                                                                                              };
+        static readonly Parser<object[]> EXP_ARRAY_AT = (ARRAY_AT).Or(EXP_METHOD_CALL);
+        // ２項演算子一覧
+        static readonly Parser<object[]> CHAIN_EXPRS = makeExpressions(operandTable, EXP_ARRAY_AT);
+        // TODO: 代入演算子作成
+        // =(+=, -= ... )
+        static readonly Parser<object[]> EXP_ASSIGNMENT = CHAIN_EXPRS;
+        protected static readonly Parser<object[]> EXP_EQUAL_RAW = from varname in TotalVarname
+                                                                                                     from op in Parse.String("=").Text().Token()
+                                                                                                     from v in EXP_ASSIGNMENT
+                                                                                                     select new object[] { 
+                                                                                                         NodeType.METHODS_CALL,
+                                                                                                         new object[] {
+                                                                                                             (string)op,
+                                                                                                             new object[]{ NodeType.SYMBOL, varname },
+                                                                                                             new object[]{ v },
+                                                                                                             null
+                                                                                                         }
+                                                                                                     };
+        protected static readonly Parser<object[]> EXP_EQUAL = EXP_EQUAL_RAW.Or(CHAIN_EXPRS);
+
+        static readonly Parser<object[]> DEFINE_FUNCTION = makeDefineFunctionParser();
+        static readonly Parser<object[]> IF_STMT = makeIfStmtParser();
+        static readonly Parser<object[]> CASE_STMT = makeCaseStmtParser();
+
+        static Parser<object[]> makeDefineFunctionParser()
+        {
+            return from a in Parse.String("def").Token()
+                       from fname in Fname
+                       from args in ARG_VARNAMES.Contained(Parse.String("("), Parse.String(")"))
+                       from stmts in STMTS
+                       from c in Parse.String("end")
+                       select new object[]{
+                           NodeType.METHODS_CALL,
+                           new object[] {
+                               "bind",
+                               new object[]{
+                                   NodeType.LAMBDA,
+                                   new object[] { args, true, stmts }
+                               },
+                               new object[]{ new object[]{ NodeType.SYMBOL, fname } },
+                               null
+                           },
+                            null
+                       };
+        }
+
+        // if Statements
+        static Parser<object[]> makeIfStmtParser()
+        {
+            Parser<object[]> IF_EXPR = Parse.Ref(() => STMT.Contained(Parse.Char('('), Parse.Char(')')).Or(
+                                                                                   from stmt in STMT
+                                                                                   from b in Term
+                                                                                   select stmt));
+            Parser<object[]> IF_START = (from _if in Parse.String("if")
+                                                                                       from expr in IF_EXPR
+                                                                                       select expr).Token();
+            Parser<object[]> ELSE_STMTS = 
+                                                          from els in Parse.String("else").Token()
+                                                          from stmts in STMTS
+                                                          select stmts;
+            Parser<object[]> ELIF_STMTS = from els in Parse.String("elif")
+                                                                                         from expr in IF_EXPR
+                                                                                         from stmts in STMTS
+                                                                                         select new object[] { expr, stmts };
+            Parser<string> IfEnd = Parse.String("end").Text().Token();
+            Parser<object[]> IF_STMT = 
+                                                   from expr in IF_START
+                                                   from stmts1 in STMTS
+                                                   from stmts2 in
+                                                       (from stmts in ELSE_STMTS
+                                                        from c in IfEnd
+                                                        select stmts).Or(
+                                                                 from c in IfEnd
+                                                                 select new object[] { })
+                                                   select new object[]{
+                                                                                    NodeType.FUNCALL,
+                                                                                    new object[]{ 
+                                                                                        "__if",
+                                                                                        new object[]{
+                                                                                            expr,
+                                                                                            new object[]{ NodeType.BLOCK, new object[]{ new string[]{}, true, stmts1 } },
+                                                                                            new object[]{ NodeType.BLOCK, new object[]{ new string[]{}, true, stmts2 } }
+                                                                                        },
+                                                                                        null
+                                                                                    },
+                                                                                    null
+                                                                                };
+            return IF_STMT;
+        }
+
+        static Parser<object[]> makeCaseStmtParser()
+        {
+            Parser<object[]> CASE_START = 
+                                                    from _case in Parse.String("case").Text().Token()
+                                                    from stmt in STMT
+                                                    from t in Term
+                                                    select stmt;
+            Parser<object[]> WHEN_STMT = 
+                                                      from a in Parse.String("when").Text().Token()
+                                                      from expr in STMT
+                                                      from t in Term
+                                                      from stmts in STMTS
+                                                      select new object[] {
+                                                          expr,
+                                                          new object[] {
+                                                              NodeType.BLOCK,
+                                                              new object[]{ new string[]{}, true, stmts }
+                                                          }
+                                                      };
+            Parser<object[]> CASE_ELSE_STMTS = from _else in Parse.String("else").Token()
+                                                                                                 from stmts in STMTS
+                                                                                                 select new object[] {
+                                                                                                        NodeType.BLOCK,
+                                                                                                        new object[]{ new string[]{}, true, stmts }
+                                                                                                 };
+            Parser<string> CaseEnd = Parse.String("end").Text().Token();
+            Parser<object[]> CASE_STMT1 = 
+                                                   from expr in CASE_START
+                                                   from _end in CaseEnd
+                                                   select new object[]{
+                                                       NodeType.FUNCALL,
+                                                       new object[]{ 
+                                                            "cond",
+                                                            new object[]{
+                                                                new object[] { NodeType.BOOL, "true" },
+                                                                new object[] { NodeType.NL, "nl" },
+                                                            },
+                                                            null
+                                                        }
+                                                   };
+            Parser<object[]> CASE_STMT2 =
+                                                    from expr in CASE_START
+                                                    from elseblock in CASE_ELSE_STMTS
+                                                    from _end in CaseEnd
+                                                    select makeCaseStmtObject(expr, null, elseblock);
+            Parser<object[]> CASE_STMT3 =
+                                                  from expr in CASE_START
+                                                  from pairs in WHEN_STMT.Many()
+                                                  from _end in CaseEnd
+                                                  select makeCaseStmtObject(expr, pairs.ToList(), null);
+            Parser<object[]> CASE_STMT4 = 
+                                                   from expr in CASE_START
+                                                   from pairs in WHEN_STMT.Many()
+                                                   from elseblock in CASE_ELSE_STMTS
+                                                   from _end in CaseEnd
+                                                  select makeCaseStmtObject(expr, pairs.ToList(), elseblock);
+
+            Parser<object[]> CASE_STMT = CASE_STMT1.Or(CASE_STMT2).Or(CASE_STMT3).Or(CASE_STMT4);
+            return CASE_STMT;
+        }
+
+        static object[] makeCaseStmtObject(object[] expr, List<object[]> pairs, object[] elseblock)
+        {
+            List<object[]> pairs2 = null;
+            if (pairs == null) {
+                pairs2 = new List<object[]>();
+            }
+            else
+            {
+                pairs2 = pairs.Select((pair) => new object[]{
+                                                                new object[]{
+                                                                    NodeType.METHODS_CALL,
+                                                                    new object[]{
+                                                                        "==",
+                                                                        expr,
+                                                                        new object[]{ pair[0] },
+                                                                        null
+                                                                    },
+                                                                    null
+                                                                },
+                                                                pair[1],
+                                                            }).Aggregate(new List<object[]>(), (list, pair) =>
+                                                           {
+                                                               list.Add((object[])pair[0]);
+                                                               list.Add((object[])pair[1]);
+                                                               return list;
+                                                           });
+            }
+
+            if (null != elseblock)
+            {
+                pairs2.Add(new object[] { NodeType.BOOL, "true" });
+                pairs2.Add(elseblock);
+            }
+
+            return new object[] {
+                        NodeType.FUNCALL,
+                        new object[]{ 
+                            "cond",
+                            pairs2.ToArray(),
+                            null
+                        },
+                        null
+                    };
+        }
+
+        static Parser<object[]> makeExpressions(List<object[]> table, Parser<object[]> start)
+        {
+            foreach (object[] row in table.ToArray())
+            {
+                start = makeExpressionOperand(row, start);
+            }
+            return start;
+        }
+
+        static Parser<object[]> makeExpressionOperand(object[] row, Parser<object[]> start)
+        {
+            string[] operands = (string[])(row.Last());
+            switch ((OperandType)(row.First()))
+            {
+                case OperandType.CHARIN_OPERATOR:
+                    return makeChainOperator(operands, start);
+                case OperandType.LEFT_UNARY:
+                    return makeLeftUnary(operands, start);
+                case OperandType.RIGHT_UNARY:
+                    return makeRightUnary(operands, start);
                 default:
                     return null;
             }
         }
 
-        public static Ast.LpAstNode createNode(string ctx)
+        static Parser<object[]> makeChainOperator(string[] operators, Parser<object[]> beforeExpr)
         {
-            var str = Sprache.ParserExtensions.Parse(Program, ctx);
-
-            Console.WriteLine(str);
-            var pobj = PROGRAM.Parse(str);
-            var node = toNode(pobj);
-            return node;
+            return Parse.ChainOperator(
+                operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2)),
+                beforeExpr,
+                (op, a, b) => new object[]{
+                    NodeType.METHODS_CALL,
+                    new object[]{ op, a, new object[]{b}, null }
+                });
         }
-         */
+
+        static Parser<object[]> makeLeftUnary(string[] operators, Parser<object[]> expr)
+        {
+            return (from h in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
+                        from v in expr
+                        select new object[]{
+                            NodeType.METHODS_CALL,
+                            new object[]{ v, h+"@" },
+                            null
+                        }).Or(expr);
+        }
+
+        static Parser<object[]> makeRightUnary(string[] operators, Parser<object[]> expr)
+        {
+            return (from v in expr
+                        from t in operators.Select(op => Operator(op)).Aggregate((op1, op2) => op1.Or(op2))
+                        select new object[]{
+                               NodeType.METHODS_CALL,
+                               new object[]{ v, "@"+t },
+                               null
+                        }).Or(expr);
+        }
+
+        static Parser<string> Operator(string operand)
+        {
+            return Parse.String(operand).Token().Text();
+        }
+
+        public static void regenerateParser()
+        {
+            PRIMARY_PARSERS = new List<Parser<object[]>>() { NL, NUMERIC, BOOL, SYMBOL, STRING, ARRAY, HASH, BLOCK, LAMBDA };
+            PRIMARY = makePrimaryParser();
+            EXPR_PARSERS = new List<Parser<object[]>>() { EXP_EQUAL };
+            EXPR = makeExprParser();
+            METHODS_CALL = makeMethodsCallParser();
+            STMT_PARSERS = new List<Parser<object[]>>() { DEFINE_FUNCTION, CASE_STMT, IF_STMT, EXPR };
+            STMT = makeStmtParser();
+            STMTS = makeStmtsParser();
+            PROGRAM = makeProgramParser();
+        }
+
+        public static Object.LpObject execute(string ctx)
+        {
+            regenerateParser();
+            /*
+            var pobj = PROGRAM.Parse(ctx);
+            Console.WriteLine(pobj);
+            var node = toNode(pobj);
+            Console.WriteLine(node);
+            */
+            var node = createNode(ctx);
+            var o = node.Evaluate();
+
+            return o;
+        }
     }
 }

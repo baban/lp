@@ -56,7 +56,8 @@ namespace LP.Object
             obj.methods["instance_eval"] = new LpMethod(new BinMethod(instance_eval), 1);
             obj.methods["methods"] = new LpMethod(new BinMethod(methods_), 0 );
             obj.methods["nil?"] = new LpMethod(new BinMethod(is_nil), 0 );
-            obj.methods["to_s"] = new LpMethod( new BinMethod(to_s), 0 );
+            obj.methods["to_bool"] = new LpMethod(new BinMethod(to_bool), 0);
+            obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
 
             // Lv1
             // TODO: blank?
@@ -312,6 +313,16 @@ namespace LP.Object
         protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             return LpString.initialize(self.ToString());
+        }
+
+        protected static LpObject to_bool(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            if(self.class_name=="Nl")
+                return LpBool.initialize(false);
+            if (self.class_name == "Bool" )
+                return LpBool.initialize((bool)self.boolValue);
+
+            return LpBool.initialize(true);
         }
 
         internal LpObject macrocall(string p, Ast.LpAstNode[] args, LpObject lpObject)

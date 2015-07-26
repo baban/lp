@@ -60,20 +60,7 @@ namespace LP
 
         public static Object.LpObject execute(string ctx)
         {
-            /*
-            Console.WriteLine(ctx);
-            var str = Program.Parse(ctx);
-            Console.WriteLine(str);
-            var pobj = PROGRAM.Parse(str);
-            Console.WriteLine(pobj);
-            var node = toNode(pobj);
-            Console.WriteLine(node);
-            */
-            var node = Parser.MainPerser.createNode(ctx);
-            //var node = createNode(ctx);
-            var o = node.Evaluate();
-
-            return o;
+            return Parser.MainPerser.execute(ctx);
         }
     }
 }

@@ -95,7 +95,7 @@ namespace LP.Object
         private static LpObject cond(LpObject self, LpObject[] args, LpObject block = null)
         {
             Func<LpObject, LpObject> fun = (stmt) => (stmt.class_name == "Block" || stmt.class_name == "Lambda") ? stmt.funcall("call", null) : stmt;
-            Func<LpObject, bool> test = (stmt) => (bool)fun(stmt).funcall("nil?", null, null).boolValue;
+            Func<LpObject, bool> test = (stmt) => (bool)fun(stmt).funcall("to_bool", null, null).boolValue;
 
             var args2 = args.First().arrayValues;
 

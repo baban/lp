@@ -88,7 +88,8 @@ namespace LP.Util
             foreach (var ctx in contextStack)
             {
                 var ret = ctx.varcall(name);
-                return ret;
+                if( ret != null )
+                    return ret;
             }
             throw new Error.NameError();
         }
