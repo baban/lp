@@ -8,35 +8,33 @@ namespace LP.Ast
 {
     class LpAstQuote : LpAstNode
     {
-        public LpAstQuote( string leaf )
-        {
-            LpAstNode node = LpParser.createNode(leaf);
-            ChildNodes = new List<LpAstNode>() { node };
-            this.Evaluate = DoEvaluate;
-        }
-
         public LpAstQuote( LpAstNode node )
         {
             ChildNodes = new List<LpAstNode>() { node };
             this.Evaluate = DoEvaluate;
-        }
-
-        public LpAstQuote(List<LpAstNode> nodes)
-        {
-            ChildNodes = nodes;
-            this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
         }
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
-            Object.LpObject ret = Object.LpNl.initialize();
-            ChildNodes.ForEach((node) => { ret = node.Evaluate(true); });
-            return ret;
+            return LP.Object.LpQuote.initialize( ChildNodes );
+        }
+
+        public new LpAstNode DoExpand()
+        {
+            ChildNodes = ChildNodes.Select((node) => node.Expand()).ToList();
+
+            return this;
         }
 
         public override string toSource(bool expand = false)
         {
             return string.Format("'{0}", string.Join("", ChildNodes.Select((node) => node.toSource(expand))));
+        }
+
+        public static LpAstQuote toNode(object[] node)
+        {
+            return new Ast.LpAstQuote(LpParser.toNode((object[])node));
         }
     }
 }

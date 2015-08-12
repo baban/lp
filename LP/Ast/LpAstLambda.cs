@@ -17,6 +17,7 @@ namespace LP.Ast
             this.loose = argLoose;
             ChildNodes = nodes;
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
         }
 
         public override Object.LpObject DoEvaluate(bool expand = false)
@@ -24,7 +25,14 @@ namespace LP.Ast
             return Object.LpLambda.initialize(ChildNodes, args, loose);
         }
 
-        public override string toSource( bool expand=false )
+        public override LpAstNode DoExpand()
+        {
+            ChildNodes = ChildNodes.Select((node) => node.Expand()).ToList();
+
+            return this;
+        }
+
+        public override string toSource(bool expand = false)
         {
             return string.Format("->{0} do {1} end",
                 toSourceArgs(),

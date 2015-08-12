@@ -18,12 +18,13 @@ namespace LP.Ast
             this.args = args;
             this.block = blk;
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
         }
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
             var newArgs = args.Select((arg) => arg.DoEvaluate()).ToArray();
-            var newBlock = (this.block == null ? null : this.block.DoEvaluate());
+            var newBlock = (this.block == null ? null : this.block.DoEvaluate( expand ));
 
             // get context
             // 取得文脈から関数、macro検索
@@ -69,7 +70,14 @@ namespace LP.Ast
             }
         }
 
-        public override string toSource( bool expand=false )
+        public new LpAstNode DoExpand()
+        {
+            ChildNodes = ChildNodes.Select((node) => node.Expand()).ToList();
+
+            return this;
+        }
+
+        public override string toSource(bool expand = false)
         {
             return string.Format("{0}({1}){2}",
                 this.name,

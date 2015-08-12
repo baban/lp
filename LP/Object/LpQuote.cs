@@ -10,20 +10,22 @@ namespace LP.Object
     {
         static string className = "Quote";
 
-        public static LpObject initialize()
+        public static LpObject initialize(List<Ast.LpAstNode> nodes)
         {
-            return init("");
+            return init(nodes);
         }
 
-        public static LpObject initialize(string s)
-        {
-            return init(s);
-        }
-
-        private static LpObject init( string s )
+        private static LpObject init(List<Ast.LpAstNode> nodes)
         {
             LpObject obj = createClassTemplate();
-            obj.statements = new List<Ast.LpAstNode>() { LpParser.createNode(s) };
+            obj.statements = nodes;
+            return obj;
+        }
+
+        private static LpObject init(Ast.LpAstNode node)
+        {
+            LpObject obj = createClassTemplate();
+            obj.statements = new List<Ast.LpAstNode>(){node};
             return obj;
         }
 

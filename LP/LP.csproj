@@ -92,6 +92,8 @@
     <Compile Include="Ast\LpAstLeaf.cs" />
     <Compile Include="Ast\LpAstMethodCall.cs" />
     <Compile Include="Ast\LpAstNode.cs" />
+    <Compile Include="Ast\LpAstQuasiQuote.cs" />
+    <Compile Include="Ast\LpAstQuestionQuote.cs" />
     <Compile Include="Ast\LpAstQuote.cs" />
     <Compile Include="Ast\LpAstStmts.cs" />
     <Compile Include="Ast\LpAstFuncall.cs" />

@@ -12,14 +12,25 @@ namespace LP.Ast
         {
             ChildNodes = nodes;
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
         }
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
-            return Object.LpArray.initialize( ChildNodes.Select( (node) => node.DoEvaluate() ).ToArray() );
+            return Object.LpArray.initialize(ChildNodes.Select((node) => node.DoEvaluate(expand)).ToArray());
         }
 
-        public override string toSource( bool expand=false )
+        public override LpAstNode DoExpand()
+        {
+            ChildNodes = ChildNodes.Select((node) =>
+            {
+                return node.DoExpand();
+            }).ToList();
+
+            return this;
+        }
+
+        public override string toSource(bool expand = false)
         {
             return string.Format("[{0}]", string.Join(", ", ChildNodes.Select((node) => node.toSource(expand))));
         }

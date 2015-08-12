@@ -26,11 +26,14 @@ namespace LP.Ast
 
         public void init() {
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
             this.Source = toSource;
         }
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
+            if (expand) return base.DoEvaluate(expand);
+
             switch (type) {
                 case "NL":
                     return Object.LpNl.initialize();
@@ -46,12 +49,6 @@ namespace LP.Ast
                     return Object.LpString.initialize( leaf );
                 case "SYMBOL":
                     return Object.LpSymbol.initialize( leaf );
-                case "QUOTE":
-                    return Object.LpQuote.initialize( leaf );
-                case "QUASI_QUOTE":
-                    return Object.LpQuasiQuote.initialize(LpParser.toNode(Parser.MainPerser.PROGRAM.Parse(leaf)).toSource(expand));
-                case "QUESTION_QUOTE":
-                    return LpParser.execute(leaf).funcall("to_s", null, null);
                 case "VARIABLE_CALL":
                     return Util.LpIndexer.varcall(leaf);
                 case "GLOBAL_VARIABLE_CALL":
@@ -66,6 +63,8 @@ namespace LP.Ast
         public override string toSource( bool expand=false )
         {
             switch (type) {
+                case "SYMBOL":
+                    return string.Format("':{0}", leaf);
                 case "QUOTE":
                     return string.Format("'{0}", leaf);
                 case "QUASI_QUOTE":
@@ -97,6 +96,10 @@ namespace LP.Ast
                 default:
                     return null;
             }
+        }
+
+        public override LpAstNode DoExpand() {
+            return this;
         }
     }
 }

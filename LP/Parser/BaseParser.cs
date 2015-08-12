@@ -160,6 +160,17 @@ namespace LP.Parser
                                                                                from blk in BLOCK_STMT.Token()
                                                                                select new object[] { NodeType.LAMBDA, blk };
 
+        // Macro Values
+        static readonly Parser<object[]> QUOTE = from qmark in Parse.String("'").Text()
+                                                                             from expr in EXPR
+                                                                             select new object[]{ NodeType.QUOTE, expr };
+        static readonly Parser<object[]> QUASI_QUOTE = from qmark in Parse.String("`").Text()
+                                                                                    from expr in EXPR
+                                                                                    select new object[] { NodeType.QUASI_QUOTE, expr };
+        static readonly Parser<object[]> QUESTION_QUOTE = from qmark in Parse.String("?").Text()
+                                                                                        from expr in EXPR
+                                                                                        select new object[] { NodeType.QUESTION_QUOTE, expr };
+
         protected static readonly Parser<object[]> EXP_VAL = Parse.Ref(() => STMT).Contained(Parse.Char('('), Parse.Char(')'));
         static readonly Parser<object[]> ARGS = from args in Parse.Ref( ()=> STMT ).DelimitedBy(Parse.String(",").Token())
                                                                           select args.ToArray();
@@ -185,8 +196,7 @@ namespace LP.Parser
 
         protected static readonly Parser<object[]> VARCALL = GLOBAL_VARIABLE_CALL.Or(INSTANCE_VARIABLE_CALL).Or(VARIABLE_CALL);
 
-        //public static readonly Parser<object[]> PRIMARY = new Parser<object[]>[] { NL, NUMERIC, BOOL, STRING, SYMBOL, ARRAY, HASH, LAMBDA, BLOCK, QUOTE, QUASI_QUOTE, QUESTION_QUOTE }.Aggregate((seed, nxt) => seed.Or(nxt));
-        protected static List<Parser<object[]>> PRIMARY_PARSERS = new List<Parser<object[]>>() { NL, NUMERIC, BOOL, SYMBOL, STRING, ARRAY, HASH, BLOCK, LAMBDA };
+        protected static List<Parser<object[]>> PRIMARY_PARSERS = new List<Parser<object[]>>() { NL, NUMERIC, BOOL, SYMBOL, STRING, ARRAY, HASH, BLOCK, LAMBDA, QUOTE, QUASI_QUOTE, QUESTION_QUOTE };
         protected static Parser<object[]> PRIMARY = PRIMARY_PARSERS.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         protected static List<Parser<object[]>> EXPR_PARSERS = new List<Parser<object[]>>() { EXP_VAL, PRIMARY, FUNCALL, VARCALL };
@@ -288,11 +298,11 @@ namespace LP.Parser
                 case NodeType.INSTANCE_VARIABLE_CALL:
                     return Ast.LpAstLeaf.toNode((string)node[1], "INSTANCE_VARIABLE_CALL");
                 case NodeType.QUOTE:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "QUOTE");
+                    return Ast.LpAstQuote.toNode((object[])node[1]);
                 case NodeType.QUASI_QUOTE:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "QUASI_QUOTE");
+                    return Ast.LpAstQuasiQuote.toNode((object[])node[1]);
                 case NodeType.QUESTION_QUOTE:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "QUESTION_QUOTE");
+                    return Ast.LpAstQuestionQuote.toNode((object[])node[1]);
                 case NodeType.FUNCALL:
                     return Ast.LpAstFuncall.toNode((object[])node[1]);
                 case NodeType.LAMBDA:

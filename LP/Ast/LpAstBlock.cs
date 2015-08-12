@@ -20,6 +20,7 @@ namespace LP.Ast
         public void init()
         {
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
             this.Source = toSource;
         }
 
@@ -28,7 +29,14 @@ namespace LP.Ast
             return Object.LpBlock.initialize( ChildNodes, args );
         }
 
-        public override string toSource( bool expand=false )
+        public override LpAstNode DoExpand()
+        {
+            ChildNodes = ChildNodes.Select((node) => node.DoExpand()).ToList();
+
+            return this;
+        }
+
+        public override string toSource(bool expand = false)
         {
             return string.Format("do {0}{1} end",
                 toSourceArgs(),

@@ -10,37 +10,6 @@ namespace LP.Parser
     class MainPerser : BaseParser
     {
         /*
-        // Array, Hash
-        static readonly Parser<string[]> AssocVal = from k in Parse.Ref(() => Stmt)
-                                                    from sps in Parse.Char(':').Token()
-                                                    from s in Parse.Ref(() => Stmt)
-                                                    select new string[] { k, s };
-
-        static readonly Parser<string[]> Assoc = (from sep in Parse.Char(',').Token()
-                                                  from kv in AssocVal
-                                                  select kv).Or(AssocVal);
-
-        static readonly Parser<string[]> Assocs = from as1 in AssocVal
-                                                  from ass in
-                                                      (from dt in Parse.Char(',').Token()
-                                                       from pas in AssocVal
-                                                       select pas).Many()
-                                                  select new string[][] { as1 }.Concat(ass).Select((pair) => pair[0] + " : " + pair[1]).ToArray();
-
-        static readonly Parser<string> Hash = from a in Parse.String("{").Text().Token()
-                                              from pairs in Assoc.Many()
-                                              from b in Parse.String("}").Text().Token()
-                                              select a + string.Join(",", pairs.Select((pair) => pair[0] + " : " + pair[1])) + b;
-
-        // Macro Values
-        static readonly Parser<string> Quote = from qmark in Parse.String("'").Text()
-                                               from idf in Expr
-                                               select qmark + idf;
-
-        static readonly Parser<string> QuasiQuote = from qmark in Parse.String("`").Text()
-                                                    from idf in Expr
-                                                    select qmark + idf;
-
         static readonly Parser<string> QuestionQuote = from qmark in Parse.String("?").Text()
                                                        from idf in ExpVal
                                                        select qmark + idf;

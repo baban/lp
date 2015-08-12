@@ -15,6 +15,7 @@ namespace LP.Ast
             this.pairs = pairs;
 
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
         }
 
         public override Object.LpObject DoEvaluate(bool expand = false)
@@ -23,7 +24,17 @@ namespace LP.Ast
             return ret;
         }
 
-        public override string toSource( bool expand=false )
+        public override LpAstNode DoExpand()
+        {
+            pairs = pairs.Select((pair) => {
+                pair[0] = pair[0].DoExpand();
+                pair[1] = pair[1].DoExpand();
+                return pair;
+            }  ).ToList();
+            return this;
+        }
+
+        public override string toSource(bool expand = false)
         {
             return "{ " +
                 string.Join(", ", pairs.Select((pair) => {

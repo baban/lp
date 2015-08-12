@@ -11,16 +11,24 @@ namespace LP.Ast
         public LpAstStmts( List<LpAstNode> nodes ){
             ChildNodes = nodes;
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
         }
 
         public override Object.LpObject DoEvaluate(bool expand = false)
         {
             Object.LpObject ret = Object.LpNl.initialize();
-            ChildNodes.ForEach((node) =>{ ret = node.Evaluate(true); });
+            ChildNodes.ForEach((node) => { ret = node.Evaluate(expand); });
             return ret;
         }
 
-        public override string toSource( bool expand=false )
+        public override LpAstNode DoExpand()
+        {
+            ChildNodes = ChildNodes.Select((node) => node.Expand()).ToList();
+
+            return this;
+        }
+
+        public override string toSource(bool expand = false)
         {
             return string.Join("; ", ChildNodes.Select((node) => node.toSource(expand)));
         }

@@ -20,18 +20,50 @@ namespace LP.Object
 
         public static LpObject initialize()
         {
-            return init("");
+            return init();
         }
 
-        public static LpObject initialize(string s)
+        public static LpObject initialize(List<Ast.LpAstNode> nodes) {
+            return init(nodes);
+        }
+
+        public static Ast.LpAstNode castAndExpand(Ast.LpAstNode node)
         {
-            return init(s);
+            var leaf = node as Ast.LpAstLeaf;
+            if (leaf != null)
+            {
+                return leaf.DoExpand();
+            }
+
+            var questionQuote = node as Ast.LpAstQuestionQuote;
+            if (questionQuote != null)
+            {
+                return questionQuote.DoExpand();
+            }
+
+            var methodNode = node as Ast.LpAstMethodCall;
+            if (methodNode != null)
+            {
+                return methodNode.DoExpand();
+            }
+
+            return node.DoExpand();
         }
 
-        private static LpObject init(string s)
+        //`(?recv).times(?*args)
+        // `?7 // '7
+        // `?a // a
+        //  `(a+?b)
+        private static LpObject init(List<Ast.LpAstNode> nodes)
+        {
+            LpObject obj = init();
+            obj.statements = nodes.Select((node) => castAndExpand(node) ).ToList();
+            return obj;
+        }
+
+        private static LpObject init()
         {
             LpObject obj = createClassTemplate();
-            obj.statements = new List<Ast.LpAstNode>() { LpParser.createNode(s) };
             return obj;
         }
 

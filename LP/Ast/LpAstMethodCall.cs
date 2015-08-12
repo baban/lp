@@ -27,6 +27,7 @@ namespace LP.Ast
         public void init()
         {
             this.Evaluate = DoEvaluate;
+            this.Expand = DoExpand;
             this.Source = toSource;
         }
 
@@ -50,7 +51,17 @@ namespace LP.Ast
             }
         }
 
-        public override string toSource( bool expand=false )
+        public override LpAstNode DoExpand()
+        {
+            lft = lft.DoExpand();
+            args = args.Select((arg) => arg.DoExpand()).ToArray();
+            if( block != null )
+                block = block.DoExpand();
+
+            return this;
+        }
+
+        public override string toSource(bool expand = false)
         {
             return string.Format("{0}.{1}({2}){3}",
                 lft.toSource(),
