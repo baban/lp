@@ -18,7 +18,7 @@ namespace LP.Ast
             this.Expand = DoExpand;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
             Object.LpObject ret = Object.LpHash.initialize( this.pairs );
             return ret;
@@ -34,11 +34,11 @@ namespace LP.Ast
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
             return "{ " +
                 string.Join(", ", pairs.Select((pair) => {
-                    return string.Join(" : ", pair.Select((node) => node.toSource(expand)));
+                    return string.Join(" : ", pair.Select((node) => node.toSource()));
                 }).ToArray() ) +
                    " }";
         }

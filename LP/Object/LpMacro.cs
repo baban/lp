@@ -74,7 +74,7 @@ namespace LP.Object
             LpObject ret = Object.LpNl.initialize();
             foreach (Ast.LpAstNode stmt in self.statements)
             {
-                ret = stmt.Evaluate(true);
+                ret = stmt.Evaluate();
                 if (ret.class_name == "Quote" || ret.class_name == "QuasiQuote")
                     ret = LpParser.execute(ret.stringValue);
             }

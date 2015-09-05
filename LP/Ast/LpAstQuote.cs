@@ -15,21 +15,19 @@ namespace LP.Ast
             this.Expand = DoExpand;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
             return LP.Object.LpQuote.initialize( ChildNodes );
         }
 
-        public new LpAstNode DoExpand()
+        public override LpAstNode DoExpand()
         {
-            ChildNodes = ChildNodes.Select((node) => node.Expand()).ToList();
-
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
-            return string.Format("'{0}", string.Join("", ChildNodes.Select((node) => node.toSource(expand))));
+            return string.Format("'{0}", string.Join("", ChildNodes.Select((node) => node.toSource())));
         }
 
         public static LpAstQuote toNode(object[] node)

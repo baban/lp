@@ -30,10 +30,8 @@ namespace LP.Ast
             this.Source = toSource;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
-            if (expand) return base.DoEvaluate(expand);
-
             switch (type) {
                 case "NL":
                     return Object.LpNl.initialize();
@@ -60,7 +58,7 @@ namespace LP.Ast
             }
         }
         
-        public override string toSource( bool expand=false )
+        public override string toSource()
         {
             switch (type) {
                 case "SYMBOL":
@@ -70,9 +68,7 @@ namespace LP.Ast
                 case "QUASI_QUOTE":
                     return string.Format("`{0}", leaf);
                 case "QUESTION_QUOTE":
-                    return expand ?
-                        LpParser.execute(leaf).funcall("to_s",null,null).stringValue :
-                        string.Format("?{0}", leaf);
+                    return string.Format("?{0}", leaf);
                 default:
                     return leaf;
             }

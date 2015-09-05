@@ -20,7 +20,7 @@ namespace LP.Ast
             this.Expand = DoExpand;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
             return Object.LpLambda.initialize(ChildNodes, args, loose);
         }
@@ -32,11 +32,11 @@ namespace LP.Ast
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
             return string.Format("->{0} do {1} end",
                 toSourceArgs(),
-                string.Join("; ", ChildNodes.Select((node) => node.toSource(expand))));
+                string.Join("; ", ChildNodes.Select((node) => node.toSource())));
         }
 
         private string toSourceArgs()

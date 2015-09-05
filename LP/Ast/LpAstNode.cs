@@ -12,11 +12,11 @@ namespace LP.Ast
         public List<LpAstNode> ChildNodes = new List<LpAstNode>();
         public Object.LpObject Leaf = null;
 
-        public delegate Object.LpObject EvaluateMethod(bool expand = false);
-        public delegate LpAstNode ExpandMethod();
+        public delegate Object.LpObject EvaluateMethod();
         public EvaluateMethod Evaluate;
+        public delegate LpAstNode ExpandMethod();
         public ExpandMethod Expand;
-        public delegate string toSourceMethod(bool expand);
+        public delegate string toSourceMethod();
         public toSourceMethod Source;
 
         public LpAstNode()
@@ -26,12 +26,12 @@ namespace LP.Ast
             this.Source = toSource;
         }
 
-        public virtual Object.LpObject DoEvaluate(bool expand = false)
+        public virtual Object.LpObject DoEvaluate()
         {
             var ret = LP.Object.LpNl.initialize();
             foreach (Ast.LpAstNode stmt in ChildNodes)
             {
-                ret = stmt.Evaluate(false);
+                ret = stmt.Evaluate();
             }
             return ret;
         }
@@ -41,7 +41,7 @@ namespace LP.Ast
             return this;
         }
 
-        public virtual string toSource( bool expand = false )
+        public virtual string toSource()
         {
             return null;
         }

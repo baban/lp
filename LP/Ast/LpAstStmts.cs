@@ -14,10 +14,10 @@ namespace LP.Ast
             this.Expand = DoExpand;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
             Object.LpObject ret = Object.LpNl.initialize();
-            ChildNodes.ForEach((node) => { ret = node.Evaluate(expand); });
+            ChildNodes.ForEach((node) => { ret = node.Evaluate(); });
             return ret;
         }
 
@@ -28,9 +28,9 @@ namespace LP.Ast
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
-            return string.Join("; ", ChildNodes.Select((node) => node.toSource(expand)));
+            return string.Join("; ", ChildNodes.Select((node) => node.toSource()));
         }
 
         public static LpAstStmts toNode( List<object[]> nodes ) {

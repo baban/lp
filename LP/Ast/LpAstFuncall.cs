@@ -21,10 +21,10 @@ namespace LP.Ast
             this.Expand = DoExpand;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
             var newArgs = args.Select((arg) => arg.DoEvaluate()).ToArray();
-            var newBlock = (this.block == null ? null : this.block.DoEvaluate( expand ));
+            var newBlock = (this.block == null ? null : this.block.DoEvaluate());
 
             // get context
             // 取得文脈から関数、macro検索
@@ -70,25 +70,25 @@ namespace LP.Ast
             }
         }
 
-        public new LpAstNode DoExpand()
+        public override LpAstNode DoExpand()
         {
             ChildNodes = ChildNodes.Select((node) => node.Expand()).ToList();
 
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
             return string.Format("{0}({1}){2}",
                 this.name,
-                string.Join(", ", args.Select((node) => node.toSource(expand)).ToArray()),
-                toSourceBlock(expand));
+                string.Join(", ", args.Select((node) => node.toSource()).ToArray()),
+                toSourceBlock());
         }
 
-        private string toSourceBlock( bool expand )
+        private string toSourceBlock()
         {
             if (this.block == null) return "";
-            return " " + this.block.toSource(expand);
+            return " " + this.block.toSource();
         }
 
         public static LpAstFuncall toNode(object[] vals)

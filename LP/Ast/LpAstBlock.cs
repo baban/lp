@@ -24,7 +24,7 @@ namespace LP.Ast
             this.Source = toSource;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
             return Object.LpBlock.initialize( ChildNodes, args );
         }
@@ -36,12 +36,11 @@ namespace LP.Ast
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
             return string.Format("do {0}{1} end",
                 toSourceArgs(),
-        
-                string.Join("; ", ChildNodes.Select((node) => node.toSource(expand))));
+                string.Join("; ", ChildNodes.Select((node) => node.toSource())));
         }
 
         private string toSourceArgs()

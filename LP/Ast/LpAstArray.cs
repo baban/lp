@@ -15,9 +15,9 @@ namespace LP.Ast
             this.Expand = DoExpand;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
-            return Object.LpArray.initialize(ChildNodes.Select((node) => node.DoEvaluate(expand)).ToArray());
+            return Object.LpArray.initialize(ChildNodes.Select((node) => node.DoEvaluate()).ToArray());
         }
 
         public override LpAstNode DoExpand()
@@ -30,9 +30,9 @@ namespace LP.Ast
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
-            return string.Format("[{0}]", string.Join(", ", ChildNodes.Select((node) => node.toSource(expand))));
+            return string.Format("[{0}]", string.Join(", ", ChildNodes.Select((node) => node.toSource())));
         }
 
         public static LpAstArray toNode(List<object[]> nodes)

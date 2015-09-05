@@ -31,7 +31,7 @@ namespace LP.Ast
             this.Source = toSource;
         }
 
-        public override Object.LpObject DoEvaluate(bool expand = false)
+        public override Object.LpObject DoEvaluate()
         {
             programStack.Push(this.name);
 
@@ -61,23 +61,23 @@ namespace LP.Ast
             return this;
         }
 
-        public override string toSource(bool expand = false)
+        public override string toSource()
         {
             return string.Format("{0}.{1}({2}){3}",
                 lft.toSource(),
                 this.name,
-                this.toSourceArgs(expand),
-                this.toSourceBlock(expand) );
+                this.toSourceArgs(),
+                this.toSourceBlock() );
         }
 
-        private string toSourceArgs(bool expand){
-            return string.Join(", ", this.args.Select((o) => o.toSource(expand)).ToArray());
+        private string toSourceArgs(){
+            return string.Join(", ", this.args.Select((o) => o.toSource()).ToArray());
         }
 
-        private string toSourceBlock(bool expand)
+        private string toSourceBlock()
         {
             if (this.block == null) return "";
-            return " "+this.block.toSource(expand);
+            return " "+this.block.toSource();
         }
 
         public static LpAstMethodCall toNode( object[] nodes ) {
