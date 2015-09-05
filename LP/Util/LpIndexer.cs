@@ -52,7 +52,7 @@ namespace LP.Util
         public static Object.LpObject getLatestClass()
         {
             foreach (var o in contextStack)
-                if (o.class_name == "Kernel" || o.class_name == "Class")
+                if (o.class_name != "Block" && o.class_name != "Lambda")
                     return o;
 
             return null;

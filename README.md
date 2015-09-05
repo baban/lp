@@ -10,9 +10,12 @@
 1.5 // 小数
 true // bool
 false
+:symbol // シンボル
 "文字列" // 文字列
 [1,1.5,true,"string"] // 配列
 { :a => 1, false => "hoge" } // ハッシュ
+'10  // クォート
+`10  // 準クォート
 ```
 
 ## 演算子
@@ -62,5 +65,15 @@ end
 ```
 def hoge(a, b=1, *c, &d)
    print(a)
+end
+```
+
+
+### クラス定義
+
+```
+class Hoge
+  def mage(a)
+  end
 end
 ```

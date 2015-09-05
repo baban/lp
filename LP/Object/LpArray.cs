@@ -68,6 +68,7 @@ namespace LP.Object
             obj.methods["push"] = new LpMethod(new BinMethod(push), 1);
             obj.methods["<<"] = new LpMethod( new BinMethod(push), 0 );
             obj.methods["at"] = new LpMethod( new BinMethod(at), 1 );
+            obj.methods["[]"] = new LpMethod(new BinMethod(at), 1);
             obj.methods["car"] = new LpMethod(new BinMethod(first), 0);
             obj.methods["first"] = new LpMethod( new BinMethod(first), 0 );
             obj.methods["size"] = new LpMethod( new BinMethod(len), 0 );

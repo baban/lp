@@ -72,7 +72,7 @@ namespace LP.Object
 
         public override string ToString()
         {
-            return string.Format("#<obj {0:x8}>", GetHashCode());
+            return string.Format("#<obj:{0:x8}>", GetHashCode());
         }
 
         public override int GetHashCode()

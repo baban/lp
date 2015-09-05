@@ -172,17 +172,15 @@ namespace LP.Parser
                                                                                         select new object[] { NodeType.QUESTION_QUOTE, expr };
 
         protected static readonly Parser<object[]> EXP_VAL = Parse.Ref(() => STMT).Contained(Parse.Char('('), Parse.Char(')'));
-        static readonly Parser<object[]> ARGS = from args in Parse.Ref( ()=> STMT ).DelimitedBy(Parse.String(",").Token())
+        static readonly Parser<object[]> ZERO_ARGS = from args in Parse.WhiteSpace.Many().DelimitedBy(Parse.String(",").Token())
+                                                                                     select new object[]{};
+        static readonly Parser<object[]> ARGS = from args in Parse.Ref(() => STMT).DelimitedBy(Parse.String(",").Token())
                                                                           select args.ToArray();
-        static readonly Parser<object[]> ARGS_CALL = ARGS.Contained(Parse.String("("),Parse.String(")"));
-        static readonly Parser<object[]> METHOD_CALL1 = from fname in Fname
+        static readonly Parser<object[]> ARGS_CALL = ARGS.Or(ZERO_ARGS).Contained(Parse.String("("), Parse.String(")"));
+        protected static readonly Parser<object[]> METHOD_CALL = from fname in Fname
                                                                                             from args in ARGS_CALL
-                                                                                            from blk in BLOCK.Token()
-                                                                                            select new object[] { fname, args, blk };
-        static readonly Parser<object[]> METHOD_CALL2 = from fname in Fname
-                                                                                            from args in ARGS_CALL
-                                                                                            select new object[] { fname, args, null };
-        protected static readonly Parser<object[]> METHOD_CALL = METHOD_CALL1.Or(METHOD_CALL2);
+                                                                                            from blk in BLOCK.Token().Optional()
+                                                                                            select new object[] { fname, args, blk.GetOrDefault() };
 
         protected static readonly Parser<object[]> FUNCALL = from fvals in METHOD_CALL
                                                                                                  select new object[] { NodeType.FUNCALL, fvals };
