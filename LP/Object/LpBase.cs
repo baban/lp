@@ -28,6 +28,8 @@ namespace LP.Object
         public List<LpObject> arrayValues = null;
         public Dictionary<LpObject, LpObject> hashValues = null;
         public Parser<object[]> parserValue = null;
+        public System.IO.StreamReader streamReader = null;
+        public System.IO.StreamWriter streamWriter = null;
 
         public bool is_macro = false;
         public List<Ast.LpAstNode> statements = null;

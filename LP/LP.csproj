@@ -98,6 +98,7 @@
     <Compile Include="Ast\LpAstStmts.cs" />
     <Compile Include="Ast\LpAstFuncall.cs" />
     <Compile Include="Error\LpArgumentError.cs" />
+    <Compile Include="Error\LpIOError.cs" />
     <Compile Include="Error\LpNoMethodError.cs" />
     <Compile Include="Error\LpSyntaxError.cs" />
     <Compile Include="Error\NameError.cs" />

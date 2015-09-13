@@ -168,9 +168,8 @@ namespace LP.Object
 
         private static LpObject open(LpObject self, LpObject[] args, LpObject block = null)
         {
-            // TODO: blockを与えられた時の処理がまだ
-            var code = readFile(args[0].stringValue);
-            return LpString.initialize(code);
+            var klass = classes["File"];
+            return klass.funcall("open",args,block);
         }
 
         private static LpObject load(LpObject self, LpObject[] args, LpObject block = null)
@@ -247,7 +246,8 @@ namespace LP.Object
         private static LpObject require(LpObject self, LpObject[] args, LpObject block = null)
         {
             // TODO: load path から使えるものを順番に捜す
-            var code = readFile(args[0].stringValue);
+            var filename = args[0].stringValue;
+            var code = readFile(filename);
             LpParser.execute(code);
             return LpNl.initialize();
         }

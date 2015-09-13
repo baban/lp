@@ -97,7 +97,7 @@ namespace LP.Ast
             return new Ast.LpAstFuncall(
                 (string)vals[0],
                 (Ast.LpAstNode[])((object[])vals[1]).Select((n) => LpParser.toNode((object[])n)).ToArray(),
-                LpParser.toNode(block));
+                (block == null) ? null : LpParser.toNode(block));
         }
     }
 }

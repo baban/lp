@@ -57,7 +57,6 @@ namespace LP.Object
         private static void setMethods(LpObject obj)
         {
             // TODO: new
-            // TODO: []
             // TODO: cdr
             // TODO: each
             // TODO: map

@@ -118,7 +118,7 @@ namespace LP.Object
 
         protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var str = string.Format("#<Class:{0:x8}>", self.GetHashCode());
+            var str = string.Format("#<{0}:{1:x8}>", className, self.GetHashCode());
             return LpString.initialize(str);
         }
     }

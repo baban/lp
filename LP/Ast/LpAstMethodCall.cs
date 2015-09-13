@@ -88,7 +88,7 @@ namespace LP.Ast
                 (string)vals[0],
                 LpParser.toNode( (object[])vals[1] ),
                 (Ast.LpAstNode[])((object[])vals[2]).Select((n) => LpParser.toNode((object[])n)).ToArray(),
-                LpParser.toNode(block));
+                (block==null) ? null : LpParser.toNode(block));
         }
     }
 }
