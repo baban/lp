@@ -41,8 +41,9 @@ namespace LP.Object
             // TODO: retry
             // TODO: raise
             // TODO: abort
-            // TODO: self
+            obj.methods["self"] = new LpMethod(new BinMethod(self_),0);
             // TODO: block_given? // マクロで再現
+
             obj.methods["break"] = new LpMethod( new BinMethod(break_) );
             // TODO: caller
             obj.methods["exec"] = new LpMethod(new BinMethod(exec), 1);
@@ -56,6 +57,7 @@ namespace LP.Object
             // TODO: yield // マクロで再現
 
             // Lv1
+            obj.methods["self"] = new LpMethod(new BinMethod(self_), 0);
             obj.methods["print"] = new LpMethod(new BinMethod(print), 1);
             obj.methods["__if"] = new LpMethod(new BinMethod(if_), 3);
             obj.methods["if"] = new LpMethod(new BinMethod(if_), 3);
@@ -82,6 +84,12 @@ namespace LP.Object
 
             self.methods[dst.stringValue] = self.methods[src.stringValue];
             return LpNl.initialize();
+        }
+
+        private static LpObject self_(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var o = Util.LpIndexer.getLatestClass();
+            return o;
         }
 
         private static LpObject break_(LpObject self, LpObject[] args, LpObject block = null)
