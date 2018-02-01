@@ -326,6 +326,19 @@ namespace LP.Parser
 
         public static Ast.LpAstNode createNode(string ctx)
         {
+            Parser<string> Nl = Parse.Regex("nl").Named("Nl");
+            string filename = @"C:\Users\ba-n\test.txt";
+            System.IO.StreamReader sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
+            //var nl = Sprache.ParserExtensions.Parse(Nl, "nl");
+            var ipt = new Sprache.Input("nl");
+            //var nl = Sprache.ParserExtensions.Parse(Nl, ipt);
+            Parser<Sprache.Input> identifier =
+                from trailing in Parse.Regex("nl")
+                select new Sprache.Input("nl");
+
+            Console.WriteLine("----------------------------execute----------------------------");
+            //Console.WriteLine(nl);
+
             //Console.WriteLine(ctx);
             var pobj = Sprache.ParserExtensions.Parse(PROGRAM, ctx);
             var node = toNode(pobj);

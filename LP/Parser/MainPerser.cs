@@ -515,6 +515,8 @@ namespace LP.Parser
 
         public static Object.LpObject execute(string ctx)
         {
+            // IInputを使って、行番号を取得できるパーサーを使ってみるテスト。
+
             regenerateParser();
             /*
             var pobj = PROGRAM.Parse(ctx);

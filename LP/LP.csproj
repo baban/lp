@@ -72,6 +72,17 @@
     <Reference Include="CommandLine">
       <HintPath>.\CommandLine.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Dynamic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Debugging">
+      <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Scripting.Debugging.dll</HintPath>
+    </Reference>
     <Reference Include="Sprache, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Sprache.dll</HintPath>
@@ -136,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

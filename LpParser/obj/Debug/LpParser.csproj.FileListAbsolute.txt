@@ -1,0 +1,12 @@
+D:\repo\lp\LpParser\bin\Debug\LpParser.exe.config
+D:\repo\lp\LpParser\bin\Debug\LpParser.exe
+D:\repo\lp\LpParser\bin\Debug\LpParser.pdb
+D:\repo\lp\LpParser\obj\Debug\LpParser.csprojResolveAssemblyReference.cache
+D:\repo\lp\LpParser\obj\Debug\LpParser.exe
+D:\repo\lp\LpParser\obj\Debug\LpParser.pdb
+D:\repo\lp\LpParser\bin\Debug\Irony.dll
+D:\repo\lp\LpParser\bin\Debug\Irony.Interpreter.dll
+D:\repo\lp\LpParser\bin\Debug\Irony.pdb
+D:\repo\lp\LpParser\bin\Debug\Irony.xml
+D:\repo\lp\LpParser\bin\Debug\Irony.Interpreter.pdb
+D:\repo\lp\LpParser\bin\Debug\Irony.Interpreter.xml
