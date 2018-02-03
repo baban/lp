@@ -10,7 +10,7 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    public class NumbersNode : AstNode
+    public class ExprNode : AstNode
     {
         public AstNode Left { get; private set; }
         public AstNode Right { get; private set; }
@@ -28,9 +28,9 @@ namespace IronyParser.Node
         {
             thread.CurrentNode = this;
 
-            int[] result = new int[2];
-            result[0] = (int)Left.Evaluate(thread);
-            result[1] = (int)Right.Evaluate(thread);
+            string[] result = new string[2];
+            result[0] = Left.Evaluate(thread).ToString();
+            result[1] = Right.Evaluate(thread).ToString();
 
             thread.CurrentNode = Parent;
 
