@@ -16,14 +16,14 @@ namespace IronyParser.Parser
             var Num = new NumberLiteral("Number");
             var Str = new StringLiteral("String", "\"");
             var Id = new IdentifierTerminal("identifier");
-            var Primary = new NonTerminal("Primary");
+            var Primary = new NonTerminal("Primary", typeof(Node.LpNode));
 
             Primary.Rule = Num;
 
             KeyTerm Plus = ToTerm("+");
 
             NonTerminal Expr = new NonTerminal("Expr", typeof(Node.ExprNode));
-            Expr.Rule = Num + Plus + Num;
+            Expr.Rule = Primary + Plus + Primary;
 
             Root = Expr;
         }

@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Node\ExprNode.cs" />
+    <Compile Include="Node\LpNode.cs" />
     <Compile Include="Node\ValueLeaf.cs" />
     <Compile Include="Parser\LpParser.cs" />
     <Compile Include="Program.cs" />

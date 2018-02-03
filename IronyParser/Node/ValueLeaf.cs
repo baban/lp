@@ -12,17 +12,26 @@ namespace IronyParser.Node
 {
     class ValueLeaf : AstNode
     {
-
+        public AstNode Leaf { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
+
+            Console.WriteLine("Init");
+            //ParseTreeNodeList nodes = treeNode.GetMappedChildNodes();
+            //Leaf = AddChild("Leaf", nodes[0]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+
+            Console.WriteLine("DoEvaluate");
+            //string result = Leaf.Evaluate(thread).ToString();
+
             thread.CurrentNode = Parent;
-            return Evaluate(thread);
+
+            return "aaaa";
         }
     }
 }
