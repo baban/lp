@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Node\NumbersNode.cs" />
+    <Compile Include="Node\ValueLeaf.cs" />
     <Compile Include="Parser\LpParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
