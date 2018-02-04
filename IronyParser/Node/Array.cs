@@ -8,31 +8,34 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    public class Primary : AstNode
+    public class Array : AstNode
     {
-        public AstNode Node { get; private set; }
+        ParseTreeNodeList nodes = null;
+
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            var node = treeNode.GetMappedChildNodes().First();
-            Node = AddChild("Primary", node);
+            nodes = treeNode.GetMappedChildNodes();
+            if (nodes.Count > 2)
+            {
+                for (int i = 1; i < nodes.Count()-1; i++)
+                {
+                    AddChild("Node", nodes[i]);
+                }
+
+            }
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-
             string result = "";
-            if(Node is Symbol || Node is Array)
+            if (ChildNodes.Count() > 0)
             {
-                result = Node.Evaluate(thread).ToString();
-            } else
-            {
-                result = Node.ToString();
+                result = ChildNodes.Select((node) => node.Evaluate(thread).ToString()).Aggregate((a, b) => a + ", " + b).ToString();
             }
             thread.CurrentNode = Parent;
-
-            return result;
+            return "[" + result + "]";
         }
     }
 }

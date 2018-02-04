@@ -13,23 +13,24 @@ namespace IronyParser.Parser
     {
         public LpGrammer() : base(true)
         {
+            var ArrayStart = ToTerm("[");
+            var ArrayEnd   = ToTerm("]");
+            var Plus = ToTerm("+");
+
             var Num = new NumberLiteral("Number");
             var Str = new StringLiteral("String", "\"");
             var Id = new IdentifierTerminal("identifier");
             var Symbol = new NonTerminal("Symbol", typeof(Node.Symbol));
-            Symbol.Rule = ":" + Id;
+            var Array = new NonTerminal("Array", typeof(Node.Array));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
+            var Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
-            Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id;
-
-            KeyTerm Plus = ToTerm("+");
-
-            NonTerminal Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            Symbol.Rule = ":" + Id;
+            Array.Rule = ArrayStart + Num +  ArrayEnd | ArrayStart + ArrayEnd;
+            Primary.Rule = Num | Str | Array | "true" | "false" | "nl" | Symbol | Id;
             Expr.Rule = Primary + Plus + Primary;
-
-            NonTerminal Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
             Stmt.Rule = Expr;
-
             Root = Stmt;
         }
     }
