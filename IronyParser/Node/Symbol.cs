@@ -18,14 +18,15 @@ namespace IronyParser.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            node = treeNode.GetMappedChildNodes().First();
+            var nodes = treeNode.GetMappedChildNodes();
+            node = nodes.Last();
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
             thread.CurrentNode = Parent;
-            return "Symbvol";
+            return ":"+node.ToString();
         }
     }
 }
