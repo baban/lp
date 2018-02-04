@@ -13,7 +13,7 @@ namespace IronyParser
         static void Main(string[] args)
         {
             Console.WriteLine("Start");
-            var content = "123+456";
+            var content = "aaa+:ccc";
             ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
             var tree = app.Parser.Parse(content);
             

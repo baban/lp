@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -12,21 +10,30 @@ namespace IronyParser.Node
 {
     public class Primary : AstNode
     {
-        ParseTreeNodeList nodes;
+        public AstNode Node { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            nodes = treeNode.GetMappedChildNodes();
+            var node = treeNode.GetMappedChildNodes().First();
+            Node = AddChild("Primary", node);
         }
-
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
 
+            string result = "";
+            if(Node is Symbol)
+            {
+                Console.WriteLine(Node.GetType());
+                result = Node.Evaluate(thread).ToString();
+            } else
+            {
+                result = Node.ToString();
+            }
             thread.CurrentNode = Parent;
 
-            return nodes.First().ToString();
+            return result;
         }
     }
 }
