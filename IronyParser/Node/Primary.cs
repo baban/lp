@@ -10,15 +10,12 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    public class LpNode : AstNode
+    public class Primary : AstNode
     {
         ParseTreeNodeList nodes;
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            Console.WriteLine("treeNode");
-            Console.WriteLine(treeNode);
-            Console.WriteLine(Location);
             nodes = treeNode.GetMappedChildNodes();
         }
 

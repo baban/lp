@@ -15,7 +15,9 @@ namespace IronyParser
             Console.WriteLine("Start");
             var content = "123+456";
             ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
-            string result = (string)app.Evaluate(content);
+            var tree = app.Parser.Parse(content);
+            
+            string result = (string)app.Evaluate(tree);
             if (result == null)
             {
                 Console.WriteLine("null");
@@ -23,7 +25,7 @@ namespace IronyParser
             else
             {
                 Console.WriteLine(result);
-                Console.WriteLine("Left: {0}", result);
+                Console.WriteLine("result: {0}", result);
             }
             Console.WriteLine("Finish");
         }

@@ -10,7 +10,7 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    public class ExprNode : AstNode
+    public class Expr : AstNode
     {
         public AstNode Left { get; private set; }
         public AstNode Right { get; private set; }
@@ -18,7 +18,6 @@ namespace IronyParser.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            Console.WriteLine("Init");
 
             ParseTreeNodeList nodes = treeNode.GetMappedChildNodes();
             Left = AddChild("Left", nodes[0]);
@@ -27,11 +26,9 @@ namespace IronyParser.Node
 
         protected override object DoEvaluate(ScriptThread thread)
         {
-            Console.WriteLine("DoEvaluate");
-
             thread.CurrentNode = this;
 
-            string result = Left.Evaluate(thread).ToString() + Right.Evaluate(thread).ToString();
+            string result = Left.Evaluate(thread).ToString() + "+" + Right.Evaluate(thread).ToString();
 
             thread.CurrentNode = Parent;
 

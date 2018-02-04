@@ -16,16 +16,19 @@ namespace IronyParser.Parser
             var Num = new NumberLiteral("Number");
             var Str = new StringLiteral("String", "\"");
             var Id = new IdentifierTerminal("identifier");
-            var Primary = new NonTerminal("Primary", typeof(Node.LpNode));
+            var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
-            Primary.Rule = Num;
+            Primary.Rule = Num | Str;
 
             KeyTerm Plus = ToTerm("+");
 
-            NonTerminal Expr = new NonTerminal("Expr", typeof(Node.ExprNode));
+            NonTerminal Expr = new NonTerminal("Expr", typeof(Node.Expr));
             Expr.Rule = Primary + Plus + Primary;
 
-            Root = Expr;
+            NonTerminal Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
+            Stmt.Rule = Expr;
+
+            Root = Stmt;
         }
     }
 }

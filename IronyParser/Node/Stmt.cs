@@ -10,28 +10,26 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    class ValueLeaf : AstNode
+    public class Stmt : AstNode
     {
-        public AstNode Leaf { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
 
-            Console.WriteLine("Init");
-            //ParseTreeNodeList nodes = treeNode.GetMappedChildNodes();
-            //Leaf = AddChild("Leaf", nodes[0]);
+            var nodes = treeNode.GetMappedChildNodes();
+
+            nodes.ForEach((node) => AddChild("Node", node) );
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
 
-            Console.WriteLine("DoEvaluate");
-            //string result = Leaf.Evaluate(thread).ToString();
+            string result = ChildNodes.Select((node) => node.Evaluate(thread) + ";").Aggregate((a, b) => a + b).ToString();
 
             thread.CurrentNode = Parent;
 
-            return "aaaa";
+            return result;
         }
     }
 }
