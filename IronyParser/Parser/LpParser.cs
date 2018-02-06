@@ -27,7 +27,7 @@ namespace IronyParser.Parser
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
             Symbol.Rule = ":" + Id;
-            Array.Rule = ArrayStart + Num +  ArrayEnd | ArrayStart + ArrayEnd;
+            Array.Rule = ArrayStart + Stmt + ArrayEnd | ArrayStart + ArrayEnd;
             Primary.Rule = Num | Str | Array | "true" | "false" | "nl" | Symbol | Id;
             Expr.Rule = Primary + Plus + Primary;
             Stmt.Rule = Expr;
