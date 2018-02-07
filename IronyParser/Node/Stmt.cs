@@ -13,9 +13,7 @@ namespace IronyParser.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-
             var nodes = treeNode.GetMappedChildNodes();
-
             nodes.ForEach((node) => AddChild("Node", node) );
         }
 
