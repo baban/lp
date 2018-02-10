@@ -20,6 +20,7 @@ namespace IronyParser.Parser
             var CommasOpt = new NonTerminal("CommasOpt");
             CommasOpt.Rule = MakeStarRule(CommaOpt, null, Comma);
             var Plus = ToTerm("+");
+            var Minus = ToTerm("-");
 
             var Num = new NumberLiteral("Number");
             var Str = new StringLiteral("String", "\"");
@@ -41,10 +42,9 @@ namespace IronyParser.Parser
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal);
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
-            Expr.Rule = Primary + Plus + Primary;
+            Expr.Rule = Primary + Plus + Primary | Primary + Minus + Primary;
             Stmt.Rule = Expr;
-            //Root = Stmt;
-            Root = Hash;
+            Root = Stmt;
         }
     }
 }
