@@ -27,6 +27,9 @@ namespace IronyParser.Parser
             var Symbol = new NonTerminal("Symbol", typeof(Node.Symbol));
             var Array = new NonTerminal("Array", typeof(Node.Array));
             var ArrayItems = new NonTerminal("ArrayItems", typeof(Node.ArrayItems));
+            var AssocVal = new NonTerminal("AssocVal", typeof(Node.AssocVal));
+            var Assoc = new NonTerminal("Assoc", typeof(Node.Assoc));
+            var Hash = new NonTerminal("Hash", typeof(Node.Hash));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
@@ -34,10 +37,14 @@ namespace IronyParser.Parser
             Symbol.Rule = ":" + Id;
             ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
             Array.Rule = ArrayStart + ArrayItems + ArrayEnd;
-            Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array;
+            AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
+            Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal);
+            Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
+            Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
             Expr.Rule = Primary + Plus + Primary;
             Stmt.Rule = Expr;
-            Root = Stmt;
+            //Root = Stmt;
+            Root = Hash;
         }
     }
 }
