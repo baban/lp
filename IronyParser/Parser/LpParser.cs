@@ -21,6 +21,9 @@ namespace IronyParser.Parser
             CommasOpt.Rule = MakeStarRule(CommaOpt, null, Comma);
             var Plus = ToTerm("+");
             var Minus = ToTerm("-");
+            var Mul = ToTerm("*");
+            var Div = ToTerm("/");
+            var Mod = ToTerm("%");
 
             var Num = new NumberLiteral("Number");
             var Str = new StringLiteral("String", "\"");
@@ -32,6 +35,7 @@ namespace IronyParser.Parser
             var Assoc = new NonTerminal("Assoc", typeof(Node.Assoc));
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
+            var MulExpr = new NonTerminal("MulExpr", typeof(Node.Expr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
@@ -42,7 +46,8 @@ namespace IronyParser.Parser
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal);
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
-            Expr.Rule = Primary + Plus + Primary | Primary + Minus + Primary;
+            MulExpr.Rule = Primary + Mul + Primary | Primary + Div + Primary | Primary + Mod + Primary | Primary;
+            Expr.Rule = MulExpr + Plus + MulExpr | MulExpr + Minus + MulExpr;
             Stmt.Rule = Expr;
             Root = Stmt;
         }

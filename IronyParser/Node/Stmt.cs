@@ -10,19 +10,19 @@ namespace IronyParser.Node
 {
     public class Stmt : AstNode
     {
+        public AstNode Node { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            nodes.ForEach((node) => AddChild("Node", node) );
+            Node = AddChild("Left", nodes[0]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-
-            string result = ChildNodes.Select((node) => node.Evaluate(thread) + ";").Aggregate((a, b) => a + b).ToString();
-
+            string result = "";
+            result = Node.Evaluate(thread).ToString();
             thread.CurrentNode = Parent;
 
             return result;
