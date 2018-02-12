@@ -35,7 +35,9 @@ namespace IronyParser.Parser
             var Assoc = new NonTerminal("Assoc", typeof(Node.Assoc));
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
+            var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.SimpleExpr));
             var MulExpr = new NonTerminal("MulExpr", typeof(Node.Expr));
+            var ExprStart = new NonTerminal("ExprStart");
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
@@ -46,10 +48,23 @@ namespace IronyParser.Parser
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal);
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
-            MulExpr.Rule = Primary + Mul + Primary | Primary + Div + Primary | Primary + Mod + Primary | Primary;
-            Expr.Rule = MulExpr + Plus + MulExpr | MulExpr + Minus + MulExpr;
+            SimpleExpr.Rule = Primary;
+            MulExpr.Rule = makeChainOperators(new string[] { "*", "/", "%" }, SimpleExpr);
+            Expr.Rule = makeChainOperators(new string[] { "+", "-" }, MulExpr);
             Stmt.Rule = Expr;
             Root = Stmt;
+            //static readonly Parser<object[]> SIMPLE_EXP = EXP_VAL.Or(FUNCALL).Or(VARCALL).Or(PRIMARY);
+
+        }
+
+        BnfExpression makeChainOperators(string[] operands, NonTerminal start)
+        {
+            return operands.Select((op) => makeChainOperator(op, start)).Aggregate((a, b) => a | b);
+        }
+
+        BnfExpression makeChainOperator(string op, NonTerminal start)
+        {
+            return start + ToTerm(op) + start;
         }
     }
 }
