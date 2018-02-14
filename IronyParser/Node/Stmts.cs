@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -9,20 +8,19 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    public class SimpleExpr : AstNode
+    public class Stmts : AstNode
     {
-        public AstNode Node { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            Node = AddChild("Node", nodes[0]);
+            nodes.ForEach((node) => AddChild("Stmt", node));
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            string result = Node.Evaluate(thread).ToString();
+            var result = ChildNodes.Select((node) => node.Evaluate(thread).ToString()).Aggregate((a, b) => a + "; " + b).ToString();
             thread.CurrentNode = Parent;
             return result;
         }

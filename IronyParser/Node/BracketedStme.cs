@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -9,7 +7,7 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    public class SimpleExpr : AstNode
+    public class BracketedStme : AstNode
     {
         public AstNode Node { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
@@ -24,7 +22,8 @@ namespace IronyParser.Node
             thread.CurrentNode = this;
             string result = Node.Evaluate(thread).ToString();
             thread.CurrentNode = Parent;
-            return result;
+
+            return "(" + result + ")";
         }
     }
 }

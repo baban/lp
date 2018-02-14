@@ -19,11 +19,6 @@ namespace IronyParser.Parser
             var CommaOpt = new NonTerminal("CommaOpt", Empty | Comma);
             var CommasOpt = new NonTerminal("CommasOpt");
             CommasOpt.Rule = MakeStarRule(CommaOpt, null, Comma);
-            var Plus = ToTerm("+");
-            var Minus = ToTerm("-");
-            var Mul = ToTerm("*");
-            var Div = ToTerm("/");
-            var Mod = ToTerm("%");
 
             var Num = new NumberLiteral("Number");
             var Str = new StringLiteral("String", "\"");
@@ -37,9 +32,12 @@ namespace IronyParser.Parser
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.SimpleExpr));
             var MulExpr = new NonTerminal("MulExpr", typeof(Node.Expr));
-            var ExprStart = new NonTerminal("ExprStart");
+            var AddExpr = new NonTerminal("AddExpr", typeof(Node.Expr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            var ShiftExpr = new NonTerminal("ShiftExpr", typeof(Node.Expr));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
+            var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStme));
+            var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
 
             Symbol.Rule = ":" + Id;
             ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
@@ -48,23 +46,28 @@ namespace IronyParser.Parser
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal);
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
-            SimpleExpr.Rule = Primary;
+            BracketedStmt.Rule = "(" + Stmt + ")";
+            SimpleExpr.Rule = BracketedStmt | Primary;
             MulExpr.Rule = makeChainOperators(new string[] { "*", "/", "%" }, SimpleExpr);
-            Expr.Rule = makeChainOperators(new string[] { "+", "-" }, MulExpr);
+            AddExpr.Rule = makeChainOperators(new string[] { "+", "-" }, MulExpr);
+            //ShiftExpr.Rule = makeChainOperators(new string[] { "<<", ">>" }, AddExpr);
+            Expr = AddExpr;
             Stmt.Rule = Expr;
-            Root = Stmt;
+            Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
+            // Root = Stmts;
+            Root = Primary;
             //static readonly Parser<object[]> SIMPLE_EXP = EXP_VAL.Or(FUNCALL).Or(VARCALL).Or(PRIMARY);
 
         }
 
-        BnfExpression makeChainOperators(string[] operands, NonTerminal start)
+        BnfExpression makeChainOperators(string[] operands, NonTerminal beforeExpr)
         {
-            return operands.Select((op) => makeChainOperator(op, start)).Aggregate((a, b) => a | b);
+            return operands.Select((op) => makeChainOperator(op, beforeExpr)).Aggregate((a, b) => a | b);
         }
 
-        BnfExpression makeChainOperator(string op, NonTerminal start)
+        BnfExpression makeChainOperator(string op, NonTerminal beforeExpr)
         {
-            return start + ToTerm(op) + start;
+            return beforeExpr + ToTerm(op) + beforeExpr;
         }
     }
 }
