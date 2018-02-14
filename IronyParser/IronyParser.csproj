@@ -58,6 +58,7 @@
     <Compile Include="Node\BracketedStme.cs" />
     <Compile Include="Node\Expr.cs" />
     <Compile Include="Node\Hash.cs" />
+    <Compile Include="Node\IfStmt.cs" />
     <Compile Include="Node\Primary.cs" />
     <Compile Include="Node\SimpleExpr.cs" />
     <Compile Include="Node\Stmt.cs" />

@@ -35,8 +35,9 @@ namespace IronyParser.Parser
             var AddExpr = new NonTerminal("AddExpr", typeof(Node.Expr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var ShiftExpr = new NonTerminal("ShiftExpr", typeof(Node.Expr));
-            var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
             var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStme));
+            var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
+            var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
 
             Symbol.Rule = ":" + Id;
@@ -52,10 +53,11 @@ namespace IronyParser.Parser
             AddExpr.Rule = makeChainOperators(new string[] { "+", "-" }, MulExpr);
             //ShiftExpr.Rule = makeChainOperators(new string[] { "<<", ">>" }, AddExpr);
             Expr = AddExpr;
-            Stmt.Rule = Expr;
+            IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
+            Stmt.Rule = Primary;
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
             // Root = Stmts;
-            Root = Primary;
+            Root = IfStmt;
             //static readonly Parser<object[]> SIMPLE_EXP = EXP_VAL.Or(FUNCALL).Or(VARCALL).Or(PRIMARY);
 
         }
