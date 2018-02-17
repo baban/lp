@@ -40,6 +40,12 @@ namespace IronyParser.Parser
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
 
+            RegisterBracePair("(", ")");
+            RegisterOperators(10, "*", "/", "%");
+            MarkPunctuation(",", "(", ")");
+
+            //RegisterPunctuation(ToTerm(";"));
+
             Symbol.Rule = ":" + Id;
             ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
             Array.Rule = ArrayStart + ArrayItems + ArrayEnd;
@@ -54,10 +60,10 @@ namespace IronyParser.Parser
             //ShiftExpr.Rule = makeChainOperators(new string[] { "<<", ">>" }, AddExpr);
             Expr = AddExpr;
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
-            Stmt.Rule = Primary;
+            Stmt.Rule = IfStmt | Primary;
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
             // Root = Stmts;
-            Root = IfStmt;
+            Root = Stmt;
             //static readonly Parser<object[]> SIMPLE_EXP = EXP_VAL.Or(FUNCALL).Or(VARCALL).Or(PRIMARY);
 
         }
