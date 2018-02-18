@@ -31,17 +31,23 @@ namespace IronyParser.Parser
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.SimpleExpr));
-            var MulExpr = new NonTerminal("MulExpr", typeof(Node.Expr));
-            var AddExpr = new NonTerminal("AddExpr", typeof(Node.Expr));
+            //var MulExpr = new NonTerminal("MulExpr", typeof(Node.Expr));
+            var BinExpr = new NonTerminal("BinExpr", typeof(Node.Expr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var ShiftExpr = new NonTerminal("ShiftExpr", typeof(Node.Expr));
             var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStme));
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
+            var BinOp = new NonTerminal("BinOp", typeof(Node.Op));
+
+            BinOp.Rule = ToTerm("<")
+            | "||" | "&&" | "|" | "^" | "&" | "==" | "!=" | ">" | "<=" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%"
+            | "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=";
 
             RegisterBracePair("(", ")");
             RegisterOperators(10, "*", "/", "%");
+            RegisterOperators(9, "+", "-");
             MarkPunctuation(",", "(", ")");
 
             //RegisterPunctuation(ToTerm(";"));
@@ -54,13 +60,14 @@ namespace IronyParser.Parser
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
             BracketedStmt.Rule = "(" + Stmt + ")";
-            SimpleExpr.Rule = BracketedStmt | Primary;
-            MulExpr.Rule = makeChainOperators(new string[] { "*", "/", "%" }, SimpleExpr);
-            AddExpr.Rule = makeChainOperators(new string[] { "+", "-" }, MulExpr);
+            SimpleExpr.Rule = BracketedStmt | BinExpr | Primary;
+            //MulExpr.Rule = makeChainOperators(new string[] { "*", "/", "%" }, SimpleExpr);
+            //BinExpr.Rule = makeChainOperators(new string[] { "*", "/", "%", "+", "-" }, SimpleExpr);
+            BinExpr.Rule = SimpleExpr + BinOp +  SimpleExpr;
             //ShiftExpr.Rule = makeChainOperators(new string[] { "<<", ">>" }, AddExpr);
-            Expr = AddExpr;
+            Expr = BinExpr;
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
-            Stmt.Rule = IfStmt | Primary;
+            Stmt.Rule = IfStmt | Expr;
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
             // Root = Stmts;
             Root = Stmt;

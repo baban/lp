@@ -27,7 +27,7 @@ namespace IronyParser.Node
         {
             thread.CurrentNode = this;
 
-            string result = Left.Evaluate(thread).ToString() + " " + Op.ToString() + " " + Right.Evaluate(thread).ToString();
+            string result = "("+Left.Evaluate(thread).ToString() + " " + Op.ToString() + " " + Right.Evaluate(thread).ToString()+")";
 
             thread.CurrentNode = Parent;
 
