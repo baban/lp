@@ -7,4 +7,3 @@ D:\repo\lp\IronyParser\bin\Debug\Irony.Interpreter.pdb
 D:\repo\lp\IronyParser\bin\Debug\Irony.Interpreter.xml
 D:\repo\lp\IronyParser\obj\Debug\IronyParser.exe
 D:\repo\lp\IronyParser\obj\Debug\IronyParser.pdb
-D:\repo\lp\IronyParser\obj\Debug\IronyParser.csprojResolveAssemblyReference.cache

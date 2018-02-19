@@ -7,22 +7,26 @@ using Irony.Parsing;
 
 namespace IronyParser.Node
 {
-    public class Op : AstNode
+    public class RightUnary : AstNode
     {
-        public string Node { get; private set; }
+        public AstNode Node { get; private set; }
+        public ParseTreeNode Op;
 
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
 
             ParseTreeNodeList nodes = treeNode.GetMappedChildNodes();
-            Node = nodes[0].ToString();
+            Op = nodes[0];
+            Node = AddChild("Node", nodes[1]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            string result = Node.ToString();
+
+            string result = Op.ToString() + Node.Evaluate(thread).ToString();
+
             thread.CurrentNode = Parent;
 
             return result;
