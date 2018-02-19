@@ -31,10 +31,10 @@ namespace IronyParser.Parser
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.SimpleExpr));
-            //var MulExpr = new NonTerminal("MulExpr", typeof(Node.Expr));
-            var BinExpr = new NonTerminal("BinExpr", typeof(Node.Expr));
+            var Expr10 = new NonTerminal("Expr10", typeof(Node.Expr));
+            var Expr9 = new NonTerminal("Expr9", typeof(Node.Expr));
+            var Expr8 = new NonTerminal("Expr8", typeof(Node.Expr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
-            var ShiftExpr = new NonTerminal("ShiftExpr", typeof(Node.Expr));
             var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStme));
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
@@ -46,9 +46,19 @@ namespace IronyParser.Parser
             | "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=";
 
             RegisterBracePair("(", ")");
-            RegisterOperators(10, "*", "/", "%");
+            RegisterOperators(1, "||");
+            RegisterOperators(2, "&&");
+            RegisterOperators(3, "|");
+            RegisterOperators(4, "^");
+            RegisterOperators(5, "&");
+            RegisterOperators(6, "==", "!=");
+            RegisterOperators(7, "<", ">", "<=", ">=");
+            RegisterOperators(8, "<<", ">>");
             RegisterOperators(9, "+", "-");
+            RegisterOperators(10, "*", "/", "%");
             MarkPunctuation(",", "(", ")");
+            //this.Delimiters = "{}[](),:;+-*/%&|^!~<>=";
+            this.MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
 
             //RegisterPunctuation(ToTerm(";"));
 
@@ -60,17 +70,14 @@ namespace IronyParser.Parser
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
             BracketedStmt.Rule = "(" + Stmt + ")";
-            SimpleExpr.Rule = BracketedStmt | BinExpr | Primary;
-            //MulExpr.Rule = makeChainOperators(new string[] { "*", "/", "%" }, SimpleExpr);
-            //BinExpr.Rule = makeChainOperators(new string[] { "*", "/", "%", "+", "-" }, SimpleExpr);
-            BinExpr.Rule = SimpleExpr + BinOp +  SimpleExpr;
-            //ShiftExpr.Rule = makeChainOperators(new string[] { "<<", ">>" }, AddExpr);
-            Expr = BinExpr;
+            Expr10.Rule = makeChainOperators(new string[] { "*", "/", "%" }, SimpleExpr);
+            Expr9.Rule = makeChainOperators(new string[] { "+", "-" }, SimpleExpr);
+            Expr8.Rule = makeChainOperators(new string[] { "<<", ">>" }, SimpleExpr);
+            SimpleExpr.Rule = BracketedStmt | Expr10 | Expr9 | Expr8 | Primary;
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
-            Stmt.Rule = IfStmt | Expr;
+            Stmt.Rule = IfStmt | SimpleExpr;
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
-            // Root = Stmts;
-            Root = Stmt;
+            Root = Stmts;
             //static readonly Parser<object[]> SIMPLE_EXP = EXP_VAL.Or(FUNCALL).Or(VARCALL).Or(PRIMARY);
 
         }
