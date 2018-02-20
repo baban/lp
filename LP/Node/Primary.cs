@@ -21,7 +21,7 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            Object.LpObject result = Object.LpNumeric.initialize();
+            Object.LpObject result = Object.LpNumeric.initialize((int)Node.Evaluate(thread));
             /*
             if(Node is Symbol || Node is Array)
             {

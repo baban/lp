@@ -79,6 +79,7 @@ namespace LP
             {
                 Console.WriteLine(result);
                 Console.WriteLine("result: {0}", result);
+                result.funcall("display", new Object.LpObject[] { }, null);
             }
             Console.WriteLine("Finish");
             /*
