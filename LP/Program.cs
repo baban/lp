@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Irony.Parsing;
+using Irony.Interpreter;
 
 namespace LP
 {
@@ -12,6 +14,9 @@ namespace LP
     {
         static void Main(string[] args)
         {
+            runNode(new string []{ });
+            return;
+
             if (args.Length == 0) {
                 sysInit("", args, 0);
                 consoleReadFile();
@@ -31,7 +36,7 @@ namespace LP
                 if ( options.Evaluate != null )
                 {
                     sysInit("", args, 0);
-                    LpParser.execute(options.Evaluate);
+                    //LpParser.execute(options.Evaluate);
                     return;
                 }
 
@@ -60,8 +65,23 @@ namespace LP
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             */
-            string code = readFile(argv[0]);
-
+            //string code = readFile(argv[0]);
+            string code = "1";
+            ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
+            Console.WriteLine("parse");
+            var tree = app.Parser.Parse(code);
+            Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
+            if (result == null)
+            {
+                Console.WriteLine("null");
+            }
+            else
+            {
+                Console.WriteLine(result);
+                Console.WriteLine("result: {0}", result);
+            }
+            Console.WriteLine("Finish");
+            /*
             try
             {
                 LpParser.execute(code);
@@ -70,6 +90,7 @@ namespace LP
             {
                 Console.WriteLine(e.ToString());
             }
+            */
             /*
             sw.Stop();
             Console.WriteLine(sw.Elapsed.TotalSeconds);

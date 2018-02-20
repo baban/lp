@@ -72,6 +72,12 @@
     <Reference Include="CommandLine">
       <HintPath>.\CommandLine.dll</HintPath>
     </Reference>
+    <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca48ace7223ead47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Irony.0.9.1\lib\net40\Irony.dll</HintPath>
+    </Reference>
+    <Reference Include="Irony.Interpreter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca48ace7223ead47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Irony.Interpreter.0.9.1\lib\net40\Irony.Interpreter.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Dynamic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Dynamic.dll</HintPath>
@@ -114,6 +120,7 @@
     <Compile Include="Error\LpSyntaxError.cs" />
     <Compile Include="Error\NameError.cs" />
     <Compile Include="LpParser.cs" />
+    <Compile Include="Node\Primary.cs" />
     <Compile Include="Object\LpArray.cs" />
     <Compile Include="Object\LpBase.cs" />
     <Compile Include="Object\LpBlock.cs" />
@@ -128,6 +135,7 @@
     <Compile Include="Object\LpUnquote.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Parser\BaseParser.cs" />
+    <Compile Include="Parser\LpParser.cs" />
     <Compile Include="Parser\MainPerser.cs" />
     <Compile Include="Parser\StringParser.cs" />
     <Compile Include="Util\LpGlobalIndexer.cs" />

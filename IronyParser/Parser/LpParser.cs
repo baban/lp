@@ -47,6 +47,7 @@ namespace IronyParser.Parser
             var Expr3 = new NonTerminal("Expr3", typeof(Node.BinExpr));
             var Expr2 = new NonTerminal("Expr2", typeof(Node.BinExpr));
             var Expr1 = new NonTerminal("Expr1", typeof(Node.BinExpr));
+            var Expr0 = new NonTerminal("Expr0", typeof(Node.BinExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
 
             var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStmt));
@@ -55,6 +56,7 @@ namespace IronyParser.Parser
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
 
             RegisterBracePair("(", ")");
+            RegisterOperators(0, "=");
             RegisterOperators(1, "and", "or");
             RegisterOperators(2, "..", "^..", "..^", "^..^");
             RegisterOperators(3, "||");
@@ -102,7 +104,8 @@ namespace IronyParser.Parser
             Expr3.Rule = makeChainOperators(new string[] { "||" }, Expr);
             Expr2.Rule = makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr);
             Expr1.Rule = makeChainOperators(new string[] { "and", "or" }, Expr);
-            Expr.Rule = BracketedStmt | Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Primary;
+            Expr0.Rule = makeChainOperators(new string[] { "=" }, Expr);
+            Expr.Rule = BracketedStmt | Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Expr0 | Primary;
 
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
             Stmt.Rule = IfStmt | Expr;
