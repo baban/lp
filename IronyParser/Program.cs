@@ -13,8 +13,10 @@ namespace IronyParser
         static void Main(string[] args)
         {
             Console.WriteLine("Start");
-            var content = "1 and 1";
+            var content = "1 + 1";
+            Console.WriteLine("create");
             ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
+            Console.WriteLine("parse");
             var tree = app.Parser.Parse(content);
             
             string result = (string)app.Evaluate(tree);

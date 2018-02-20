@@ -55,7 +55,7 @@
     <Compile Include="Node\Array.cs" />
     <Compile Include="Node\Assoc.cs" />
     <Compile Include="Node\AssocVal.cs" />
-    <Compile Include="Node\BracketedStme.cs" />
+    <Compile Include="Node\BracketedStmt.cs" />
     <Compile Include="Node\BinExpr.cs" />
     <Compile Include="Node\Hash.cs" />
     <Compile Include="Node\IfStmt.cs" />
