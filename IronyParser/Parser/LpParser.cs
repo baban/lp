@@ -42,6 +42,10 @@ namespace IronyParser.Parser
             var Expr6 = new NonTerminal("Expr6", typeof(Node.BinExpr));
             var Expr5 = new NonTerminal("Expr5", typeof(Node.BinExpr));
             var Expr4 = new NonTerminal("Expr4", typeof(Node.BinExpr));
+            var Expr3 = new NonTerminal("Expr3", typeof(Node.BinExpr));
+            var Expr2 = new NonTerminal("Expr2", typeof(Node.BinExpr));
+            var Expr1 = new NonTerminal("Expr1", typeof(Node.BinExpr));
+            var Expr0 = new NonTerminal("Expr0", typeof(Node.BinExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStme));
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
@@ -78,6 +82,7 @@ namespace IronyParser.Parser
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal);
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Num | Str | "true" | "false" | "nl" | Symbol | Id | Array | Hash;
+
             BracketedStmt.Rule = "(" + Stmt + ")";
             Expr15.Rule = (Expr + "++") | (Expr + "--");
             Expr14.Rule = (ToTerm("+") + Expr) | (ToTerm("!") + Expr) | (ToTerm("~") + Expr);
@@ -91,7 +96,12 @@ namespace IronyParser.Parser
             Expr6.Rule = makeChainOperators(new string[] { "|" }, Expr);
             Expr5.Rule = makeChainOperators(new string[] { ">=", ">", "<=", "<" }, Expr);
             Expr4.Rule = makeChainOperators(new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, Expr);
-            Expr.Rule = BracketedStmt | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Primary;
+            Expr3.Rule = makeChainOperators(new string[] { "&&" }, Expr);
+            Expr2.Rule = makeChainOperators(new string[] { "||" }, Expr);
+            Expr1.Rule = makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr);
+            Expr0.Rule = makeChainOperators(new string[] { "and", "or" }, Expr);
+            Expr.Rule = BracketedStmt | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Expr0 | Primary;
+
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
             Stmt.Rule = IfStmt | Expr;
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
