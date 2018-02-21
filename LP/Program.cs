@@ -66,7 +66,7 @@ namespace LP
             sw.Start();
             */
             //string code = readFile(argv[0]);
-            string code = "true";
+            string code = "nl";
             ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
             Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);
