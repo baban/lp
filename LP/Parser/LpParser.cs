@@ -12,6 +12,7 @@ namespace LP.Parser
     {
         public LpGrammer() : base(true)
         {
+            var Comma = ToTerm(",", "Comma");
             var Id = new IdentifierTerminal("identifier");
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
@@ -19,15 +20,26 @@ namespace LP.Parser
             var Bool = new NonTerminal("Boolean", typeof(Node.Bool));
             var Nl = new NonTerminal("Nl", typeof(Node.Nl));
             var Symbol = new NonTerminal("Symbol", typeof(Node.Symbol));
+            var Array = new NonTerminal("Array", typeof(Node.Array));
+            var ArrayItems = new NonTerminal("ArrayItems", typeof(Node.ArrayItems));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
+
+            var Expr = new NonTerminal("Expr");
+            var Stmt = new NonTerminal("Stmt");
+
             Numeric.Rule = new NumberLiteral("Number");
             Str.Rule = new StringLiteral("String", "\"");
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
             Symbol.Rule = ":" + Id;
-            Primary.Rule = Numeric | Str | Bool | Nl | Symbol;
+            ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Numeric);
+            Array.Rule = (ToTerm("[") + ArrayItems + ToTerm("]")) | ToTerm("[") + Empty + ToTerm("]");
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array;
 
-            Root = Primary;
+            Expr = Primary;
+            Stmt = Expr;
+
+            Root = Stmt;
         }
     }
 }
