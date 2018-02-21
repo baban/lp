@@ -12,16 +12,21 @@ namespace LP.Parser
     {
         public LpGrammer() : base(true)
         {
+            var Id = new IdentifierTerminal("identifier");
+
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
-            Numeric.Rule = new NumberLiteral("Number");
             var Str = new NonTerminal("String", typeof(Node.String));
-            Str.Rule = new StringLiteral("String", "\"");
             var Bool = new NonTerminal("Boolean", typeof(Node.Bool));
-            Bool.Rule = ToTerm("true") | "false";
             var Nl = new NonTerminal("Nl", typeof(Node.Nl));
-            Nl.Rule = ToTerm("nl");
+            var Symbol = new NonTerminal("Symbol", typeof(Node.Symbol));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
-            Primary.Rule = Numeric | Str | Bool | Nl;
+            Numeric.Rule = new NumberLiteral("Number");
+            Str.Rule = new StringLiteral("String", "\"");
+            Bool.Rule = ToTerm("true") | "false";
+            Nl.Rule = ToTerm("nl");
+            Symbol.Rule = ":" + Id;
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol;
+
             Root = Primary;
         }
     }

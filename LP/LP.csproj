@@ -125,6 +125,7 @@
     <Compile Include="Node\Numeric.cs" />
     <Compile Include="Node\Primary.cs" />
     <Compile Include="Node\String.cs" />
+    <Compile Include="Node\Symbol.cs" />
     <Compile Include="Object\LpArray.cs" />
     <Compile Include="Object\LpBase.cs" />
     <Compile Include="Object\LpBlock.cs" />
