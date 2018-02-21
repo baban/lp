@@ -19,15 +19,14 @@ namespace LP.Object
 
         public static LpObject initialize( string[][] pairs )
         {
-            return null;
-            /*
             var obj = init();
+            /*
             foreach (var pair in pairs)
             {
                 obj.hashValues[LpParser.STMT.Parse(pair[0])] = LpParser.STMT.Parse(pair[1]);
             }
+            */
             return obj;
-             */
         }
 
         public static LpObject initialize( List<Ast.LpAstNode[]> pairs )
@@ -69,6 +68,7 @@ namespace LP.Object
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
              */
+            obj.methods["display"] = new BinMethod(display);
         }
 
         private static LpObject len(LpObject self, LpObject args)
@@ -99,6 +99,12 @@ namespace LP.Object
                 classes[className] = obj;
                 return obj.Clone();
             }
+        }
+
+        static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            Console.WriteLine("{ }");
+            return LpNl.initialize();
         }
     }
 }

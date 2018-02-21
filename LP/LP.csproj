@@ -122,10 +122,15 @@
     <Compile Include="LpParser.cs" />
     <Compile Include="Node\Array.cs" />
     <Compile Include="Node\ArrayItems.cs" />
+    <Compile Include="Node\Assoc.cs" />
+    <Compile Include="Node\AssocVal.cs" />
     <Compile Include="Node\Bool.cs" />
+    <Compile Include="Node\Expr.cs" />
+    <Compile Include="Node\Hash.cs" />
     <Compile Include="Node\Nl.cs" />
     <Compile Include="Node\Numeric.cs" />
     <Compile Include="Node\Primary.cs" />
+    <Compile Include="Node\Stmt.cs" />
     <Compile Include="Node\String.cs" />
     <Compile Include="Node\Symbol.cs" />
     <Compile Include="Object\LpArray.cs" />
