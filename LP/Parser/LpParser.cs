@@ -16,8 +16,10 @@ namespace LP.Parser
             Numeric.Rule = new NumberLiteral("Number");
             var Str = new NonTerminal("String", typeof(Node.String));
             Str.Rule = new StringLiteral("String", "\"");
+            var Bool = new NonTerminal("Boolean", typeof(Node.Bool));
+            Bool.Rule = ToTerm("true") | "false";
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
-            Primary.Rule = Numeric | Str;
+            Primary.Rule = Numeric | Str | Bool;
             Root = Primary;
         }
     }
