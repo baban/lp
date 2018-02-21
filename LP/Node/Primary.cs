@@ -21,7 +21,13 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            Object.LpObject result = Object.LpNumeric.initialize((int)Node.Evaluate(thread));
+            Object.LpObject result = null;
+            if (Node is Numeric || Node is Node.String)
+            {
+                Console.WriteLine("Node");
+                Console.WriteLine(Node);
+                result = (Object.LpObject)Node.Evaluate(thread);
+            }
             /*
             if(Node is Symbol || Node is Array)
             {

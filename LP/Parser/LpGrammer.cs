@@ -12,12 +12,9 @@ namespace LP.Parser
     {
         public LpGrammer() : base(true)
         {
-            var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
-            Numeric.Rule = new NumberLiteral("Number");
-            var Str = new NonTerminal("String", typeof(Node.String));
-            Str.Rule = new StringLiteral("String", "\"");
+            var Num = new NumberLiteral("Number");
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
-            Primary.Rule = Numeric | Str;
+            Primary.Rule = Num;
             Root = Primary;
         }
     }

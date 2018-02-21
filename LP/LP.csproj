@@ -120,7 +120,9 @@
     <Compile Include="Error\LpSyntaxError.cs" />
     <Compile Include="Error\NameError.cs" />
     <Compile Include="LpParser.cs" />
+    <Compile Include="Node\Numeric.cs" />
     <Compile Include="Node\Primary.cs" />
+    <Compile Include="Node\String.cs" />
     <Compile Include="Object\LpArray.cs" />
     <Compile Include="Object\LpBase.cs" />
     <Compile Include="Object\LpBlock.cs" />
