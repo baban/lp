@@ -35,12 +35,11 @@ namespace LP.Parser
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
             Symbol.Rule = ":" + Id;
-            ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
-            Array.Rule = (ToTerm("[") + ArrayItems + ToTerm("]")) | ToTerm("[") + Empty + ToTerm("]");
+            ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt) | Empty;
+            Array.Rule = ToTerm("[") + ArrayItems + ToTerm("]");
             AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
-            Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal);
-            //Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
-            Hash.Rule = ToTerm("{") + ToTerm("}");
+            Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
+            Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash;
 
             Expr.Rule = Primary;
