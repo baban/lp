@@ -110,7 +110,7 @@ namespace LP.Parser
 
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
 
-            Root = Stmt;
+            Root = Stmts;
         }
 
         BnfExpression makeChainOperators(string[] operands, NonTerminal beforeExpr)
