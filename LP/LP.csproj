@@ -126,14 +126,17 @@
     <Compile Include="Node\AssocVal.cs" />
     <Compile Include="Node\BinExpr.cs" />
     <Compile Include="Node\Bool.cs" />
+    <Compile Include="Node\BracketedStmt.cs" />
     <Compile Include="Node\Expr.cs" />
     <Compile Include="Node\Hash.cs" />
+    <Compile Include="Node\IfStmt.cs" />
     <Compile Include="Node\LeftUnary.cs" />
     <Compile Include="Node\Nl.cs" />
     <Compile Include="Node\Numeric.cs" />
     <Compile Include="Node\Primary.cs" />
     <Compile Include="Node\RightUnary.cs" />
     <Compile Include="Node\Stmt.cs" />
+    <Compile Include="Node\Stmts.cs" />
     <Compile Include="Node\String.cs" />
     <Compile Include="Node\Symbol.cs" />
     <Compile Include="Object\LpArray.cs" />
