@@ -27,6 +27,11 @@ namespace LP.Parser
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
+            var Expr16 = new NonTerminal("Expr16", typeof(Node.LeftUnary));
+            var Expr15 = new NonTerminal("Expr15", typeof(Node.RightUnary));
+            var Expr14 = new NonTerminal("Expr14", typeof(Node.RightUnary));
+            var Expr13 = new NonTerminal("Expr13", typeof(Node.BinExpr));
+            var Expr12 = new NonTerminal("Expr12", typeof(Node.RightUnary));
             var Expr11 = new NonTerminal("Expr11", typeof(Node.BinExpr));
             var Expr10 = new NonTerminal("Expr10", typeof(Node.BinExpr));
             var Expr9 = new NonTerminal("Expr9", typeof(Node.BinExpr));
@@ -77,6 +82,11 @@ namespace LP.Parser
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash;
 
+            Expr16.Rule = (Expr + "++") | (Expr + "--");
+            Expr15.Rule = ("+" + Expr) | ("!" + Expr) | ("~" + Expr);
+            Expr14.Rule = ToTerm("not") + Expr;
+            Expr13.Rule = makeChainOperators(new string[] { "**" }, Expr);
+            Expr12.Rule = "-" + Expr;
             Expr11.Rule = makeChainOperators(new string[] { "*", "/", "%" }, Expr);
             Expr10.Rule = makeChainOperators(new string[] { "+", "-" }, Expr);
             Expr9.Rule = makeChainOperators(new string[] { "<<", ">>" }, Expr);
@@ -89,7 +99,7 @@ namespace LP.Parser
             Expr2.Rule = makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr);
             Expr1.Rule = makeChainOperators(new string[] { "and", "or" }, Expr);
             Expr0.Rule = makeChainOperators(new string[] { "=" }, Expr);
-            Expr.Rule = Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Primary;
+            Expr.Rule = Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Primary;
 
             Stmt.Rule = Expr;
 
