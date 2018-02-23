@@ -66,7 +66,8 @@ namespace LP
             sw.Start();
             */
             //string code = readFile(argv[0]);
-            string code = "def hoge() 1; 2; 3 end";
+            //string code = "def hoge() 1; 2; 3 end";
+            string code = "class Hoge 1; 2; 3 end";
             ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
             Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);

@@ -49,6 +49,7 @@ namespace LP.Parser
             var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStmt));
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
+            var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
@@ -109,7 +110,8 @@ namespace LP.Parser
 
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
             DefineFunction.Rule = ToTerm("def") + Id + "()" + Stmts + ToTerm("end");
-            Stmt.Rule = DefineFunction | IfStmt | Expr;
+            DefineClass.Rule = ToTerm("class")+ Id + Stmts + ToTerm("end");
+            Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
 
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
 
