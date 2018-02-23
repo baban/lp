@@ -127,6 +127,7 @@
     <Compile Include="Node\BinExpr.cs" />
     <Compile Include="Node\Bool.cs" />
     <Compile Include="Node\BracketedStmt.cs" />
+    <Compile Include="Node\DefineFunction.cs" />
     <Compile Include="Node\Expr.cs" />
     <Compile Include="Node\Hash.cs" />
     <Compile Include="Node\IfStmt.cs" />
