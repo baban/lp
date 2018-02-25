@@ -26,7 +26,8 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate()
         {
-            return Object.LpBlock.initialize( ChildNodes, args );
+            //return Object.LpBlock.initialize( ChildNodes, args );
+            return null;
         }
 
         public override LpAstNode DoExpand()

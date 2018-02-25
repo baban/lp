@@ -20,21 +20,21 @@ namespace LP.Object
         public static LpObject initialize(Ast.LpAstNode stmt)
         {
             LpObject obj = init();
-            obj.statements.Add(stmt);
+            //obj.statements.Add(stmt);
             return obj;
         }
 
         public static LpObject initialize(List<Ast.LpAstNode> stmts)
         {
             LpObject obj = init();
-            obj.statements = stmts;
+            //obj.statements = stmts;
             return obj;
         }
 
         public static LpObject initialize(List<Ast.LpAstNode> stmts, string[] args, bool argLoose = false )
         {
             LpObject obj = init();
-            obj.statements = stmts;
+            //obj.statements = stmts;
             obj.arguments = new Util.LpArguments(args, argLoose);
             obj.superclass = LpObject.initialize();
             return obj;
@@ -43,7 +43,7 @@ namespace LP.Object
         static LpObject init()
         {
             LpObject obj = createClassTemplate();
-            obj.statements = new List<Ast.LpAstNode>();
+            //obj.statements = new List<Ast.LpAstNode>();
             return obj;
         }
 
@@ -100,12 +100,14 @@ namespace LP.Object
             self.arguments.setVariables(self, dstArgs, block);
 
             LpObject ret = Object.LpNl.initialize();
+            /*
             foreach (Ast.LpAstNode stmt in self.statements)
             {
                 ret = stmt.Evaluate();
 
                 if (ret.controlStatus == LpBase.ControlCode.RETURN) break;
             }
+            */
             Util.LpIndexer.pop();
             return ret;
         }
@@ -113,12 +115,14 @@ namespace LP.Object
         static LpObject to_class(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
-            return LpClass.initialize( name, self.statements.ToList() );
+            //return LpClass.initialize( name, self.statements.ToList() );
+            return null;
         }
          
         static LpObject to_method(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpMethod.initialize(self.arguments, self.statements.ToList() );
+            //return LpMethod.initialize(self.arguments, self.statements.ToList() );
+            return null;
         }
 
         static Object.LpObject bind(LpObject self, LpObject[] args, LpObject block = null)

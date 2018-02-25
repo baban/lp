@@ -72,12 +72,14 @@ namespace LP.Object
 
 
             LpObject ret = Object.LpNl.initialize();
+            /*
             foreach (Ast.LpAstNode stmt in self.statements)
             {
                 ret = stmt.Evaluate();
                 if (ret.class_name == "Quote" || ret.class_name == "QuasiQuote")
                     ret = LpParser.execute(ret.stringValue);
             }
+            */
             return ret;
         }
 
@@ -92,8 +94,11 @@ namespace LP.Object
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             var stmt = self.statements.First();
+            return null;
+            /*
             var str = self.statements.First().toSource();
             return LpString.initialize(str);
+            */
         }
          
         private static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)

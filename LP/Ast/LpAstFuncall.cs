@@ -33,10 +33,13 @@ namespace LP.Ast
             {
                 if (ctx.is_macro == true)
                 {
+                    /*
                     // macro call
                     var node = ctx.macroexpand(args, this.block);
                     var ret = node.DoEvaluate();
                     return ret;
+                    */
+                    return null;
                 }
                 else
                 {

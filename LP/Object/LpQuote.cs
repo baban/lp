@@ -18,14 +18,14 @@ namespace LP.Object
         private static LpObject init(List<Ast.LpAstNode> nodes)
         {
             LpObject obj = createClassTemplate();
-            obj.statements = nodes;
+            //obj.statements = nodes;
             return obj;
         }
 
         private static LpObject init(Ast.LpAstNode node)
         {
             LpObject obj = createClassTemplate();
-            obj.statements = new List<Ast.LpAstNode>(){node};
+            //obj.statements = new List<Ast.LpAstNode>(){node};
             return obj;
         }
 
@@ -58,12 +58,14 @@ namespace LP.Object
 
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize( self.statements.First().toSource() );
+            //return LpString.initialize( self.statements.First().toSource() );
+            return null;
         }
 
         private static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize(string.Format("'{0}", self.statements.First().toSource()));
+            //return LpString.initialize(string.Format("'{0}", self.statements.First().toSource()));
+            return null;
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)

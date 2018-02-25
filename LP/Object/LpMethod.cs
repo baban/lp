@@ -39,7 +39,7 @@ namespace LP.Object
         {
             var obj = createClassTemplate();
             obj.arguments = new Util.LpArguments( args );
-            obj.statements = stmts;
+            //obj.statements = stmts;
             return obj;
         }
 
@@ -47,7 +47,7 @@ namespace LP.Object
         {
             var obj = createClassTemplate();
             obj.arguments = args;
-            obj.statements = stmts;
+            //obj.statements = stmts;
             return obj;
         }
 

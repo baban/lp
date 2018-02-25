@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sprache;
+using Irony.Ast;
+using Irony.Interpreter;
+using Irony.Interpreter.Ast;
+using Irony.Parsing;
 
 namespace LP.Object
 {
@@ -32,7 +36,7 @@ namespace LP.Object
         public System.IO.StreamWriter streamWriter = null;
 
         public bool is_macro = false;
-        public List<Ast.LpAstNode> statements = null;
+        public AstNodeList statements = null;
 
         public string class_name = null;
     }

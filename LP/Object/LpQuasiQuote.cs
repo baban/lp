@@ -57,7 +57,7 @@ namespace LP.Object
         private static LpObject init(List<Ast.LpAstNode> nodes)
         {
             LpObject obj = init();
-            obj.statements = nodes.Select((node) => castAndExpand(node) ).ToList();
+            //obj.statements = //nodes.Select((node) => castAndExpand(node) ).ToList();
             return obj;
         }
 
@@ -95,12 +95,14 @@ namespace LP.Object
 
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize(self.statements.First().toSource());
+            //return LpString.initialize(self.statements.First().toSource());
+            return null;
         }
 
         private static LpObject inspect(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpString.initialize(string.Format("'{0}", self.statements.First().toSource()));
+            //return LpString.initialize(string.Format("'{0}", self.statements.First().toSource()));
+            return null;
         }
 
         protected static LpObject display(LpObject self, LpObject[] args, LpObject block = null)

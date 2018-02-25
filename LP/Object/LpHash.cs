@@ -80,6 +80,7 @@ namespace LP.Object
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
              */
+            obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
             obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
         }
 
@@ -96,20 +97,27 @@ namespace LP.Object
             return self;
         }
 
-        static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
+        static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
             string pairs = "";
-            if(self.hashValues.Count() > 0)
+            if (self.hashValues.Count() > 0)
             {
                 string s = self.hashValues.ToArray()
                     .Select((pair) => {
                         return pair.Key.funcall("to_s", new LpObject[] { }, null).stringValue + " => " + pair.Value.funcall("to_s", new LpObject[] { }, null).stringValue;
-                    } )
+                    })
                     .Aggregate((a, b) => a + ", " + b);
                 pairs = s;
             }
             pairs = "{ " + pairs + " }";
-            Console.WriteLine(pairs);
+            var ret = LpString.initialize(pairs);
+            return ret;
+        }
+
+        static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            var ret = to_s(self, args, block);
+            Console.WriteLine(ret.stringValue);
             return LpNl.initialize();
         }
     }

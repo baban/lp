@@ -25,6 +25,7 @@ namespace LP.Parser
             var AssocVal = new NonTerminal("AssocVal", typeof(Node.AssocVal));
             var Assoc = new NonTerminal("Assoc", typeof(Node.Assoc));
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
+            var Block = new NonTerminal("Block", typeof(Node.Block));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
             var Expr16 = new NonTerminal("Expr16", typeof(Node.LeftUnary));
@@ -86,7 +87,8 @@ namespace LP.Parser
             AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
-            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash;
+            Block.Rule = ToTerm("do") + Stmts + ToTerm("end");
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block;
 
             BracketedStmt.Rule = "(" + Stmt + ")";
             Expr16.Rule = (Expr + "++") | (Expr + "--");

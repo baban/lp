@@ -108,12 +108,12 @@ namespace LP.Object
             //throw new Error.NameError();
             return null;
         }
-
+        /*
         public Ast.LpAstNode macroexpand(Ast.LpAstNode[] args, Ast.LpAstNode block = null)
         {
             return statements.First();
         }
-
+        */
         public LpObject funcall(string name, LpObject[] args, LpObject block = null)
         {
             return funcall(name, this, args, block);
@@ -260,7 +260,7 @@ namespace LP.Object
         protected static LpObject define_method(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
-            self.methods[name] = LpMethod.initialize( block.arguments, block.statements.ToList() );
+            //self.methods[name] = LpMethod.initialize( block.arguments, block.statements.ToList() );
             return LpSymbol.initialize( name );
         }
 

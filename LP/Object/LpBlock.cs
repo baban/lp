@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sprache;
+using Irony.Ast;
+using Irony.Interpreter;
+using Irony.Interpreter.Ast;
+using Irony.Parsing;
 
 namespace LP.Object
 {
@@ -19,24 +23,24 @@ namespace LP.Object
         static LpObject init()
         {
             var obj = createClassTemplate();
-            obj.statements = new List<Ast.LpAstNode>();
+            obj.statements = new AstNodeList();
             return obj;
         }
-
+        /*
         public static LpObject initialize(Ast.LpAstNode stmt)
         {
             LpObject obj = init();
             obj.statements.Add(stmt);
             return obj;
         }
-
-        public static LpObject initialize(List<Ast.LpAstNode> stmts)
+        */
+        public static LpObject initialize(AstNodeList stmts)
         {
             LpObject obj = init();
-            obj.statements = stmts.ToList();
+            obj.statements = stmts;
             return obj;
         }
-
+        /*
         public static LpObject initialize(List<Ast.LpAstNode> stmts, string[] args, bool argsLoose = false )
         {
             LpObject obj = init();
@@ -44,7 +48,7 @@ namespace LP.Object
             obj.arguments = new Util.LpArguments( args, argsLoose );
             return obj;
         }
-
+        */
         private static LpObject createClassTemplate()
         {
             if (classes.ContainsKey(className))
@@ -92,10 +96,13 @@ namespace LP.Object
             self.arguments.putVariables(args, block);
 
             LpObject ret = Object.LpNl.initialize();
+            //self.statements.First().UseType
+            /*
             foreach (Ast.LpAstNode stmt in self.statements)
             {
                 ret = stmt.Evaluate();
             }
+            */
             Util.LpIndexer.pop();
             return ret;
         }
