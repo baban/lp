@@ -29,15 +29,10 @@ namespace LP.Object
             return obj;
         }
 
-        public static LpObject initialize( List<Ast.LpAstNode[]> pairs )
+        public static LpObject initialize(Dictionary<LpObject, LpObject> pairs )
         {
             var obj = init();
-
-            foreach (var pair in pairs)
-            {
-                obj.hashValues[pair[0].Evaluate()] = pair[1].Evaluate();
-            }
-
+            obj.hashValues = pairs;
             return obj;
         }
 
@@ -46,6 +41,23 @@ namespace LP.Object
             LpObject obj = createClassTemplate();
             obj.hashValues = new Dictionary<LpObject, LpObject>();
             return obj;
+        }
+
+        private static LpObject createClassTemplate()
+        {
+            if (classes.ContainsKey(className))
+            {
+                return classes[className].Clone();
+            }
+            else
+            {
+                LpObject obj = new LpObject();
+                setMethods(obj);
+                obj.superclass = LpObject.initialize();
+                obj.class_name = className;
+                classes[className] = obj;
+                return obj.Clone();
+            }
         }
 
         private static void setMethods(LpObject obj)
@@ -68,7 +80,7 @@ namespace LP.Object
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
              */
-            obj.methods["display"] = new BinMethod(display);
+            obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
         }
 
         private static LpObject len(LpObject self, LpObject args)
@@ -84,26 +96,20 @@ namespace LP.Object
             return self;
         }
 
-        private static LpObject createClassTemplate()
-        {
-            if (classes.ContainsKey(className))
-            {
-                return classes[className].Clone();
-            }
-            else
-            {
-                LpObject obj = new LpObject();
-                setMethods(obj);
-                obj.superclass = LpObject.initialize();
-                obj.class_name = className;
-                classes[className] = obj;
-                return obj.Clone();
-            }
-        }
-
         static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
         {
-            Console.WriteLine("{ }");
+            string pairs = "";
+            if(self.hashValues.Count() > 0)
+            {
+                string s = self.hashValues.ToArray()
+                    .Select((pair) => {
+                        return pair.Key.funcall("to_s", new LpObject[] { }, null).stringValue + " => " + pair.Value.funcall("to_s", new LpObject[] { }, null).stringValue;
+                    } )
+                    .Aggregate((a, b) => a + ", " + b);
+                pairs = s;
+            }
+            pairs = "{ " + pairs + " }";
+            Console.WriteLine(pairs);
             return LpNl.initialize();
         }
     }

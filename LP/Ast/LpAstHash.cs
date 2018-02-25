@@ -20,7 +20,7 @@ namespace LP.Ast
 
         public override Object.LpObject DoEvaluate()
         {
-            Object.LpObject ret = Object.LpHash.initialize( this.pairs );
+            Object.LpObject ret = null; // Object.LpHash.initialize( this.pairs );
             return ret;
         }
 

@@ -19,9 +19,8 @@ namespace LP.Node
 
         protected override object DoEvaluate(ScriptThread thread)
         {
-            return null;
             thread.CurrentNode = this;
-            var result = ChildNodes.Select((node) => (Object.LpObject[])node.Evaluate(thread)).ToArray();
+            var result = ChildNodes.Select((node) => (Object.LpObject[])node.Evaluate(thread)).ToDictionary( pairs => pairs[0], pairs => pairs[1] );
             thread.CurrentNode = Parent;
             return result;
         }

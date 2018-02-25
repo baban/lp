@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -12,23 +13,27 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            if (nodes.Count > 2)
+            if (nodes.Count() > 0)
             {
-                AddChild("Node", nodes[1]);
+                AddChild("Node", nodes[0]);
             }
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
-            return Object.LpHash.initialize();
             thread.CurrentNode = this;
-            //string result = "";
+            Object.LpObject result;
             if (ChildNodes.Count() > 0)
             {
-                //result = ChildNodes.First().Evaluate(thread);
+                var assoc = ChildNodes.First();
+                var pairs = (Dictionary<Object.LpObject, Object.LpObject>)assoc.Evaluate(thread);
+                result = Object.LpHash.initialize(pairs);
+            } else
+            {
+                result = Object.LpHash.initialize();
             }
             thread.CurrentNode = Parent;
-            return Object.LpHash.initialize();
+            return result;
         }
     }
 }

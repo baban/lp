@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronyParser", "IronyParser\IronyParser.csproj", "{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,14 +39,6 @@ Global
 		{898D450A-FAC3-456B-989A-F6175E7D2A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{898D450A-FAC3-456B-989A-F6175E7D2A98}.Release|Any CPU.Build.0 = Release|Any CPU
 		{898D450A-FAC3-456B-989A-F6175E7D2A98}.Release|x64.ActiveCfg = Release|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Debug|x64.Build.0 = Debug|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Release|x64.ActiveCfg = Release|Any CPU
-		{5C0412F0-566D-4AE9-B23C-8CCFCD63142C}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
