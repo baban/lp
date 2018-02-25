@@ -15,7 +15,7 @@ namespace LP.Node
             var nodes = treeNode.GetMappedChildNodes();
             if (nodes.Count() > 0)
             {
-                AddChild("Node", nodes[0]);
+                AddChild("Node", nodes.First());
             }
         }
 

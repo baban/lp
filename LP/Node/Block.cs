@@ -12,7 +12,6 @@ namespace LP.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            System.Console.WriteLine("init Block");
             var nodes = treeNode.GetMappedChildNodes();
             if (nodes.Count() > 0)
             {
@@ -23,7 +22,8 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            System.Console.WriteLine("Block");
+            //ScopeInfo info = new ScopeInfo(this, false);
+            //Scope scope = new Scope(info, null, thread.CurrentScope, new object[]{ });
             Object.LpObject result;
             if (ChildNodes.Count() > 0)
             {

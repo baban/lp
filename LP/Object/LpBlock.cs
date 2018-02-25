@@ -95,7 +95,7 @@ namespace LP.Object
             Util.LpIndexer.push(self);
             self.arguments.putVariables(args, block);
 
-            LpObject ret = Object.LpNl.initialize();
+            LpObject ret = LpNl.initialize();
             //self.statements.First().UseType
             /*
             foreach (Ast.LpAstNode stmt in self.statements)
