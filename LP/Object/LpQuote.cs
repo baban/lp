@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Sprache;
+using Irony.Ast;
+using Irony.Interpreter;
+using Irony.Interpreter.Ast;
+using Irony.Parsing;
 
 namespace LP.Object
 {
@@ -10,12 +10,12 @@ namespace LP.Object
     {
         static string className = "Quote";
 
-        public static LpObject initialize(List<Ast.LpAstNode> nodes)
+        public static LpObject initialize(AstNodeList stmt)
         {
-            return init(nodes);
+            return init(stmt);
         }
 
-        private static LpObject init(List<Ast.LpAstNode> nodes)
+        private static LpObject init(AstNodeList stmt)
         {
             LpObject obj = createClassTemplate();
             //obj.statements = nodes;

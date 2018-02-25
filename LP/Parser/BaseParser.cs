@@ -296,7 +296,7 @@ namespace LP.Parser
                 case NodeType.INSTANCE_VARIABLE_CALL:
                     return Ast.LpAstLeaf.toNode((string)node[1], "INSTANCE_VARIABLE_CALL");
                 case NodeType.QUOTE:
-                    return Ast.LpAstQuote.toNode((object[])node[1]);
+                    return null; // Ast.LpAstQuote.toNode((object[])node[1]);
                 case NodeType.QUASI_QUOTE:
                     return Ast.LpAstQuasiQuote.toNode((object[])node[1]);
                 case NodeType.QUESTION_QUOTE:

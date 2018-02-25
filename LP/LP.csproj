@@ -110,7 +110,6 @@
     <Compile Include="Ast\LpAstNode.cs" />
     <Compile Include="Ast\LpAstQuasiQuote.cs" />
     <Compile Include="Ast\LpAstQuestionQuote.cs" />
-    <Compile Include="Ast\LpAstQuote.cs" />
     <Compile Include="Ast\LpAstStmts.cs" />
     <Compile Include="Ast\LpAstFuncall.cs" />
     <Compile Include="Error\LpArgumentError.cs" />
@@ -136,6 +135,7 @@
     <Compile Include="Node\Nl.cs" />
     <Compile Include="Node\Numeric.cs" />
     <Compile Include="Node\Primary.cs" />
+    <Compile Include="Node\Quote.cs" />
     <Compile Include="Node\RightUnary.cs" />
     <Compile Include="Node\Stmt.cs" />
     <Compile Include="Node\Stmts.cs" />
