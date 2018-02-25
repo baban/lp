@@ -318,7 +318,7 @@ namespace LP.Parser
                 case NodeType.ARRAY:
                     return Ast.LpAstArray.toNode((List<object[]>)node[1]);
                 case NodeType.HASH:
-                    return Ast.LpAstHash.toNode((object[])node[1]);
+                    return null; // Ast.LpAstHash.toNode((object[])node[1]);
                 default:
                     return null;
             }

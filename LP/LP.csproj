@@ -104,7 +104,6 @@
   <ItemGroup>
     <Compile Include="Ast\LpAstArray.cs" />
     <Compile Include="Ast\LpAstBlock.cs" />
-    <Compile Include="Ast\LpAstHash.cs" />
     <Compile Include="Ast\LpAstLambda.cs" />
     <Compile Include="Ast\LpAstLeaf.cs" />
     <Compile Include="Ast\LpAstMethodCall.cs" />
