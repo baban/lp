@@ -67,7 +67,7 @@ namespace LP
             */
             //string code = readFile(argv[0]);
             //string code = "def hoge() 1; 2; 3 end";
-            string code = "?1";
+            string code = "1+2";
             Console.WriteLine("initialize");
             ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
             Console.WriteLine("parse");

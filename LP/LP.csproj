@@ -127,9 +127,11 @@
     <Compile Include="Node\DefineClass.cs" />
     <Compile Include="Node\DefineFunction.cs" />
     <Compile Include="Node\Expr.cs" />
+    <Compile Include="Node\Funcall.cs" />
     <Compile Include="Node\Hash.cs" />
     <Compile Include="Node\IfStmt.cs" />
     <Compile Include="Node\LeftUnary.cs" />
+    <Compile Include="Node\MethodCall.cs" />
     <Compile Include="Node\Nl.cs" />
     <Compile Include="Node\Numeric.cs" />
     <Compile Include="Node\Primary.cs" />
@@ -153,6 +155,7 @@
     <Compile Include="Object\LpQuasiQuote.cs" />
     <Compile Include="Object\LpQuote.cs" />
     <Compile Include="Object\LpUnquote.cs" />
+    <Compile Include="Node\VariableCall.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Parser\BaseParser.cs" />
     <Compile Include="Parser\LpParser.cs" />

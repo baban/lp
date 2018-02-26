@@ -31,6 +31,7 @@ namespace LP.Parser
             var Quote = new NonTerminal("Quote", typeof(Node.Quote));
             var QuasiQuote = new NonTerminal("QuasiQuote", typeof(Node.QuasiQuote));
             var QuestionQuote = new NonTerminal("QuestionQuote", typeof(Node.QuestionQuote));
+            var VariableCall = new NonTerminal("VariableCall", typeof(Node.VariableCall));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
             var Expr16 = new NonTerminal("Expr16", typeof(Node.LeftUnary));
@@ -51,6 +52,8 @@ namespace LP.Parser
             var Expr1 = new NonTerminal("Expr1", typeof(Node.BinExpr));
             var Expr0 = new NonTerminal("Expr0", typeof(Node.BinExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
+            var MethodCall = new NonTerminal("MethodCall");
 
             var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStmt));
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
@@ -97,7 +100,8 @@ namespace LP.Parser
             Quote.Rule = "'" + Stmt;
             QuasiQuote.Rule = "`" + Stmt;
             QuestionQuote.Rule = "?" + Stmt;
-            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote;
+            VariableCall.Rule = Id;
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
 
             BracketedStmt.Rule = "(" + Stmt + ")";
             Expr16.Rule = (Expr + "++") | (Expr + "--");
@@ -117,11 +121,13 @@ namespace LP.Parser
             Expr2.Rule = makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr);
             Expr1.Rule = makeChainOperators(new string[] { "and", "or" }, Expr);
             Expr0.Rule = makeChainOperators(new string[] { "=" }, Expr);
-            Expr.Rule = BracketedStmt | Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Primary;
+            Funcall.Rule = Id + "()";
+            MethodCall.Rule = Expr + "." + Funcall;
+            Expr.Rule = BracketedStmt | MethodCall | Funcall | Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Primary;
 
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
             DefineFunction.Rule = ToTerm("def") + Id + "()" + Stmts + ToTerm("end");
-            DefineClass.Rule = ToTerm("class")+ ClassName + "\n" + Stmts + ToTerm("end");
+            DefineClass.Rule = ToTerm("class")+ ClassName + ToTerm(";") + Stmts + ToTerm("end");
             Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
 
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
