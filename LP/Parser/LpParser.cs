@@ -14,6 +14,7 @@ namespace LP.Parser
         {
             var Comma = ToTerm(",", "Comma");
             var Id = new IdentifierTerminal("identifier");
+            var ClassName = Id;
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
             var Str = new NonTerminal("String", typeof(Node.String));
@@ -120,7 +121,7 @@ namespace LP.Parser
 
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
             DefineFunction.Rule = ToTerm("def") + Id + "()" + Stmts + ToTerm("end");
-            DefineClass.Rule = ToTerm("class")+ Id + Stmts + ToTerm("end");
+            DefineClass.Rule = ToTerm("class")+ ClassName + "\n" + Stmts + ToTerm("end");
             Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
 
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);

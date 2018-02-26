@@ -35,12 +35,6 @@ namespace LP.Object
                 return leaf.DoExpand();
             }
 
-            var questionQuote = node as Ast.LpAstQuestionQuote;
-            if (questionQuote != null)
-            {
-                return questionQuote.DoExpand();
-            }
-
             var methodNode = node as Ast.LpAstMethodCall;
             if (methodNode != null)
             {

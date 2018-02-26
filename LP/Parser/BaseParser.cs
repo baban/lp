@@ -298,9 +298,9 @@ namespace LP.Parser
                 case NodeType.QUOTE:
                     return null; // Ast.LpAstQuote.toNode((object[])node[1]);
                 case NodeType.QUASI_QUOTE:
-                    return Ast.LpAstQuasiQuote.toNode((object[])node[1]);
+                    return null;//Ast.LpAstQuasiQuote.toNode((object[])node[1]);
                 case NodeType.QUESTION_QUOTE:
-                    return Ast.LpAstQuestionQuote.toNode((object[])node[1]);
+                    return null; ;//Ast.LpAstQuestionQuote.toNode((object[])node[1]);
                 case NodeType.FUNCALL:
                     return Ast.LpAstFuncall.toNode((object[])node[1]);
                 case NodeType.LAMBDA:

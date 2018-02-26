@@ -17,6 +17,8 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+            ScopeInfo info = new ScopeInfo(this, false);
+            //thread.PushClosureScope();
             thread.CurrentNode = Parent;
             return Object.LpNl.initialize();
         }
