@@ -96,11 +96,13 @@ namespace LP.Ast
 
         public static LpAstFuncall toNode(object[] vals)
         {
+            /*
             object[] block = vals[2] as object[];
             return new Ast.LpAstFuncall(
                 (string)vals[0],
                 (Ast.LpAstNode[])((object[])vals[1]).Select((n) => LpParser.toNode((object[])n)).ToArray(),
-                (block == null) ? null : LpParser.toNode(block));
+                (block == null) ? null : LpParser.toNode(block));*/
+            return null;
         }
     }
 }

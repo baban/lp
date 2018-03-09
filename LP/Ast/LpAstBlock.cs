@@ -53,10 +53,12 @@ namespace LP.Ast
         public static LpAstBlock toNode(object[] nodes)
         {
             var blk2 = nodes;
+            /*
             return new Ast.LpAstBlock(
                 LpParser.toNode((object[])blk2[2]).ChildNodes,
                 (string[])blk2[0],
-                (bool)blk2[1]);
+                (bool)blk2[1]);*/
+            return null;
         }
     }
 }

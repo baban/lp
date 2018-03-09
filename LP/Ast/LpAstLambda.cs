@@ -46,11 +46,13 @@ namespace LP.Ast
 
         public static LpAstLambda toNode(object[] nodes)
         {
-            var blk = nodes;
+            /*
+             * var blk = nodes;
             return new Ast.LpAstLambda(
                 LpParser.toNode((object[])blk[2]).ChildNodes,
                 (string[])blk[0],
-                (bool)blk[1]);
+                (bool)blk[1]);*/
+            return null;
         }
     }
 }

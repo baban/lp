@@ -39,18 +39,20 @@ namespace LP.Parser
             var Expr14 = new NonTerminal("Expr14", typeof(Node.RightUnary));
             var Expr13 = new NonTerminal("Expr13", typeof(Node.BinExpr));
             var Expr12 = new NonTerminal("Expr12", typeof(Node.RightUnary));
-            var Expr11 = new NonTerminal("Expr11", typeof(Node.BinExpr));
-            var Expr10 = new NonTerminal("Expr10", typeof(Node.BinExpr));
-            var Expr9 = new NonTerminal("Expr9", typeof(Node.BinExpr));
-            var Expr8 = new NonTerminal("Expr8", typeof(Node.BinExpr));
-            var Expr7 = new NonTerminal("Expr7", typeof(Node.BinExpr));
-            var Expr6 = new NonTerminal("Expr6", typeof(Node.BinExpr));
-            var Expr5 = new NonTerminal("Expr5", typeof(Node.BinExpr));
-            var Expr4 = new NonTerminal("Expr4", typeof(Node.BinExpr));
-            var Expr3 = new NonTerminal("Expr3", typeof(Node.BinExpr));
-            var Expr2 = new NonTerminal("Expr2", typeof(Node.BinExpr));
-            var Expr1 = new NonTerminal("Expr1", typeof(Node.BinExpr));
-            var Expr0 = new NonTerminal("Expr0", typeof(Node.BinExpr));
+            var Expr11 = new NonTerminal("Expr11", typeof(Node.Expr));
+            var Expr10 = new NonTerminal("Expr10", typeof(Node.Expr));
+            var Expr9 = new NonTerminal("Expr9", typeof(Node.Expr));
+            var Expr8 = new NonTerminal("Expr8", typeof(Node.Expr));
+            var Expr7 = new NonTerminal("Expr7", typeof(Node.Expr));
+            var Expr6 = new NonTerminal("Expr6", typeof(Node.Expr));
+            var Expr5 = new NonTerminal("Expr5", typeof(Node.Expr));
+            var Expr4 = new NonTerminal("Expr4", typeof(Node.Expr));
+            var Expr3 = new NonTerminal("Expr3", typeof(Node.Expr));
+            var Expr2 = new NonTerminal("Expr2", typeof(Node.Expr));
+            var Expr1 = new NonTerminal("Expr1", typeof(Node.Expr));
+            var Expr0 = new NonTerminal("Expr0", typeof(Node.Expr));
+            var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Expr));
+            var BinExpr = new NonTerminal("BinExpr", typeof(Node.BinExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall");
@@ -62,7 +64,6 @@ namespace LP.Parser
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
-
             RegisterBracePair("(", ")");
             RegisterOperators(0, "=");
             RegisterOperators(1, "and", "or");
@@ -74,8 +75,8 @@ namespace LP.Parser
             RegisterOperators(7, "|");
             RegisterOperators(8, "&");
             RegisterOperators(9, "<<", ">>");
-            RegisterOperators(10, "+", "-");
-            RegisterOperators(11, "*", "/", "%");
+            RegisterOperators(9, "+", "-");
+            RegisterOperators(10, "*", "/", "%");
             RegisterOperators(12, "-");
             RegisterOperators(13, "**");
             RegisterOperators(14, "not");
@@ -84,6 +85,7 @@ namespace LP.Parser
             MarkPunctuation(",", "(", ")");
             //this.Delimiters = "{}[](),:;+-*/%&|^!~<>=";
             this.MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
+            this.MarkTransient(Stmt, Primary, Expr);
 
             Numeric.Rule = new NumberLiteral("Number");
             Str.Rule = new StringLiteral("String", "\"");
@@ -103,27 +105,30 @@ namespace LP.Parser
             VariableCall.Rule = Id;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
 
+            SimpleExpr.Rule = BracketedStmt | Primary;
             BracketedStmt.Rule = "(" + Stmt + ")";
             Expr16.Rule = (Expr + "++") | (Expr + "--");
             Expr15.Rule = ("+" + Expr) | ("!" + Expr) | ("~" + Expr);
             Expr14.Rule = ToTerm("not") + Expr;
-            Expr13.Rule = makeChainOperators(new string[] { "**" }, Expr);
+            Expr13.Rule = makeChainOperators(new string[] { "**" }, Expr, Expr);
             Expr12.Rule = "-" + Expr;
-            Expr11.Rule = makeChainOperators(new string[] { "*", "/", "%" }, Expr);
-            Expr10.Rule = makeChainOperators(new string[] { "+", "-" }, Expr);
-            Expr9.Rule = makeChainOperators(new string[] { "<<", ">>" }, Expr);
-            Expr8.Rule = makeChainOperators(new string[] { "&" }, Expr);
-            Expr7.Rule = makeChainOperators(new string[] { "|" }, Expr);
-            Expr6.Rule = makeChainOperators(new string[] { ">=", ">", "<=", "<" }, Expr);
-            Expr5.Rule = makeChainOperators(new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, Expr);
-            Expr4.Rule = makeChainOperators(new string[] { "&&" }, Expr);
-            Expr3.Rule = makeChainOperators(new string[] { "||" }, Expr);
-            Expr2.Rule = makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr);
-            Expr1.Rule = makeChainOperators(new string[] { "and", "or" }, Expr);
-            Expr0.Rule = makeChainOperators(new string[] { "=" }, Expr);
+            Expr11.Rule = Primary | makeChainOperators(new string[] { "*", "/" }, Primary, Expr11);
+            Expr10.Rule = Expr11 | makeChainOperators(new string[] { "+", "-" }, Expr11, Expr10);
+            Expr9.Rule = Expr10 | makeChainOperators(new string[] { "<<", ">>" }, Expr10, Expr9);
+            Expr8.Rule = Expr9 | makeChainOperators(new string[] { "&" }, Expr9, Expr8);
+            Expr7.Rule = Expr8 | makeChainOperators(new string[] { "|" }, Expr8, Expr7);
+            Expr6.Rule = Expr7 | makeChainOperators(new string[] { ">=", ">", "<=", "<" }, Expr7, Expr6);
+            Expr5.Rule = Expr6 | makeChainOperators(new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, Expr6, Expr5);
+            Expr4.Rule = Expr5 | makeChainOperators(new string[] { "&&" }, Expr5, Expr4);
+            Expr3.Rule = Expr4 | makeChainOperators(new string[] { "||" }, Expr4, Expr3);
+            Expr2.Rule = Expr3 | makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr3, Expr2);
+            Expr1.Rule = Expr2 | makeChainOperators(new string[] { "and", "or" }, Expr2, Expr1);
+            //Expr0.Rule = makeChainOperators(new string[] { "=" }, Expr, Expr);
             Funcall.Rule = Id + "()";
             MethodCall.Rule = Expr + "." + Funcall;
-            Expr.Rule = BracketedStmt | MethodCall | Funcall | Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Primary;
+            //Expr.Rule = BracketedStmt | MethodCall | Funcall | Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Expr0 | Primary;
+            //SimpleExpr.Rule = BracketedStmt | Expr | Primary;
+            Expr.Rule = Expr5;
 
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
             DefineFunction.Rule = ToTerm("def") + Id + "()" + Stmts + ToTerm("end");
@@ -135,14 +140,18 @@ namespace LP.Parser
             Root = Stmts;
         }
 
-        BnfExpression makeChainOperators(string[] operands, NonTerminal beforeExpr)
+        BnfExpression makeChainOperators(string[] operands, NonTerminal beforeExpr, NonTerminal afterExpr)
         {
-            return operands.Select((op) => makeChainOperator(op, beforeExpr)).Aggregate((a, b) => a | b);
+            var BinOp = new NonTerminal("BinOp");
+            operands.ToList().ForEach((op) => { BinOp.Rule |= ToTerm(op); } );
+            return beforeExpr + BinOp + afterExpr;//  operands.Select((op) => makeChainOperator(op, beforeExpr, afterExpr)).Aggregate((a, b) => a | b);
         }
 
-        BnfExpression makeChainOperator(string op, NonTerminal beforeExpr)
+        BnfExpression makeChainOperator(string op, NonTerminal beforeExpr, NonTerminal afterExpr)
         {
-            return beforeExpr + ToTerm(op) + beforeExpr;
+            var BinExpr = new NonTerminal("BinExpr", typeof(Node.BinExpr));
+            BinExpr.Rule = beforeExpr + ToTerm(op) + afterExpr;
+            return BinExpr;
         }
     }
 }

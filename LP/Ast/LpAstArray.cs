@@ -37,7 +37,8 @@ namespace LP.Ast
 
         public static LpAstArray toNode(List<object[]> nodes)
         {
-            return new Ast.LpAstArray(nodes.Select((o) => LpParser.toNode(o)).ToList());
+            //return new Ast.LpAstArray(nodes.Select((o) => LpParser.toNode(o)).ToList());
+            return null;
         }
     }
 }

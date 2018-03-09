@@ -26,7 +26,8 @@ namespace LP.Node
             thread.CurrentNode = this;
 
             var left = ((Object.LpObject)Left.Evaluate(thread));
-            var result = left.funcall(Op.Token.Text, new Object.LpObject[] { (Object.LpObject)Right.Evaluate(thread) }, null);
+            var right = (Object.LpObject)Right.Evaluate(thread);
+            var result = left.funcall(Op.Token.Text, new Object.LpObject[] { right }, null);
 
             thread.CurrentNode = Parent;
 

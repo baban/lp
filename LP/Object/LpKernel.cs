@@ -131,7 +131,7 @@ namespace LP.Object
 
         private static LpObject eval(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return LpParser.execute(args[0].stringValue);
+            return null; // LpParser.execute(args[0].stringValue);
         }
 
         private static LpObject if_(LpObject self, LpObject[] args, LpObject block = null)
@@ -184,7 +184,7 @@ namespace LP.Object
         {
             // TODO: load path から使えるものを順番に捜す
             var code = readFile(args[0].stringValue);
-            LpParser.execute(code);
+            //LpParser.execute(code);
             return LpNl.initialize();
         }
 
@@ -256,7 +256,7 @@ namespace LP.Object
             // TODO: load path から使えるものを順番に捜す
             var filename = args[0].stringValue;
             var code = readFile(filename);
-            LpParser.execute(code);
+            //LpParser.execute(code);
             return LpNl.initialize();
         }
 

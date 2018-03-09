@@ -1,0 +1,10 @@
+D:\repo\lp\ParserTest\bin\Debug\ParserTest.dll
+D:\repo\lp\ParserTest\bin\Debug\ParserTest.pdb
+D:\repo\lp\ParserTest\obj\Debug\ParserTest.dll
+D:\repo\lp\ParserTest\obj\Debug\ParserTest.pdb
+D:\repo\lp\ParserTest\bin\Debug\ParserTest.dll.config
+D:\repo\lp\ParserTest\bin\Debug\Irony.dll
+D:\repo\lp\ParserTest\bin\Debug\Irony.Interpreter.dll
+D:\repo\lp\ParserTest\bin\Debug\Irony.Interpreter.pdb
+D:\repo\lp\ParserTest\bin\Debug\Irony.Interpreter.xml
+D:\repo\lp\ParserTest\obj\Debug\ParserTest.csprojResolveAssemblyReference.cache

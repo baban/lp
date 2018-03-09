@@ -10,6 +10,31 @@ using Irony.Interpreter;
 
 namespace LP
 {
+    // TODO: エラー行表示
+    // TODO: メソッド定義
+    // TODO: module定義
+    // TODO: Block読み出し
+    // TODO: インスタンス変数
+    // TODO: load & require
+    // TODO: マクロのデバッグ
+    // TODO: ハッシュ引数
+    //
+    // TODO: コメントはできるだけあとに残す
+    // TODO: 文字列のこれ以上細かいところは後日実装する
+    // TODO: マクロの変数をautogemsymする
+    // TODO: .Netとの相互運用性の向上
+    //\e
+    //\s
+    //\nnn
+    //\C-x
+    //\M-x
+    //\M-\C-x
+    //\x
+
+    // メソッドの呼び出し順序
+    // 1.まずブロックを手繰る
+    // 2.それで見つからなければ継承関係を手繰る
+    // 3. 見つからなければKernelのメソッドを探す
     class Program
     {
         static void Main(string[] args)
@@ -67,7 +92,7 @@ namespace LP
             */
             //string code = readFile(argv[0]);
             //string code = "def hoge() 1; 2; 3 end";
-            string code = "1+2";
+            string code = "1*2+3*4";
             Console.WriteLine("initialize");
             ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
             Console.WriteLine("parse");
@@ -115,7 +140,7 @@ namespace LP
                 Console.Write(" >> ");
                 line = Console.ReadLine();
                 try {
-                    LpParser.execute(line).funcall("inspect",null,null).funcall("display",null,null);
+                    //LpParser.execute(line).funcall("inspect",null,null).funcall("display",null,null);
                 } catch( Error.LpError e ){
                     printError( e );
                 } catch ( Sprache.ParseException e ) {

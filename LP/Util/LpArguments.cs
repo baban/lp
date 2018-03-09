@@ -118,8 +118,8 @@ namespace LP.Util
                 {
                     if (-1 != arguments[i].IndexOf("="))
                     {
-                        var node = LpParser.createNode(arguments[i]);
-                        node.DoEvaluate();
+                        //var node = null;  //LpParser.createNode(arguments[i]);
+                        //node.DoEvaluate();
                     }
                 }
                 for (int i = 0; i < Math.Abs(arity()); i++)
