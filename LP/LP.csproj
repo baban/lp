@@ -102,7 +102,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ast\LpAstNode.cs" />
     <Compile Include="Error\LpArgumentError.cs" />
     <Compile Include="Error\LpIOError.cs" />
     <Compile Include="Error\LpNoMethodError.cs" />

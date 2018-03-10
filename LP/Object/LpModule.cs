@@ -12,10 +12,10 @@ namespace LP.Object
 
         public static LpObject initialize()
         {
-            return init( className, new List<Ast.LpAstNode>());
+            return init( className, new List<string>());
         }
 
-        private static LpObject init(string className, List<Ast.LpAstNode> stmts)
+        private static LpObject init(string className, List<string> stmts)
         {
             LpObject obj = createClassTemplate(className);
             obj.class_name = className;

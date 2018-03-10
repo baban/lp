@@ -17,7 +17,7 @@ namespace LP.Object
             return init();
         }
 
-        public static LpObject initialize(Ast.LpAstNode stmt)
+        /*public static LpObject initialize(Ast.LpAstNode stmt)
         {
             LpObject obj = init();
             //obj.statements.Add(stmt);
@@ -38,7 +38,7 @@ namespace LP.Object
             obj.arguments = new Util.LpArguments(args, argLoose);
             obj.superclass = LpObject.initialize();
             return obj;
-        }
+        }*/
 
         static LpObject init()
         {

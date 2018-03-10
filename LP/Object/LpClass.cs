@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace LP.Object
 {
@@ -14,20 +9,20 @@ namespace LP.Object
 
         public static LpObject initialize()
         {
-            return init( className, new List<Ast.LpAstNode>() );
+            return init( className, new List<string>() );
         }
 
-        public static LpObject initialize( List<Ast.LpAstNode> stmts )
+        public static LpObject initialize( List<string> stmts )
         {
             return init( className, stmts );
         }
 
-        public static LpObject initialize(string className, List<Ast.LpAstNode> stmts)
+        public static LpObject initialize(string className, List<string> stmts)
         {
             return init(className, stmts);
         }
 
-        private static LpObject init(string className, List<Ast.LpAstNode> stmts)
+        private static LpObject init(string className, List<string> stmts)
         {
             LpObject obj = createClassTemplate( className );
             obj.class_name = className;

@@ -525,10 +525,7 @@ namespace LP.Parser
             Console.WriteLine(node);
             */
 
-            var node = createNode(ctx);
-            var o = node.Evaluate();
-
-            return o;
+            return null;
         }
     }
 }

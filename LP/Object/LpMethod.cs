@@ -35,7 +35,7 @@ namespace LP.Object
             return obj;
         }
 
-        public static LpObject initialize( string[] args, List<Ast.LpAstNode> stmts )
+        public static LpObject initialize( string[] args, List<string> stmts )
         {
             var obj = createClassTemplate();
             obj.arguments = new Util.LpArguments( args );
@@ -43,7 +43,7 @@ namespace LP.Object
             return obj;
         }
 
-        public static LpObject initialize(Util.LpArguments args, List<Ast.LpAstNode> stmts)
+        public static LpObject initialize(Util.LpArguments args, List<string> stmts)
         {
             var obj = createClassTemplate();
             obj.arguments = args;

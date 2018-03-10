@@ -325,7 +325,7 @@ namespace LP.Object
             return LpBool.initialize(true);
         }
 
-        internal LpObject macrocall(string p, Ast.LpAstNode[] args, LpObject lpObject)
+        internal LpObject macrocall(string p, string[] args, LpObject lpObject)
         {
             throw new NotImplementedException();
         }

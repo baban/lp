@@ -275,74 +275,8 @@ namespace LP.Parser
                       Parse.Return(firstOperand));
         }
 
-        public static Ast.LpAstNode toNode(object[] node)
-        {
-            switch ((NodeType)node[0])
-            {
-                case NodeType.NL:
-                    return null; //Ast.LpAstLeaf.toNode((string)node[1], "NL");
-                case NodeType.NUMERIC:
-                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "NUMERIC");
-                case NodeType.STRING:
-                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "STRING");
-                case NodeType.BOOL:
-                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "BOOL");
-                case NodeType.SYMBOL:
-                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "SYMBOL");
-                case NodeType.VARIABLE_CALL:
-                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "VARIABLE_CALL");
-                case NodeType.GLOBAL_VARIABLE_CALL:
-                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "GLOBAL_VARIABLE_CALL");
-                case NodeType.INSTANCE_VARIABLE_CALL:
-                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "INSTANCE_VARIABLE_CALL");
-                case NodeType.QUOTE:
-                    return null; // Ast.LpAstQuote.toNode((object[])node[1]);
-                case NodeType.QUASI_QUOTE:
-                    return null;//Ast.LpAstQuasiQuote.toNode((object[])node[1]);
-                case NodeType.QUESTION_QUOTE:
-                    return null; ;//Ast.LpAstQuestionQuote.toNode((object[])node[1]);
-                case NodeType.FUNCALL:
-                    return null;// Ast.LpAstFuncall.toNode((object[])node[1]);
-                case NodeType.LAMBDA:
-                    return null;// Ast.LpAstLambda.toNode((object[])node[1]);
-                case NodeType.BLOCK:
-                    return null;// Ast.LpAstBlock.toNode((object[])node[1]);
-                case NodeType.METHODS_CALL:
-                    return null;// Ast.LpAstMethodCall.toNode((object[])node[1]);
-                case NodeType.EXPR:
-                    return toNode((object[])node[1]);
-                case NodeType.STMTS:
-                    return null;// Ast.LpAstStmts.toNode((List<object[]>)node[1]);
-                case NodeType.STMT:
-                    return toNode( (object[])node[1] );
-                case NodeType.ARRAY:
-                    return null;// Ast.LpAstArray.toNode((List<object[]>)node[1]);
-                case NodeType.HASH:
-                    return null; // Ast.LpAstHash.toNode((object[])node[1]);
-                default:
-                    return null;
-            }
-        }
 
-        public static Ast.LpAstNode createNode(string ctx)
-        {
-            Parser<string> Nl = Parse.Regex("nl").Named("Nl");
-            string filename = @"C:\Users\ba-n\test.txt";
-            System.IO.StreamReader sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
-            //var nl = Sprache.ParserExtensions.Parse(Nl, "nl");
-            var ipt = new Sprache.Input("nl");
-            //var nl = Sprache.ParserExtensions.Parse(Nl, ipt);
-            Parser<Sprache.Input> identifier =
-                from trailing in Parse.Regex("nl")
-                select new Sprache.Input("nl");
 
-            Console.WriteLine("----------------------------execute----------------------------");
-            //Console.WriteLine(nl);
-
-            //Console.WriteLine(ctx);
-            var pobj = Sprache.ParserExtensions.Parse(PROGRAM, ctx);
-            var node = toNode(pobj);
-            return node;
-        }
+        
     }
 }

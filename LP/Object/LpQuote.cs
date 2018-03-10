@@ -22,7 +22,7 @@ namespace LP.Object
             return obj;
         }
 
-        private static LpObject init(Ast.LpAstNode node)
+        private static LpObject init(AstNode node)
         {
             LpObject obj = createClassTemplate();
             //obj.statements = new List<Ast.LpAstNode>(){node};

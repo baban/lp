@@ -23,11 +23,11 @@ namespace LP.Object
             return init();
         }
 
-        public static LpObject initialize(List<Ast.LpAstNode> nodes) {
+        public static LpObject initialize(List<string> nodes) {
             return init(nodes);
         }
 
-        public static Ast.LpAstNode castAndExpand(Ast.LpAstNode node)
+        public static void castAndExpand(string node)
         {
             /*
              * var leaf = node as Ast.LpAstLeaf;
@@ -45,14 +45,14 @@ namespace LP.Object
 
             return node.DoExpand();
             */
-            return null;
+            return;
         }
 
         //`(?recv).times(?*args)
         // `?7 // '7
         // `?a // a
         //  `(a+?b)
-        private static LpObject init(List<Ast.LpAstNode> nodes)
+        private static LpObject init(List<string> nodes)
         {
             LpObject obj = init();
             //obj.statements = //nodes.Select((node) => castAndExpand(node) ).ToList();
