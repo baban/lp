@@ -94,7 +94,11 @@ namespace LP
             //string code = "def hoge() 1; 2; 3 end";
             string code = "1*2+3*4";
             Console.WriteLine("initialize");
-            ScriptApp app = new ScriptApp(new LanguageData(new Parser.LpGrammer()));
+            var parser = new Parser.LpGrammer();
+            Console.WriteLine("initialize parser");
+            var language = new LanguageData(parser);
+            Console.WriteLine("initialize language");
+            ScriptApp app = new ScriptApp(language);
             Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);
             Console.WriteLine("evaluate");

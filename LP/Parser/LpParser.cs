@@ -38,7 +38,7 @@ namespace LP.Parser
             var Expr15 = new NonTerminal("Expr15", typeof(Node.RightUnary));
             var Expr14 = new NonTerminal("Expr14", typeof(Node.RightUnary));
             var Expr13 = new NonTerminal("Expr13", typeof(Node.BinExpr));
-            var Expr12 = new NonTerminal("Expr12", typeof(Node.RightUnary));
+            var Expr12 = new NonTerminal("Expr12", typeof(Node.Expr));
             var Expr11 = new NonTerminal("Expr11", typeof(Node.Expr));
             var Expr10 = new NonTerminal("Expr10", typeof(Node.Expr));
             var Expr9 = new NonTerminal("Expr9", typeof(Node.Expr));
@@ -107,12 +107,12 @@ namespace LP.Parser
 
             SimpleExpr.Rule = BracketedStmt | Primary;
             BracketedStmt.Rule = "(" + Stmt + ")";
-            Expr16.Rule = (Expr + "++") | (Expr + "--");
-            Expr15.Rule = ("+" + Expr) | ("!" + Expr) | ("~" + Expr);
-            Expr14.Rule = ToTerm("not") + Expr;
-            Expr13.Rule = makeChainOperators(new string[] { "**" }, Expr, Expr);
-            Expr12.Rule = "-" + Expr;
-            Expr11.Rule = Primary | makeChainOperators(new string[] { "*", "/" }, Primary, Expr11);
+            Expr16.Rule = SimpleExpr | (SimpleExpr + "++") | (SimpleExpr + "--");
+            Expr15.Rule = Expr16 | ("+" + Expr16) | ("!" + Expr16) | ("~" + Expr16);
+            Expr14.Rule = Expr15 | ToTerm("not") + Expr15;
+            Expr13.Rule = Expr14 | makeChainOperators(new string[] { "**" }, Expr14, Expr13);
+            Expr12.Rule = Expr13 | "-" + Expr13;
+            Expr11.Rule = SimpleExpr | makeChainOperators(new string[] { "*", "/" }, SimpleExpr, Expr11);
             Expr10.Rule = Expr11 | makeChainOperators(new string[] { "+", "-" }, Expr11, Expr10);
             Expr9.Rule = Expr10 | makeChainOperators(new string[] { "<<", ">>" }, Expr10, Expr9);
             Expr8.Rule = Expr9 | makeChainOperators(new string[] { "&" }, Expr9, Expr8);
@@ -123,12 +123,10 @@ namespace LP.Parser
             Expr3.Rule = Expr4 | makeChainOperators(new string[] { "||" }, Expr4, Expr3);
             Expr2.Rule = Expr3 | makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr3, Expr2);
             Expr1.Rule = Expr2 | makeChainOperators(new string[] { "and", "or" }, Expr2, Expr1);
-            //Expr0.Rule = makeChainOperators(new string[] { "=" }, Expr, Expr);
+            Expr0.Rule = Expr1 | makeChainOperators(new string[] { "=" }, VariableCall, Expr1);
             Funcall.Rule = Id + "()";
-            MethodCall.Rule = Expr + "." + Funcall;
-            //Expr.Rule = BracketedStmt | MethodCall | Funcall | Expr16 | Expr15 | Expr14 | Expr13 | Expr12 | Expr11 | Expr10 | Expr9 | Expr8 | Expr7 | Expr6 | Expr5 | Expr4 | Expr3 | Expr2 | Expr1 | Expr0 | Primary;
-            //SimpleExpr.Rule = BracketedStmt | Expr | Primary;
-            Expr.Rule = Expr5;
+            MethodCall.Rule = SimpleExpr + "." + Funcall;
+            Expr.Rule = Expr0;
 
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
             DefineFunction.Rule = ToTerm("def") + Id + "()" + Stmts + ToTerm("end");
@@ -142,9 +140,7 @@ namespace LP.Parser
 
         BnfExpression makeChainOperators(string[] operands, NonTerminal beforeExpr, NonTerminal afterExpr)
         {
-            var BinOp = new NonTerminal("BinOp");
-            operands.ToList().ForEach((op) => { BinOp.Rule |= ToTerm(op); } );
-            return beforeExpr + BinOp + afterExpr;//  operands.Select((op) => makeChainOperator(op, beforeExpr, afterExpr)).Aggregate((a, b) => a | b);
+            return operands.Select((op) => makeChainOperator(op, beforeExpr, afterExpr)).Aggregate((a, b) => a | b);
         }
 
         BnfExpression makeChainOperator(string op, NonTerminal beforeExpr, NonTerminal afterExpr)
