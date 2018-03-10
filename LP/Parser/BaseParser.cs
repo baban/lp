@@ -302,13 +302,13 @@ namespace LP.Parser
                 case NodeType.QUESTION_QUOTE:
                     return null; ;//Ast.LpAstQuestionQuote.toNode((object[])node[1]);
                 case NodeType.FUNCALL:
-                    return Ast.LpAstFuncall.toNode((object[])node[1]);
+                    return null;// Ast.LpAstFuncall.toNode((object[])node[1]);
                 case NodeType.LAMBDA:
-                    return Ast.LpAstLambda.toNode((object[])node[1]);
+                    return null;// Ast.LpAstLambda.toNode((object[])node[1]);
                 case NodeType.BLOCK:
-                    return Ast.LpAstBlock.toNode((object[])node[1]);
+                    return null;// Ast.LpAstBlock.toNode((object[])node[1]);
                 case NodeType.METHODS_CALL:
-                    return Ast.LpAstMethodCall.toNode((object[])node[1]);
+                    return null;// Ast.LpAstMethodCall.toNode((object[])node[1]);
                 case NodeType.EXPR:
                     return toNode((object[])node[1]);
                 case NodeType.STMTS:
@@ -316,7 +316,7 @@ namespace LP.Parser
                 case NodeType.STMT:
                     return toNode( (object[])node[1] );
                 case NodeType.ARRAY:
-                    return Ast.LpAstArray.toNode((List<object[]>)node[1]);
+                    return null;// Ast.LpAstArray.toNode((List<object[]>)node[1]);
                 case NodeType.HASH:
                     return null; // Ast.LpAstHash.toNode((object[])node[1]);
                 default:

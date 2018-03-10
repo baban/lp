@@ -102,14 +102,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ast\LpAstArray.cs" />
-    <Compile Include="Ast\LpAstBlock.cs" />
-    <Compile Include="Ast\LpAstLambda.cs" />
-    <Compile Include="Ast\LpAstLeaf.cs" />
-    <Compile Include="Ast\LpAstMethodCall.cs" />
     <Compile Include="Ast\LpAstNode.cs" />
     <Compile Include="Ast\LpAstStmts.cs" />
-    <Compile Include="Ast\LpAstFuncall.cs" />
     <Compile Include="Error\LpArgumentError.cs" />
     <Compile Include="Error\LpIOError.cs" />
     <Compile Include="Error\LpNoMethodError.cs" />

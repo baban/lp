@@ -34,7 +34,7 @@ namespace LP.Object
             {
                 return leaf.DoExpand();
             }
-
+            /*
             var methodNode = node as Ast.LpAstMethodCall;
             if (methodNode != null)
             {
@@ -42,6 +42,8 @@ namespace LP.Object
             }
 
             return node.DoExpand();
+            */
+            return null;
         }
 
         //`(?recv).times(?*args)
