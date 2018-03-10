@@ -29,11 +29,13 @@ namespace LP.Object
 
         public static Ast.LpAstNode castAndExpand(Ast.LpAstNode node)
         {
-            var leaf = node as Ast.LpAstLeaf;
+            /*
+             * var leaf = node as Ast.LpAstLeaf;
             if (leaf != null)
             {
                 return leaf.DoExpand();
             }
+            */
             /*
             var methodNode = node as Ast.LpAstMethodCall;
             if (methodNode != null)

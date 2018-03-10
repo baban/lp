@@ -280,21 +280,21 @@ namespace LP.Parser
             switch ((NodeType)node[0])
             {
                 case NodeType.NL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "NL");
+                    return null; //Ast.LpAstLeaf.toNode((string)node[1], "NL");
                 case NodeType.NUMERIC:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "NUMERIC");
+                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "NUMERIC");
                 case NodeType.STRING:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "STRING");
+                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "STRING");
                 case NodeType.BOOL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "BOOL");
+                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "BOOL");
                 case NodeType.SYMBOL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "SYMBOL");
+                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "SYMBOL");
                 case NodeType.VARIABLE_CALL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "VARIABLE_CALL");
+                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "VARIABLE_CALL");
                 case NodeType.GLOBAL_VARIABLE_CALL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "GLOBAL_VARIABLE_CALL");
+                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "GLOBAL_VARIABLE_CALL");
                 case NodeType.INSTANCE_VARIABLE_CALL:
-                    return Ast.LpAstLeaf.toNode((string)node[1], "INSTANCE_VARIABLE_CALL");
+                    return null; // Ast.LpAstLeaf.toNode((string)node[1], "INSTANCE_VARIABLE_CALL");
                 case NodeType.QUOTE:
                     return null; // Ast.LpAstQuote.toNode((object[])node[1]);
                 case NodeType.QUASI_QUOTE:
@@ -312,7 +312,7 @@ namespace LP.Parser
                 case NodeType.EXPR:
                     return toNode((object[])node[1]);
                 case NodeType.STMTS:
-                    return Ast.LpAstStmts.toNode((List<object[]>)node[1]);
+                    return null;// Ast.LpAstStmts.toNode((List<object[]>)node[1]);
                 case NodeType.STMT:
                     return toNode( (object[])node[1] );
                 case NodeType.ARRAY:
