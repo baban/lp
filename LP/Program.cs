@@ -95,11 +95,11 @@ namespace LP
             string code = "1*2+3*4";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
-            Console.WriteLine("initialize parser");
+            //Console.WriteLine("initialize parser");
             var language = new LanguageData(parser);
-            Console.WriteLine("initialize language");
+            //Console.WriteLine("initialize language");
             ScriptApp app = new ScriptApp(language);
-            Console.WriteLine("parse");
+            //Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);
             Console.WriteLine("evaluate");
             Object.LpObject result = (Object.LpObject)app.Evaluate(tree);

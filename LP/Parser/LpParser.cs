@@ -10,6 +10,12 @@ namespace LP.Parser
     [Language("LpGrammar")]
     public class LpGrammer : InterpretedLanguageGrammar
     {
+        NonTerminal Primary;
+        NonTerminal Expr;
+        NonTerminal Stmt;
+        NonTerminal Stmts;
+        enum OperandType { CHARIN_OPERATOR, OPERAND, LEFT_UNARY, RIGHT_UNARY };
+
         public LpGrammer() : base(true)
         {
             var Comma = ToTerm(",", "Comma");
@@ -32,56 +38,20 @@ namespace LP.Parser
             var QuasiQuote = new NonTerminal("QuasiQuote", typeof(Node.QuasiQuote));
             var QuestionQuote = new NonTerminal("QuestionQuote", typeof(Node.QuestionQuote));
             var VariableCall = new NonTerminal("VariableCall", typeof(Node.VariableCall));
-            var Primary = new NonTerminal("Primary", typeof(Node.Primary));
+            Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
-            var Expr16 = new NonTerminal("Expr16", typeof(Node.LeftUnary));
-            var Expr15 = new NonTerminal("Expr15", typeof(Node.RightUnary));
-            var Expr14 = new NonTerminal("Expr14", typeof(Node.RightUnary));
-            var Expr13 = new NonTerminal("Expr13", typeof(Node.BinExpr));
-            var Expr12 = new NonTerminal("Expr12", typeof(Node.Expr));
-            var Expr11 = new NonTerminal("Expr11", typeof(Node.Expr));
-            var Expr10 = new NonTerminal("Expr10", typeof(Node.Expr));
-            var Expr9 = new NonTerminal("Expr9", typeof(Node.Expr));
-            var Expr8 = new NonTerminal("Expr8", typeof(Node.Expr));
-            var Expr7 = new NonTerminal("Expr7", typeof(Node.Expr));
-            var Expr6 = new NonTerminal("Expr6", typeof(Node.Expr));
-            var Expr5 = new NonTerminal("Expr5", typeof(Node.Expr));
-            var Expr4 = new NonTerminal("Expr4", typeof(Node.Expr));
-            var Expr3 = new NonTerminal("Expr3", typeof(Node.Expr));
-            var Expr2 = new NonTerminal("Expr2", typeof(Node.Expr));
-            var Expr1 = new NonTerminal("Expr1", typeof(Node.Expr));
-            var Expr0 = new NonTerminal("Expr0", typeof(Node.Expr));
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Expr));
-            var BinExpr = new NonTerminal("BinExpr", typeof(Node.BinExpr));
-            var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall");
+            Expr = new NonTerminal("Expr", typeof(Node.Expr));
 
-            var BracketedStmt = new NonTerminal("BracketedStmt", typeof(Node.BracketedStmt));
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
-            var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
+            Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
-            var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
+            Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
             RegisterBracePair("(", ")");
-            RegisterOperators(0, "=");
-            RegisterOperators(1, "and", "or");
-            RegisterOperators(2, "..", "^..", "..^", "^..^");
-            RegisterOperators(3, "||");
-            RegisterOperators(4, "&&");
-            RegisterOperators(5, "<=>", "===", "==", "!=", "=~", "!~");
-            RegisterOperators(6, ">=", ">", "<=", "<");
-            RegisterOperators(7, "|");
-            RegisterOperators(8, "&");
-            RegisterOperators(9, "<<", ">>");
-            RegisterOperators(9, "+", "-");
-            RegisterOperators(10, "*", "/", "%");
-            RegisterOperators(12, "-");
-            RegisterOperators(13, "**");
-            RegisterOperators(14, "not");
-            RegisterOperators(15, "+", "!", "~");
-            RegisterOperators(16, "++", "--");
             MarkPunctuation(",", "(", ")");
             //this.Delimiters = "{}[](),:;+-*/%&|^!~<>=";
             this.MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
@@ -99,33 +69,35 @@ namespace LP.Parser
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Block.Rule = ToTerm("do") + Stmts + ToTerm("end");
             Lambda.Rule = ToTerm("->") + ToTerm("do") + Stmts + ToTerm("end");
-            Quote.Rule = "'" + Stmt;
-            QuasiQuote.Rule = "`" + Stmt;
-            QuestionQuote.Rule = "?" + Stmt;
+            Quote.Rule = "'" + SimpleExpr;
+            QuasiQuote.Rule = "`" + SimpleExpr;
+            QuestionQuote.Rule = "?" + SimpleExpr;
             VariableCall.Rule = Id;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
 
-            SimpleExpr.Rule = BracketedStmt | Primary;
-            BracketedStmt.Rule = "(" + Stmt + ")";
-            Expr16.Rule = SimpleExpr | (SimpleExpr + "++") | (SimpleExpr + "--");
-            Expr15.Rule = Expr16 | ("+" + Expr16) | ("!" + Expr16) | ("~" + Expr16);
-            Expr14.Rule = Expr15 | ToTerm("not") + Expr15;
-            Expr13.Rule = Expr14 | makeChainOperators(new string[] { "**" }, Expr14, Expr13);
-            Expr12.Rule = Expr13 | "-" + Expr13;
-            Expr11.Rule = SimpleExpr | makeChainOperators(new string[] { "*", "/" }, SimpleExpr, Expr11);
-            Expr10.Rule = Expr11 | makeChainOperators(new string[] { "+", "-" }, Expr11, Expr10);
-            Expr9.Rule = Expr10 | makeChainOperators(new string[] { "<<", ">>" }, Expr10, Expr9);
-            Expr8.Rule = Expr9 | makeChainOperators(new string[] { "&" }, Expr9, Expr8);
-            Expr7.Rule = Expr8 | makeChainOperators(new string[] { "|" }, Expr8, Expr7);
-            Expr6.Rule = Expr7 | makeChainOperators(new string[] { ">=", ">", "<=", "<" }, Expr7, Expr6);
-            Expr5.Rule = Expr6 | makeChainOperators(new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, Expr6, Expr5);
-            Expr4.Rule = Expr5 | makeChainOperators(new string[] { "&&" }, Expr5, Expr4);
-            Expr3.Rule = Expr4 | makeChainOperators(new string[] { "||" }, Expr4, Expr3);
-            Expr2.Rule = Expr3 | makeChainOperators(new string[] { "..", "^..", "..^", "^..^" }, Expr3, Expr2);
-            Expr1.Rule = Expr2 | makeChainOperators(new string[] { "and", "or" }, Expr2, Expr1);
-            Expr0.Rule = Expr1 | makeChainOperators(new string[] { "=" }, VariableCall, Expr1);
             Funcall.Rule = Id + "()";
             MethodCall.Rule = SimpleExpr + "." + Funcall;
+            SimpleExpr.Rule = "(" + Stmt + ")" | MethodCall | Funcall | Primary;
+            var Expr16 = makeExpr(OperandType.LEFT_UNARY, 16, new string[] { "++", "--" }, SimpleExpr);
+            var Expr15 = makeExpr(OperandType.RIGHT_UNARY, 11, new string[] { "+", "!", "~" }, Expr16);
+            var Expr14 = makeExpr(OperandType.RIGHT_UNARY, 11, new string[] { "not" }, Expr15);
+            var Expr13 = makeExpr(OperandType.CHARIN_OPERATOR, 11, new string[] { "**" }, Expr14);
+            var Expr12 = makeExpr(OperandType.RIGHT_UNARY, 12, new string[] { "-" }, Expr13);
+            var Expr11 = makeExpr(OperandType.CHARIN_OPERATOR, 11, new string[] { "*", "/", "%" }, Expr12);
+            var Expr10 = makeExpr(OperandType.CHARIN_OPERATOR, 10, new string[] { "+", "-" }, Expr11);
+            var Expr9 = makeExpr(OperandType.CHARIN_OPERATOR, 9, new string[] { "<<", ">>" }, Expr10);
+            var Expr8 = makeExpr(OperandType.CHARIN_OPERATOR, 8, new string[] { "&" }, Expr9);
+            var Expr7 = makeExpr(OperandType.CHARIN_OPERATOR, 7, new string[] { "|" }, Expr8);
+            var Expr6 = makeExpr(OperandType.CHARIN_OPERATOR, 6, new string[] { ">=", ">", "<=", "<" }, Expr7);
+            var Expr5 = makeExpr(OperandType.CHARIN_OPERATOR, 5, new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, Expr6);
+            var Expr4 = makeExpr(OperandType.CHARIN_OPERATOR, 4, new string[] { "&&" }, Expr5);
+            var Expr3 = makeExpr(OperandType.CHARIN_OPERATOR, 3, new string[] { "||" }, Expr4);
+            var Expr2 = makeExpr(OperandType.CHARIN_OPERATOR, 2, new string[] { "..", "^..", "..^", "^..^" }, Expr3);
+            var Expr1 = makeExpr(OperandType.CHARIN_OPERATOR, 1, new string[] { "and", "or" }, Expr2);
+            var Expr0 = new NonTerminal("Expr0", typeof(Node.Expr));
+            Expr0.Rule = Expr1 | makeChainOperators(new string[] { "=" }, VariableCall, Expr1);
+            RegisterOperators(0, "=");
+
             Expr.Rule = Expr0;
 
             IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
@@ -136,6 +108,50 @@ namespace LP.Parser
             Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
 
             Root = Stmts;
+        }
+
+        NonTerminal makeExpr(OperandType type, int precedence, string[] operands, NonTerminal primaryExpr)
+        {
+            var Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            switch (type)
+            {
+                case OperandType.CHARIN_OPERATOR:
+                    Expr.Rule = primaryExpr | makeChainOperators(operands, Expr, primaryExpr);
+                    break;
+                case OperandType.LEFT_UNARY:
+                    Expr.Rule = primaryExpr | makeLeftUnaryOperators(operands, primaryExpr);
+                    break;
+                case OperandType.RIGHT_UNARY:
+                    Expr.Rule = primaryExpr | makeRightUnaryOperators(operands, primaryExpr);
+                    break;
+            }
+            RegisterOperators(precedence, operands);
+
+            return Expr;
+        }
+
+        BnfExpression makeLeftUnaryOperators(string[] operands, NonTerminal beforeExpr)
+        {
+            return operands.Select((op) => makeLeftUnaryOperator(op, beforeExpr)).Aggregate((a, b) => a | b);
+        }
+
+        BnfExpression makeLeftUnaryOperator(string op, NonTerminal beforeExpr)
+        {
+            var Expr = new NonTerminal("LeftUnaryExpr", typeof(Node.LeftUnary));
+            Expr.Rule = beforeExpr + op;
+            return Expr;
+        }
+
+        BnfExpression makeRightUnaryOperators(string[] operands, NonTerminal afterExpr)
+        {
+            return operands.Select((op) => makeRightUnaryOperator(op, afterExpr)).Aggregate((a, b) => a | b);
+        }
+
+        BnfExpression makeRightUnaryOperator(string op, NonTerminal afterExpr)
+        {
+            var Expr = new NonTerminal("RightUnaryExpr", typeof(Node.RightUnary));
+            Expr.Rule = op + afterExpr;
+            return Expr;
         }
 
         BnfExpression makeChainOperators(string[] operands, NonTerminal beforeExpr, NonTerminal afterExpr)
