@@ -10,17 +10,34 @@ namespace LP.Parser
     [Language("LpGrammar")]
     public class LpGrammer : InterpretedLanguageGrammar
     {
-        NonTerminal Primary;
-        NonTerminal Expr;
-        NonTerminal Stmt;
-        NonTerminal Stmts;
         enum OperandType { CHARIN_OPERATOR, OPERAND, LEFT_UNARY, RIGHT_UNARY };
+        static readonly List<object[]> operandTable = new List<object[]> {
+            new object[]{ OperandType.RIGHT_UNARY, new string[]{ "++", "--" } },
+            //new object[]{ OperandType.LEFT_UNARY,             new string[]{ "+", "!", "~" } },
+            new object[]{ OperandType.LEFT_UNARY,             new string[]{ "!", "~" } },
+            new object[]{ OperandType.LEFT_UNARY,          new string[]{ "not" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "**" } },
+            new object[]{ OperandType.LEFT_UNARY,             new string[]{ "-" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "*","/", "%" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "+","-" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "<<",">>" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "&" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "|" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ ">=", ">", "<=", "<" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "<=>", "===", "==", "!=", "=~", "!~" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "&&" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "||" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "..", "^..", "..^", "^..^" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "and", "or" } }
+        };
 
         public LpGrammer() : base(true)
         {
             var Comma = ToTerm(",", "Comma");
             var Id = new IdentifierTerminal("identifier");
+            var VarName = Id;
             var ClassName = Id;
+            var FunctionName = Id;
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
             var Str = new NonTerminal("String", typeof(Node.String));
@@ -38,19 +55,22 @@ namespace LP.Parser
             var QuasiQuote = new NonTerminal("QuasiQuote", typeof(Node.QuasiQuote));
             var QuestionQuote = new NonTerminal("QuestionQuote", typeof(Node.QuestionQuote));
             var VariableCall = new NonTerminal("VariableCall", typeof(Node.VariableCall));
-            Primary = new NonTerminal("Primary", typeof(Node.Primary));
+            var VariableSet = new NonTerminal("VariableSet", typeof(Node.VariableCall));
+            var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Expr));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall");
-            Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            var Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            var Assignment = new NonTerminal("Assignment", typeof(Node.Assignment));
+            var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
-            Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
+            var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
-            Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
+            var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
             RegisterBracePair("(", ")");
             MarkPunctuation(",", "(", ")");
             //this.Delimiters = "{}[](),:;+-*/%&|^!~<>=";
@@ -72,36 +92,22 @@ namespace LP.Parser
             Quote.Rule = "'" + SimpleExpr;
             QuasiQuote.Rule = "`" + SimpleExpr;
             QuestionQuote.Rule = "?" + SimpleExpr;
-            VariableCall.Rule = Id;
+            VariableCall.Rule = VarName;
+            VariableSet.Rule = VarName;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
 
             Funcall.Rule = Id + "()";
             MethodCall.Rule = SimpleExpr + "." + Funcall;
             SimpleExpr.Rule = "(" + Stmt + ")" | MethodCall | Funcall | Primary;
-            var Expr16 = makeExpr(OperandType.LEFT_UNARY, 16, new string[] { "++", "--" }, SimpleExpr);
-            var Expr15 = makeExpr(OperandType.RIGHT_UNARY, 11, new string[] { "+", "!", "~" }, Expr16);
-            var Expr14 = makeExpr(OperandType.RIGHT_UNARY, 11, new string[] { "not" }, Expr15);
-            var Expr13 = makeExpr(OperandType.CHARIN_OPERATOR, 11, new string[] { "**" }, Expr14);
-            var Expr12 = makeExpr(OperandType.RIGHT_UNARY, 12, new string[] { "-" }, Expr13);
-            var Expr11 = makeExpr(OperandType.CHARIN_OPERATOR, 11, new string[] { "*", "/", "%" }, Expr12);
-            var Expr10 = makeExpr(OperandType.CHARIN_OPERATOR, 10, new string[] { "+", "-" }, Expr11);
-            var Expr9 = makeExpr(OperandType.CHARIN_OPERATOR, 9, new string[] { "<<", ">>" }, Expr10);
-            var Expr8 = makeExpr(OperandType.CHARIN_OPERATOR, 8, new string[] { "&" }, Expr9);
-            var Expr7 = makeExpr(OperandType.CHARIN_OPERATOR, 7, new string[] { "|" }, Expr8);
-            var Expr6 = makeExpr(OperandType.CHARIN_OPERATOR, 6, new string[] { ">=", ">", "<=", "<" }, Expr7);
-            var Expr5 = makeExpr(OperandType.CHARIN_OPERATOR, 5, new string[] { "<=>", "===", "==", "!=", "=~", "!~" }, Expr6);
-            var Expr4 = makeExpr(OperandType.CHARIN_OPERATOR, 4, new string[] { "&&" }, Expr5);
-            var Expr3 = makeExpr(OperandType.CHARIN_OPERATOR, 3, new string[] { "||" }, Expr4);
-            var Expr2 = makeExpr(OperandType.CHARIN_OPERATOR, 2, new string[] { "..", "^..", "..^", "^..^" }, Expr3);
-            var Expr1 = makeExpr(OperandType.CHARIN_OPERATOR, 1, new string[] { "and", "or" }, Expr2);
-            var Expr0 = new NonTerminal("Expr0", typeof(Node.Expr));
-            Expr0.Rule = Expr1 | makeChainOperators(new string[] { "=" }, VariableCall, Expr1);
+            var OpExpr = makeExpressions(operandTable, SimpleExpr);
+            Assignment.Rule = VariableSet + ToTerm("=") + OpExpr;
+            AssignmentExpr.Rule = OpExpr | Assignment;
             RegisterOperators(0, "=");
 
-            Expr.Rule = Expr0;
+            Expr.Rule = AssignmentExpr;
 
-            IfStmt.Rule = ToTerm("if(") + Stmt + ToTerm(")") + Stmts + ToTerm("end");
-            DefineFunction.Rule = ToTerm("def") + Id + "()" + Stmts + ToTerm("end");
+            IfStmt.Rule = ToTerm("if(") + Expr + ToTerm(")") + Stmts + ToTerm("end");
+            DefineFunction.Rule = ToTerm("def") + FunctionName + "()" + Stmts + ToTerm("end");
             DefineClass.Rule = ToTerm("class")+ ClassName + ToTerm(";") + Stmts + ToTerm("end");
             Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
 
@@ -110,9 +116,26 @@ namespace LP.Parser
             Root = Stmts;
         }
 
+
+        NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)
+        {
+            var Table = table.ToArray();
+            NonTerminal OpExpr = expr;
+            for (int i = 0; i < Table.Length; i++)
+            {
+                object[] row = Table[i];
+                OperandType type = (OperandType)row[0];
+                int precedence = (Table.Length - i);
+                string[] operands = (string[])row[1];
+                OpExpr = makeExpr(type, precedence, operands, OpExpr);
+            }
+            return OpExpr;
+        }
+
+
         NonTerminal makeExpr(OperandType type, int precedence, string[] operands, NonTerminal primaryExpr)
         {
-            var Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            var Expr = new NonTerminal("Expr(" + string.Join(",", operands) + ")", typeof(Node.Expr));
             switch (type)
             {
                 case OperandType.CHARIN_OPERATOR:

@@ -92,7 +92,7 @@ namespace LP
             */
             //string code = readFile(argv[0]);
             //string code = "def hoge() 1; 2; 3 end";
-            string code = "1*2+3*4";
+            string code = "2+2*3";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
