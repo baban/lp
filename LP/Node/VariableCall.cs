@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -23,8 +21,12 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+            string Varname = node.Token.Text;
+            var scope = thread.CurrentScope;
+            var slot = scope.Info.GetSlot(Varname);
+            var value = (Object.LpObject)thread.CurrentScope.GetValue(slot.Index);
             thread.CurrentNode = Parent;
-            return null;
+            return value;
         }
     }
 }
