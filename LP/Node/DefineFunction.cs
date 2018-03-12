@@ -9,13 +9,15 @@ namespace LP.Node
     public class DefineFunction : AstNode
     {
         public ParseTreeNode functionName { get; private set; }
-        public AstNode functionBody { get; private set; }
+        public AstNode Args { get; private set; }
+        public AstNode Body { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
             functionName = nodes[1];
-            functionBody = AddChild("Body", nodes[2]);
+            Args = AddChild("Args", nodes[2]);
+            Body = AddChild("Body", nodes[3]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
@@ -24,7 +26,7 @@ namespace LP.Node
             string name = functionName.Token.Text;
             var scope = thread.CurrentScope;
             var slot = scope.AddSlot(name);
-            var function = Object.LpBlock.initialize(functionBody);
+            var function = Object.LpBlock.initialize(Body);
             scope.SetValue(slot.Index, function);
             thread.CurrentNode = Parent;
 

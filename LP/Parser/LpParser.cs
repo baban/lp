@@ -68,7 +68,7 @@ namespace LP.Parser
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
-            var ArgVarnames = new NonTerminal("ArgVarnames");
+            var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
@@ -112,8 +112,7 @@ namespace LP.Parser
 
             IfStmt.Rule = ToTerm("if(") + Expr + ToTerm(")") + Stmts + ToTerm("end");
             ArgVarnames.Rule = MakeStarRule(ArgVarnames, ToTerm(","), ArgVarname);
-            //DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
-            DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ")" + Stmts + ToTerm("end");
+            DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
             DefineClass.Rule = ToTerm("class")+ ClassName + ToTerm(";") + Stmts + ToTerm("end");
             Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
 

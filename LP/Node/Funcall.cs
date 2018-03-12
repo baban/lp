@@ -21,15 +21,15 @@ namespace LP.Node
         {
             thread.CurrentNode = this;
             var scope = thread.CurrentScope;
-
             var slot = scope.Info.GetSlot(functionName.Token.Text);
             var function = (Object.LpObject)scope.GetValue(slot.Index);
+
+            thread.PushClosureScope(new ScopeInfo(thread.CurrentNode, false), thread.CurrentScope, new object[]{ });
             Object.LpObject ret = Object.LpNl.initialize();
             var result = function.statements.Evaluate(thread);
-            //function
-            //Object.LpObject result = (Object.LpObject)Node.Evaluate(thread);
+            thread.PopScope();
+
             thread.CurrentNode = Parent;
-            //return result;
             return result;
         }
     }
