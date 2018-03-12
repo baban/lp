@@ -107,6 +107,7 @@
     <Compile Include="Error\LpNoMethodError.cs" />
     <Compile Include="Error\LpSyntaxError.cs" />
     <Compile Include="Error\NameError.cs" />
+    <Compile Include="Node\Args.cs" />
     <Compile Include="Node\Array.cs" />
     <Compile Include="Node\ArrayItems.cs" />
     <Compile Include="Node\Assoc.cs" />

@@ -23,23 +23,17 @@ namespace LP.Object
         static LpObject init()
         {
             var obj = createClassTemplate();
-            obj.statements = new AstNodeList();
+            obj.statements = new AstNode();
             return obj;
         }
-        /*
-        public static LpObject initialize(Ast.LpAstNode stmt)
-        {
-            LpObject obj = init();
-            obj.statements.Add(stmt);
-            return obj;
-        }
-        */
-        public static LpObject initialize(AstNodeList stmts)
+
+        public static LpObject initialize(AstNode stmts)
         {
             LpObject obj = init();
             obj.statements = stmts;
             return obj;
         }
+
         /*
         public static LpObject initialize(List<Ast.LpAstNode> stmts, string[] args, bool argsLoose = false )
         {

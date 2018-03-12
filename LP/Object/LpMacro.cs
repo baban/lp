@@ -93,7 +93,7 @@ namespace LP.Object
 
         private static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var stmt = self.statements.First();
+            var stmt = self.statements;
             return null;
             /*
             var str = self.statements.First().toSource();

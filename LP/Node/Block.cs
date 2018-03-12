@@ -22,18 +22,17 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            //ScopeInfo info = new ScopeInfo(this, false);
-            //Scope scope = new Scope(info, null, thread.CurrentScope, new object[]{ });
-            Object.LpObject result;
+            Object.LpObject result = null;
+            /*
             if (ChildNodes.Count() > 0)
             {
-                var assoc = ChildNodes.First();
                 result = Object.LpBlock.initialize(ChildNodes);
             }
             else
             {
                 result = Object.LpBlock.initialize();
             }
+            */
             thread.CurrentNode = Parent;
             return result;
         }

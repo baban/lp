@@ -38,6 +38,7 @@ namespace LP.Parser
             var VarName = Id;
             var ClassName = Id;
             var FunctionName = Id;
+            var ArgVarname = Id;
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
             var Str = new NonTerminal("String", typeof(Node.String));
@@ -59,6 +60,7 @@ namespace LP.Parser
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Expr));
+            var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall");
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
@@ -66,6 +68,7 @@ namespace LP.Parser
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
+            var ArgVarnames = new NonTerminal("ArgVarnames");
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
@@ -96,7 +99,8 @@ namespace LP.Parser
             VariableSet.Rule = VarName;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
 
-            Funcall.Rule = Id + "()";
+            Args.Rule = MakeStarRule(Args, Comma, Stmt);
+            Funcall.Rule = FunctionName + "(" + Args + ")";
             MethodCall.Rule = SimpleExpr + "." + Funcall;
             SimpleExpr.Rule = "(" + Stmt + ")" | MethodCall | Funcall | Primary;
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
@@ -107,7 +111,9 @@ namespace LP.Parser
             Expr.Rule = AssignmentExpr;
 
             IfStmt.Rule = ToTerm("if(") + Expr + ToTerm(")") + Stmts + ToTerm("end");
-            DefineFunction.Rule = ToTerm("def") + FunctionName + "()" + Stmts + ToTerm("end");
+            ArgVarnames.Rule = MakeStarRule(ArgVarnames, ToTerm(","), ArgVarname);
+            //DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
+            DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ")" + Stmts + ToTerm("end");
             DefineClass.Rule = ToTerm("class")+ ClassName + ToTerm(";") + Stmts + ToTerm("end");
             Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
 

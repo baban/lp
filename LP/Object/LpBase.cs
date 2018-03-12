@@ -36,7 +36,7 @@ namespace LP.Object
         public System.IO.StreamWriter streamWriter = null;
 
         public bool is_macro = false;
-        public AstNodeList statements = null;
+        public AstNode statements = null;
 
         public string class_name = null;
     }
