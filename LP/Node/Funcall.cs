@@ -20,16 +20,30 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+
             var scope = thread.CurrentScope;
             var slot = scope.Info.GetSlot(functionName.Token.Text);
             var function = (Object.LpObject)scope.GetValue(slot.Index);
-
-            thread.PushClosureScope(new ScopeInfo(thread.CurrentNode, false), thread.CurrentScope, new object[]{ });
-            Object.LpObject ret = Object.LpNl.initialize();
-            var result = function.statements.Evaluate(thread);
-            thread.PopScope();
+            var result = (Object.LpObject)EvaluateInStmts(function, thread);
 
             thread.CurrentNode = Parent;
+
+            return result;
+        }
+
+        object EvaluateInStmts(Object.LpObject function, ScriptThread thread)
+        {
+            var newScopeInfo = new ScopeInfo(thread.CurrentNode, false);
+            var args = (Object.LpObject[])Args.Evaluate(thread);
+            thread.PushClosureScope(newScopeInfo, thread.CurrentScope, args);
+            var scope = thread.CurrentScope;
+            var argNames = function.arguments.arguments;
+            foreach (var name in argNames)
+            {
+                var paramSlot = newScopeInfo.AddSlot(name, SlotType.Parameter);
+            }
+            var result = function.statements.Evaluate(thread);
+            thread.PopScope();
             return result;
         }
     }

@@ -183,8 +183,8 @@ namespace LP
         }
 
         static void initEnv(){
-            LP.Util.LpIndexer.initialize();
-            Util.LpIndexer.push(Object.LpKernel.initialize());
+            //LP.Util.LpIndexer.initialize();
+            //Util.LpIndexer.push(Object.LpKernel.initialize());
             initializeBuiltInClasses();
             initializeMacros();
             return;

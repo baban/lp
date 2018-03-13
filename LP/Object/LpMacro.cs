@@ -86,8 +86,8 @@ namespace LP.Object
         static Object.LpObject bind(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
-            var ctx = Util.LpIndexer.getLatestClass();
-            ctx.methods[name] = self;
+            //var ctx = Util.LpIndexer.getLatestClass();
+            //ctx.methods[name] = self;
             return self;
         }
 

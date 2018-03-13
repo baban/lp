@@ -86,7 +86,7 @@ namespace LP.Object
 
         static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            Util.LpIndexer.push(self);
+            //Util.LpIndexer.push(self);
             self.arguments.putVariables(args, block);
 
             LpObject ret = LpNl.initialize();
@@ -97,7 +97,7 @@ namespace LP.Object
                 ret = stmt.Evaluate();
             }
             */
-            Util.LpIndexer.pop();
+            //Util.LpIndexer.pop();
             return ret;
         }
     }

@@ -31,9 +31,16 @@ namespace LP.Parser
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "and", "or" } }
         };
 
+        NonTerminal Primary;
+        NonTerminal Expr;
+        NonTerminal Stmt;
+        NonTerminal Stmts;
+
         public LpGrammer() : base(true)
         {
             var Comma = ToTerm(",", "Comma");
+            var Semicolon = ToTerm(";");
+            var Term = Semicolon | "\n";
             var Id = new IdentifierTerminal("identifier");
             var VarName = Id;
             var ClassName = Id;
@@ -63,7 +70,7 @@ namespace LP.Parser
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall");
-            var Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Assignment = new NonTerminal("Assignment", typeof(Node.Assignment));
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
@@ -71,7 +78,7 @@ namespace LP.Parser
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
-            var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
+            Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
             RegisterBracePair("(", ")");
@@ -85,7 +92,7 @@ namespace LP.Parser
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
             Symbol.Rule = ":" + Id;
-            ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt) | Empty;
+            ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
             Array.Rule = ToTerm("[") + ArrayItems + ToTerm("]");
             AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
@@ -113,15 +120,14 @@ namespace LP.Parser
             IfStmt.Rule = ToTerm("if(") + Expr + ToTerm(")") + Stmts + ToTerm("end");
             ArgVarnames.Rule = MakeStarRule(ArgVarnames, ToTerm(","), ArgVarname);
             DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
-            DefineClass.Rule = ToTerm("class")+ ClassName + ToTerm(";") + Stmts + ToTerm("end");
+            DefineClass.Rule = ToTerm("class")+ ClassName + Term + Stmts + ToTerm("end");
             Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
 
-            Stmts.Rule = MakeStarRule(Stmts, ToTerm(";"), Stmt);
+            Stmts.Rule = MakeStarRule(Stmts, Term, Stmt);
 
             Root = Stmts;
         }
-
-
+         
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)
         {
             var Table = table.ToArray();

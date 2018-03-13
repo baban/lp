@@ -85,9 +85,9 @@ namespace LP.Object
 
             if (null != block)
             {
-                Util.LpIndexer.push(klass);
+                //Util.LpIndexer.push(klass);
                 block.funcall("call", block, new LpObject[] { }, null);
-                Util.LpIndexer.pop();
+                //Util.LpIndexer.pop();
             }
             klass.methods["new"] = new LpMethod(new BinMethod(initialize), -1);
 

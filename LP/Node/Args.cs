@@ -16,7 +16,9 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+            //var parameters = 
             thread.CurrentNode = Parent;
+            //return parameters;
             return null;
         }
     }

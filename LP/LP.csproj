@@ -155,8 +155,6 @@
     <Compile Include="Parser\LpParser.cs" />
     <Compile Include="Parser\MainPerser.cs" />
     <Compile Include="Parser\StringParser.cs" />
-    <Compile Include="Util\LpGlobalIndexer.cs" />
-    <Compile Include="Util\LpIndexer.cs" />
     <Compile Include="Object\LpKernel.cs" />
     <Compile Include="Object\LpLambda.cs" />
     <Compile Include="Object\LpMethod.cs" />

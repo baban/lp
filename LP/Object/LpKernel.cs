@@ -88,8 +88,8 @@ namespace LP.Object
 
         private static LpObject self_(LpObject self, LpObject[] args, LpObject block = null)
         {
-            var o = Util.LpIndexer.getLatestClass();
-            return o;
+            //var o = Util.LpIndexer.getLatestClass();
+            return null;
         }
 
         private static LpObject break_(LpObject self, LpObject[] args, LpObject block = null)

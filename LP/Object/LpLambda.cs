@@ -95,7 +95,7 @@ namespace LP.Object
 
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            Util.LpIndexer.push(self);
+            //Util.LpIndexer.push(self);
             var dstArgs = (null == args) ? new LpObject[] { } : args;
             self.arguments.setVariables(self, dstArgs, block);
 
@@ -108,7 +108,7 @@ namespace LP.Object
                 if (ret.controlStatus == LpBase.ControlCode.RETURN) break;
             }
             */
-            Util.LpIndexer.pop();
+            //Util.LpIndexer.pop();
             return ret;
         }
 
@@ -128,8 +128,8 @@ namespace LP.Object
         static Object.LpObject bind(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
-            var ctx =Util.LpIndexer.getLatestClass();
-            ctx.methods[name] = self;
+            //var ctx =Util.LpIndexer.getLatestClass();
+            //ctx.methods[name] = self;
             return self;
         }
     }

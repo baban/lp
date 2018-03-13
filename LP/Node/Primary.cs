@@ -23,15 +23,6 @@ namespace LP.Node
             thread.CurrentNode = this;
             Object.LpObject result = null;
             result = (Object.LpObject)Node.Evaluate(thread);
-            /*
-            if(Node is Symbol || Node is Array)
-            {
-                result = Node.Evaluate(thread).ToString();
-            } else
-            {
-                result = Node.ToString();
-            }
-            */
             thread.CurrentNode = Parent;
 
             return result;
