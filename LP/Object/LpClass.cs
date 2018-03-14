@@ -1,5 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Sprache;
+using Irony.Ast;
+using Irony.Interpreter;
+using Irony.Interpreter.Ast;
+using Irony.Parsing;
 
 namespace LP.Object
 {
@@ -9,27 +17,33 @@ namespace LP.Object
 
         public static LpObject initialize()
         {
-            return init( className, new List<string>() );
+            return init( className, new AstNode() );
         }
 
-        public static LpObject initialize( List<string> stmts )
+        public static LpObject initialize(AstNode stmts)
         {
             return init( className, stmts );
         }
 
-        public static LpObject initialize(string className, List<string> stmts)
+        public static LpObject initialize(string className)
+        {
+            return init(className, new AstNode());
+        }
+
+        public static LpObject initialize(string className, AstNode stmts)
         {
             return init(className, stmts);
         }
 
-        private static LpObject init(string className, List<string> stmts)
+        private static LpObject init(string className, AstNode stmts)
         {
             LpObject obj = createClassTemplate( className );
             obj.class_name = className;
-            obj.statements = null; // stmts.ToList();
+            obj.statements = stmts;
+
+            //stmts.Evaluate(thread);
 
             classes[obj.class_name] = obj;
-            //Util.LpIndexer.push(obj);
 
             return obj;
         }
@@ -97,7 +111,7 @@ namespace LP.Object
         private static LpObject create_mold_class( string class_name ) {
             LpObject kls = LpClass.initialize().Clone();
             kls.class_name = class_name;
-            kls.methods = (Hashtable)kls.methods.Clone();
+            //kls.methods = (Hashtable)kls.methods.Clone();
             return kls;
         }
 

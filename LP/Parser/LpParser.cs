@@ -34,7 +34,8 @@ namespace LP.Parser
         public LpGrammer() : base(true)
         {
             var Comma = ToTerm(",", "Comma");
-            var Term = ToTerm(";") | "\n";
+            var Semi = ToTerm(";", "Semi");
+            var Term = Semi | "\n";
             var Id = new IdentifierTerminal("identifier");
             var VarName = Id;
             var ClassName = Id;
@@ -75,6 +76,7 @@ namespace LP.Parser
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
+
             RegisterBracePair("(", ")");
             MarkPunctuation(",", "(", ")");
             //this.Delimiters = "{}[](),:;+-*/%&|^!~<>=";
