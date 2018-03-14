@@ -93,8 +93,8 @@ namespace LP
             //string code = readFile(argv[0]);
             //string code = "def hoge() 1; 2; 3 end";
             //string code = "abc=1+5*5; abc";
-            //string code = "def aaa() 1; 2 end; aaa()";
-            string code = "def aaa(a) b=2; b+2 end; aaa(1)";
+            string code = "def bbb(a,b,c) 1; 2; c end; bbb(1,2,3)";
+            //string code = "1 ; 2";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");

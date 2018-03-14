@@ -17,7 +17,7 @@ namespace LP.Node
 
         protected override object DoEvaluate(ScriptThread thread)
         {
-            Object.LpObject result = null;
+            Object.LpObject result = Object.LpNl.initialize();
             thread.CurrentNode = this;
             ChildNodes.ForEach((node) => result = (Object.LpObject)node.Evaluate(thread));
             thread.CurrentNode = Parent;

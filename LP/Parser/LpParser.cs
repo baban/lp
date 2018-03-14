@@ -31,16 +31,10 @@ namespace LP.Parser
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "and", "or" } }
         };
 
-        NonTerminal Primary;
-        NonTerminal Expr;
-        NonTerminal Stmt;
-        NonTerminal Stmts;
-
         public LpGrammer() : base(true)
         {
             var Comma = ToTerm(",", "Comma");
-            var Semicolon = ToTerm(";");
-            var Term = Semicolon | "\n";
+            var Term = ToTerm(";") | "\n";
             var Id = new IdentifierTerminal("identifier");
             var VarName = Id;
             var ClassName = Id;
@@ -70,7 +64,7 @@ namespace LP.Parser
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall");
-            Expr = new NonTerminal("Expr", typeof(Node.Expr));
+            var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Assignment = new NonTerminal("Assignment", typeof(Node.Assignment));
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
@@ -78,7 +72,7 @@ namespace LP.Parser
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
-            Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
+            var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
             RegisterBracePair("(", ")");

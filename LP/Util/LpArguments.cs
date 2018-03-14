@@ -8,7 +8,7 @@ namespace LP.Util
 {
     class LpArguments
     {
-        public string[] arguments = null;
+        public string[] arguments = new string[] { };
         bool loose = false;
         string arrayArg = null;
         string blockArg = null;

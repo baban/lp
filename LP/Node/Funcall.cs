@@ -1,4 +1,5 @@
-﻿using Irony.Ast;
+﻿using System.Collections.Generic;
+using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
 using Irony.Parsing;
@@ -37,10 +38,15 @@ namespace LP.Node
             var args = (Object.LpObject[])Args.Evaluate(thread);
             thread.PushClosureScope(newScopeInfo, thread.CurrentScope, args);
             var scope = thread.CurrentScope;
-            var argNames = function.arguments.arguments;
-            foreach (var name in argNames)
+            var prms = scope.Parameters;
+            var names = function.arguments.arguments;
+            Queue<Object.LpObject> q = new Queue<Object.LpObject>(new List<Object.LpObject>(args));
+            for(int i=0; i < names.Length ; i++)
             {
-                var paramSlot = newScopeInfo.AddSlot(name, SlotType.Parameter);
+                var name = names[i];
+                var slot = newScopeInfo.AddSlot(name, SlotType.Parameter);
+                var v = args[i];
+                scope.SetValue(slot.Index, v);
             }
             var result = function.statements.Evaluate(thread);
             thread.PopScope();
