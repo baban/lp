@@ -40,9 +40,6 @@ namespace LP.Object
             LpObject obj = createClassTemplate( className );
             obj.class_name = className;
             obj.statements = stmts;
-
-            //stmts.Evaluate(thread);
-
             classes[obj.class_name] = obj;
 
             return obj;

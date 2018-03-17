@@ -93,11 +93,11 @@ namespace LP.Parser
             AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
-            Block.Rule = ToTerm("do") + Stmts + ToTerm("end");
-            Lambda.Rule = ToTerm("->") + ToTerm("do") + Stmts + ToTerm("end");
+            Block.Rule = ToTerm("do") + "|" + Args +"|" + Stmts + ToTerm("end");
+            Lambda.Rule = ToTerm("->") + "|" + Args + "|" + ToTerm("do") + Stmts + ToTerm("end");
             Quote.Rule = "'" + SimpleExpr;
             QuasiQuote.Rule = "`" + SimpleExpr;
-            QuestionQuote.Rule = "?" + SimpleExpr;
+            QuestionQuote.Rule = "?" + VariableCall;
             VariableCall.Rule = VarName;
             VariableSet.Rule = VarName;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;

@@ -22,7 +22,13 @@ namespace LP.Node
         {
             thread.CurrentNode = this;
             var klass = Object.LpClass.initialize(className.Token.Text, Body);
+            var scope = thread.CurrentScope;
+            var newScopeInfo = new ScopeInfo(thread.CurrentNode, false);
+            thread.PushClosureScope(newScopeInfo, thread.CurrentScope, new object[] { });
+            Body.Evaluate(thread);
+            thread.PopScope();
             thread.CurrentNode = Parent;
+
             return klass;
         }
     }

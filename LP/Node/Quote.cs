@@ -19,11 +19,13 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            Object.LpObject result = null;
-            //result = (Object.LpObject)Node.Evaluate(thread);
+            System.Console.WriteLine(Node);
+            //var result = (Object.LpObject)Node.Evaluate(thread);
+            var result = Object.LpQuote.initialize(Node);
             thread.CurrentNode = Parent;
 
-            return result;
+            //return result;
+            return Object.LpNl.initialize();
         }
     }
 }
