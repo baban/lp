@@ -97,7 +97,7 @@ namespace LP
             //string code = "a='(1+2); ?a";
             //string code = "a='(1+2); `(1+3)";
             //string code = "a='(2+3); `(1+?a)";
-            string code = "{===]";
+            string code = "1+a";
             //string code = "class AAA; 1;2;3 end";
             //string code = "1 ; 2";
             Console.WriteLine("initialize");
@@ -109,6 +109,7 @@ namespace LP
             //Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);
             //Console.WriteLine("tree");
+            /*
             if (tree.HasErrors())
             {
                 Console.WriteLine(tree.ParserMessages.First().Message);
@@ -116,7 +117,7 @@ namespace LP
                 Console.WriteLine(tree.ParserMessages.First().Location);
                 return 0;
             }
-
+            */
 
             Console.WriteLine("evaluate");
             
