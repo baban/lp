@@ -10,7 +10,6 @@ using Irony.Interpreter;
 
 namespace LP
 {
-    // TODO: 文法エラー行表示
     // TODO: エラー時にスタックトレースを出す
     // TODO: .Netライブラリの相互運用
     // TODO: module定義
