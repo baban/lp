@@ -10,8 +10,9 @@ using Irony.Interpreter;
 
 namespace LP
 {
-    // TODO: エラー行表示
-    // TODO: メソッド定義
+    // TODO: 文法エラー行表示
+    // TODO: エラー時にスタックトレースを出す
+    // TODO: .Netライブラリの相互運用
     // TODO: module定義
     // TODO: Block読み出し
     // TODO: インスタンス変数
@@ -96,7 +97,8 @@ namespace LP
             //string code = "def bbb(a,b,c) 1; 2; c end; bbb(1,2,3)";
             //string code = "a='(1+2); ?a";
             //string code = "a='(1+2); `(1+3)";
-            string code = "a='(2+3); `(1+?a)";
+            //string code = "a='(2+3); `(1+?a)";
+            string code = "{===]";
             //string code = "class AAA; 1;2;3 end";
             //string code = "1 ; 2";
             Console.WriteLine("initialize");
@@ -107,7 +109,18 @@ namespace LP
             ScriptApp app = new ScriptApp(language);
             //Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);
+            //Console.WriteLine("tree");
+            if (tree.HasErrors())
+            {
+                Console.WriteLine(tree.ParserMessages.First().Message);
+                Console.WriteLine(tree.FileName);
+                Console.WriteLine(tree.ParserMessages.First().Location);
+                return 0;
+            }
+
+
             Console.WriteLine("evaluate");
+            
             Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
             if (result == null)
             {
