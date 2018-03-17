@@ -12,9 +12,9 @@ namespace LP.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            //var node = treeNode.GetMappedChildNodes().Last();
+            var node = treeNode.GetMappedChildNodes().Last();
             System.Console.WriteLine("QuasiQuote");
-            //Node = AddChild("Stmt", node);
+            Node = AddChild("QuotedVariable", node);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
@@ -22,11 +22,14 @@ namespace LP.Node
             thread.CurrentNode = this;
             System.Console.WriteLine("Node");
             System.Console.WriteLine(Node);
-            //var result = (Object.LpObject)Node.Evaluate(thread);
+            var var = (Object.LpObject)Node.Evaluate(thread);
+            System.Console.WriteLine("aaaaaa");
+            System.Console.WriteLine( var.class_name);
+            System.Console.WriteLine(var.statements);
+            var result = (Object.LpObject)var.statements.Evaluate(thread);
             thread.CurrentNode = Parent;
 
-            //return result;
-            return null;
+            return result;
         }
     }
 }

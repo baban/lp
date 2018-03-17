@@ -20,12 +20,10 @@ namespace LP.Node
         {
             thread.CurrentNode = this;
             System.Console.WriteLine(Node);
-            //var result = (Object.LpObject)Node.Evaluate(thread);
             var result = Object.LpQuote.initialize(Node);
             thread.CurrentNode = Parent;
 
-            //return result;
-            return Object.LpNl.initialize();
+            return result;
         }
     }
 }

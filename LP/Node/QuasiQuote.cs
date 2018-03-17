@@ -13,7 +13,7 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var node = treeNode.GetMappedChildNodes().Last();
-            Node = AddChild("Stmt", node);
+            Node = AddChild("QuasiQuote", node);
         }
 
         protected override object DoEvaluate(ScriptThread thread)

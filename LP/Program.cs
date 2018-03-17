@@ -96,7 +96,7 @@ namespace LP
             //string code = "def bbb(a,b,c) 1; 2; c end; bbb(1,2,3)";
             //string code = "a='(1+2); ?a";
             //string code = "a='(1+2); `(1+3)";
-            string code = "`(1+3)";
+            string code = "a='(2+3); `(1+?a)";
             //string code = "class AAA; 1;2;3 end";
             //string code = "1 ; 2";
             Console.WriteLine("initialize");
