@@ -70,17 +70,25 @@ namespace LP.Parser
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
+            var CaseStmt = new NonTerminal("IfStmt", typeof(Node.CaseStmt));
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
+            var DefineMacro = new NonTerminal("DefineMacro", typeof(Node.DefineMacro));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
+            var DefineModule = new NonTerminal("DefineModule", typeof(Node.DefineModule));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
 
+            CommentTerminal SingleLineComment = new CommentTerminal("SingleLineComment", "//", "\r", "\n", "\u2085", "\u2028", "\u2029");
+            CommentTerminal DelimitedComment = new CommentTerminal("DelimitedComment", "/*", "*/");
+            NonGrammarTerminals.Add(SingleLineComment);
+            NonGrammarTerminals.Add(DelimitedComment);
+
             RegisterBracePair("(", ")");
-            MarkPunctuation(",", "(", ")");
+            //IsWhitespaceOrDelimiter("{}[](),:;+-*/%&|^!~<>=");
             //this.Delimiters = "{}[](),:;+-*/%&|^!~<>=";
-            this.MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
+            MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
             this.MarkTransient(Stmt, Primary, Expr);
 
             Numeric.Rule = new NumberLiteral("Number");
@@ -89,18 +97,23 @@ namespace LP.Parser
             Nl.Rule = ToTerm("nl");
             Symbol.Rule = ":" + Id;
             ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
+            //ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Primary);
             Array.Rule = ToTerm("[") + ArrayItems + ToTerm("]");
             AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
+            //AssocVal.Rule = Primary + ToTerm("=>") + Primary;
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             Block.Rule = ToTerm("do") + "|" + Args +"|" + Stmts + ToTerm("end");
+            //Block.Rule = ToTerm("do") + ToTerm("end");
             Lambda.Rule = ToTerm("->") + "|" + Args + "|" + ToTerm("do") + Stmts + ToTerm("end");
+            //Lambda.Rule = ToTerm("->") + ToTerm("do") + ToTerm("end");
             Quote.Rule = "'" + SimpleExpr;
             QuasiQuote.Rule = "`" + SimpleExpr;
             QuestionQuote.Rule = "?" + VariableCall;
             VariableCall.Rule = VarName;
             VariableSet.Rule = VarName;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
+            //Primary.Rule = Numeric | Str | Bool | Nl | Symbol | VariableCall | Array | Hash | Block | Lambda;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + "(" + Args + ")";
@@ -114,14 +127,18 @@ namespace LP.Parser
             Expr.Rule = AssignmentExpr;
 
             IfStmt.Rule = ToTerm("if(") + Expr + ToTerm(")") + Stmts + ToTerm("end");
+            CaseStmt.Rule = ToTerm("case(") + Expr + ToTerm(")") + ToTerm("end");
             ArgVarnames.Rule = MakeStarRule(ArgVarnames, ToTerm(","), ArgVarname);
             DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
+            DefineMacro.Rule = ToTerm("mac") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
             DefineClass.Rule = ToTerm("class")+ ClassName + Term + Stmts + ToTerm("end");
-            Stmt.Rule = DefineClass | DefineFunction | IfStmt | Expr;
+            DefineModule.Rule = ToTerm("module") + ClassName + Term + Stmts + ToTerm("end");
+            Stmt.Rule = DefineClass | DefineModule | DefineFunction | DefineMacro | IfStmt | CaseStmt | Expr;
 
             Stmts.Rule = MakeStarRule(Stmts, Term, Stmt);
 
             Root = Stmts;
+            //Root = Primary;
         }
          
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)

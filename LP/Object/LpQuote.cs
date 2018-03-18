@@ -10,6 +10,11 @@ namespace LP.Object
     {
         static string className = "Quote";
 
+        public static LpObject initialize()
+        {
+            return init(null);
+        }
+
         public static LpObject initialize(AstNode node)
         {
             return init(node);

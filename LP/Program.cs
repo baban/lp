@@ -97,9 +97,9 @@ namespace LP
             //string code = "a='(1+2); ?a";
             //string code = "a='(1+2); `(1+3)";
             //string code = "a='(2+3); `(1+?a)";
-            string code = "1+a";
+            //string code = "1+a";
             //string code = "class AAA; 1;2;3 end";
-            //string code = "1 ; 2";
+            string code = "[1,2,3]";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
@@ -109,6 +109,7 @@ namespace LP
             //Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);
             //Console.WriteLine("tree");
+            
             /*
             if (tree.HasErrors())
             {
@@ -118,6 +119,7 @@ namespace LP
                 return 0;
             }
             */
+            
 
             Console.WriteLine("evaluate");
             
@@ -193,15 +195,13 @@ namespace LP
             if (!System.IO.File.Exists(filename))
                 return null;
 
-            System.IO.StreamReader sr = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
+            StreamReader sr = new StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
             var str = sr.ReadToEnd();
             sr.Close();
             return str;
         }
 
         static void initEnv(){
-            //LP.Util.LpIndexer.initialize();
-            //Util.LpIndexer.push(Object.LpKernel.initialize());
             initializeBuiltInClasses();
             initializeMacros();
             return;
@@ -222,10 +222,10 @@ namespace LP
             Object.LpNl.initialize();
             Object.LpNumeric.initialize();
             Object.LpObject.initialize();
-            //Object.LpQuote.initialize();
+            Object.LpQuote.initialize();
             Object.LpString.initialize();
             Object.LpSymbol.initialize();
-            //Object.LpMacro.initialize();
+            Object.LpMacro.initialize();
         }
 
         static void initializeMacros() {

@@ -117,8 +117,11 @@
     <Compile Include="Node\Block.cs" />
     <Compile Include="Node\Bool.cs" />
     <Compile Include="Node\BracketedStmt.cs" />
+    <Compile Include="Node\CaseStmt.cs" />
     <Compile Include="Node\DefineClass.cs" />
     <Compile Include="Node\DefineFunction.cs" />
+    <Compile Include="Node\DefineMacro.cs" />
+    <Compile Include="Node\DefineModule.cs" />
     <Compile Include="Node\Expr.cs" />
     <Compile Include="Node\Funcall.cs" />
     <Compile Include="Node\Hash.cs" />
