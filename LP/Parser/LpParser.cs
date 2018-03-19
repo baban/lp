@@ -55,6 +55,7 @@ namespace LP.Parser
             var Bool = new NonTerminal("Boolean", typeof(Node.Bool));
             var Nl = new NonTerminal("Nl", typeof(Node.Nl));
             var Symbol = new NonTerminal("Symbol", typeof(Node.Symbol));
+            var Regex = new NonTerminal("Regex", typeof(Node.Regex));
             var Array = new NonTerminal("Array", typeof(Node.Array));
             var ArrayItems = new NonTerminal("ArrayItems", typeof(Node.ArrayItems));
             var AssocVal = new NonTerminal("AssocVal", typeof(Node.AssocVal));
@@ -105,6 +106,7 @@ namespace LP.Parser
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
             Symbol.Rule = ":" + Id;
+            Regex.Rule = new RegexLiteral("Regex");
             ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
             //ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Primary);
             Array.Rule = ToTerm("[") + ArrayItems + ToTerm("]");
@@ -123,7 +125,7 @@ namespace LP.Parser
             QuestionQuote.Rule = "?" + VariableCall;
             VariableCall.Rule = VarName;
             VariableSet.Rule = VarName;
-            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
             //Primary.Rule = Numeric | Str | Bool | Nl | Symbol | VariableCall | Array | Hash | Block | Lambda;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);

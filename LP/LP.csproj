@@ -135,6 +135,7 @@
     <Compile Include="Node\QuasiQuote.cs" />
     <Compile Include="Node\QuestionQuote.cs" />
     <Compile Include="Node\Quote.cs" />
+    <Compile Include="Node\Regex.cs" />
     <Compile Include="Node\RightUnary.cs" />
     <Compile Include="Node\Stmt.cs" />
     <Compile Include="Node\Stmts.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Object\LpMacro.cs" />
     <Compile Include="Object\LpQuasiQuote.cs" />
     <Compile Include="Object\LpQuote.cs" />
+    <Compile Include="Object\LpRegexp.cs" />
     <Compile Include="Object\LpUnquote.cs" />
     <Compile Include="Node\VariableCall.cs" />
     <Compile Include="Options.cs" />
