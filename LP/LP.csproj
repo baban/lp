@@ -110,6 +110,7 @@
     <Compile Include="Node\Args.cs" />
     <Compile Include="Node\ArgVarnames.cs" />
     <Compile Include="Node\Array.cs" />
+    <Compile Include="Node\ArrayAtExpr.cs" />
     <Compile Include="Node\ArrayItems.cs" />
     <Compile Include="Node\Assoc.cs" />
     <Compile Include="Node\AssocVal.cs" />

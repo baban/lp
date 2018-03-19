@@ -80,8 +80,14 @@ namespace LP.Object
             obj.methods["display"] = new BinMethod(display);
             obj.methods["inspect"] = new BinMethod(inspect);
              */
+            obj.methods["[]"] = new LpMethod(new BinMethod(fetch), 1);
             obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
             obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
+        }
+
+        private static LpObject fetch(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            return LpNl.initialize();
         }
 
         private static LpObject len(LpObject self, LpObject args)

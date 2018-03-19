@@ -75,6 +75,7 @@ namespace LP.Parser
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall", typeof(Node.MethodCall));
+            var ArrayAtExpr = new NonTerminal("ArrayAtExpr", typeof(Node.ArrayAtExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Assignment = new NonTerminal("Assignment", typeof(Node.Assignment));
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
@@ -126,7 +127,9 @@ namespace LP.Parser
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr;
             MethodCall.Rule = SimpleExpr + "." + FunctionName + Lbr + Args + Rbr;
-            SimpleExpr.Rule = Lbr + Stmt + Rbr | MethodCall | Funcall | Primary;
+            ArrayAtExpr.Rule = SimpleExpr + "[" + SimpleExpr + "]";
+            SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
+
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
             Assignment.Rule = VariableSet + ToTerm("=") + OpExpr;
             AssignmentExpr.Rule = OpExpr | Assignment;
