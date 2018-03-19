@@ -1,4 +1,5 @@
-﻿using Irony.Ast;
+﻿using System.Collections.Generic;
+using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
 using Irony.Parsing;
@@ -7,21 +8,29 @@ namespace LP.Node
 {
     public class MethodCall : AstNode
     {
-        public AstNode Node { get; private set; }
+        public AstNode Expr { get; private set; }
+        public ParseTreeNode functionName { get; private set; }
+        public AstNode Args { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            Node = AddChild("Node", nodes[0]);
+            Expr = AddChild("Expr", nodes[0]);
+            functionName = nodes[2];
+            Args = AddChild("Args", nodes[3]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            //Object.LpObject result = (Object.LpObject)Node.Evaluate(thread);
+
+            var val = (Object.LpObject)Expr.Evaluate(thread);
+            var args = (Object.LpObject[])Args.Evaluate(thread);
+            var result = val.funcall(functionName.Token.Text, args);
+
             thread.CurrentNode = Parent;
-            //return result;
-            return null;
+
+            return result;
         }
     }
 }

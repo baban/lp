@@ -34,8 +34,8 @@ namespace LP.Parser
         public LpGrammer() : base(true)
         {
             // TODO: public, internal, protected, private の宣言を変数、メソッド、クラスに追加
-            // if文にelse,elifを追加
-            // case文を拡張
+            // TODO: if文にelse,elifを追加
+            // TODO: case文を拡張
 
             var Comma = ToTerm(",", "Comma");
             var Semi = ToTerm(";", "Semi");
@@ -48,7 +48,7 @@ namespace LP.Parser
             var VarName = Id;
             var ClassName = Id;
             var FunctionName = Id;
-            var ArgVarname = Id;
+            var ArgVarname = VarName;
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
             var Str = new NonTerminal("String", typeof(Node.String));
@@ -61,7 +61,7 @@ namespace LP.Parser
             var AssocVal = new NonTerminal("AssocVal", typeof(Node.AssocVal));
             var Assoc = new NonTerminal("Assoc", typeof(Node.Assoc));
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
-            var BlockArgs = new NonTerminal("BlockArgs", typeof(Node.BlockArgs));
+            var FenceArgs = new NonTerminal("FenceArgs", typeof(Node.FenceArgs));
             var Block = new NonTerminal("Block", typeof(Node.Block));
             var Lambda = new NonTerminal("Lambda", typeof(Node.Block));
             var Quote = new NonTerminal("Quote", typeof(Node.Quote));
@@ -74,7 +74,7 @@ namespace LP.Parser
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Expr));
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
-            var MethodCall = new NonTerminal("MethodCall");
+            var MethodCall = new NonTerminal("MethodCall", typeof(Node.MethodCall));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Assignment = new NonTerminal("Assignment", typeof(Node.Assignment));
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
@@ -108,29 +108,24 @@ namespace LP.Parser
             Symbol.Rule = ":" + Id;
             Regex.Rule = new RegexLiteral("Regex");
             ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
-            //ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Primary);
             Array.Rule = ToTerm("[") + ArrayItems + ToTerm("]");
             AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
-            //AssocVal.Rule = Primary + ToTerm("=>") + Primary;
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
             ArgVarnames.Rule = MakeStarRule(ArgVarnames, Comma, ArgVarname);
-            BlockArgs.Rule = "|" + ArgVarnames + "|" | Empty;
-            Block.Rule = Do + BlockArgs + Stmts + End;
-            //Block.Rule = ToTerm("do") + ToTerm("end");
-            Lambda.Rule = ToTerm("->") + Do + BlockArgs + Stmts + End;
-            //Lambda.Rule = ToTerm("->") + ToTerm("do") + ToTerm("end");
+            FenceArgs.Rule = "|" + ArgVarnames + "|" | Empty;
+            Block.Rule = Do + FenceArgs + Stmts + End;
+            Lambda.Rule = ToTerm("->") + Do + FenceArgs + Stmts + End;
             Quote.Rule = "'" + SimpleExpr;
             QuasiQuote.Rule = "`" + SimpleExpr;
             QuestionQuote.Rule = "?" + VariableCall;
             VariableCall.Rule = VarName;
             VariableSet.Rule = VarName;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall;
-            //Primary.Rule = Numeric | Str | Bool | Nl | Symbol | VariableCall | Array | Hash | Block | Lambda;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr;
-            MethodCall.Rule = SimpleExpr + "." + Funcall;
+            MethodCall.Rule = SimpleExpr + "." + FunctionName + Lbr + Args + Rbr;
             SimpleExpr.Rule = Lbr + Stmt + Rbr | MethodCall | Funcall | Primary;
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
             Assignment.Rule = VariableSet + ToTerm("=") + OpExpr;
@@ -143,14 +138,13 @@ namespace LP.Parser
             CaseStmt.Rule = ToTerm("case") + Lbr + Expr + Rbr + End;
             DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + ArgVarnames + Rbr + Stmts + End;
             DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + ArgVarnames + Rbr + Stmts + End;
-            DefineClass.Rule = ToTerm("class")+ ClassName + Term + Stmts + End;
+            DefineClass.Rule = ToTerm("class") + ClassName + Term + Stmts + End;
             DefineModule.Rule = ToTerm("module") + ClassName + Term + Stmts + End;
             Stmt.Rule = DefineClass | DefineModule | DefineFunction | DefineMacro | IfStmt | CaseStmt | Expr;
 
             Stmts.Rule = MakeStarRule(Stmts, Term, Stmt);
 
             Root = Stmts;
-            //Root = Primary;
         }
          
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)
