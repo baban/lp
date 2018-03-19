@@ -9,15 +9,15 @@ namespace LP.Node
 {
     public class Block : AstNode
     {
-        AstNode Body;
+        AstNode ArgVarNames = null;
+        AstNode Body = null;
+
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            if (nodes.Count() > 0)
-            {
-                Body = AddChild("Node", nodes[0]);
-            }
+            ArgVarNames = AddChild("ArgVarNames", nodes[1]);
+            Body = AddChild("Body", nodes[2]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
@@ -27,6 +27,7 @@ namespace LP.Node
             if (ChildNodes.Count() > 0)
             {
                 result = Object.LpBlock.initialize(Body);
+                result.arguments = null;
             }
             else
             {

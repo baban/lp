@@ -6,21 +6,26 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class Args : AstNode
+    public class BlockArgs : AstNode
     {
+        AstNode VarNames;
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            nodes.ForEach((node) => AddChild("Arg", node));
+            //System.Console.WriteLine(nodes.Count());
+            //nodes.ForEach((node) => System.Console.WriteLine(node));
+            //nodes.ForEach((node) => AddChild("Stmt", node));
+            VarNames = AddChild("VarNames", nodes[1]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            Object.LpObject[] result = ChildNodes.Select((node) => (Object.LpObject)node.Evaluate(thread)).ToArray();
+            //Object.LpObject[] result = ChildNodes.Select((node) => (Object.LpObject)node.Evaluate(thread)).ToArray();
             thread.CurrentNode = Parent;
-            return result;
+            //return result;
+            return null;
         }
     }
 }

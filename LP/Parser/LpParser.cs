@@ -33,8 +33,16 @@ namespace LP.Parser
 
         public LpGrammer() : base(true)
         {
+            // TODO: public, internal, protected, private の宣言を変数、メソッド、クラスに追加
+            // if文にelse,elifを追加
+            // case文を拡張
+
             var Comma = ToTerm(",", "Comma");
             var Semi = ToTerm(";", "Semi");
+            var Lbr = ToTerm("(", "Lbr");
+            var Rbr = ToTerm(")", "Rbr");
+            var Do = ToTerm("do", "Do");
+            var End = ToTerm("end", "End");
             var Term = Semi | "\n";
             var Id = new IdentifierTerminal("identifier");
             var VarName = Id;
@@ -52,6 +60,7 @@ namespace LP.Parser
             var AssocVal = new NonTerminal("AssocVal", typeof(Node.AssocVal));
             var Assoc = new NonTerminal("Assoc", typeof(Node.Assoc));
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
+            var BlockArgs = new NonTerminal("BlockArgs", typeof(Node.BlockArgs));
             var Block = new NonTerminal("Block", typeof(Node.Block));
             var Lambda = new NonTerminal("Lambda", typeof(Node.Block));
             var Quote = new NonTerminal("Quote", typeof(Node.Quote));
@@ -70,7 +79,7 @@ namespace LP.Parser
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
-            var CaseStmt = new NonTerminal("IfStmt", typeof(Node.CaseStmt));
+            var CaseStmt = new NonTerminal("CaseStmt", typeof(Node.CaseStmt));
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineMacro = new NonTerminal("DefineMacro", typeof(Node.DefineMacro));
@@ -103,9 +112,11 @@ namespace LP.Parser
             //AssocVal.Rule = Primary + ToTerm("=>") + Primary;
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
-            Block.Rule = ToTerm("do") + "|" + Args +"|" + Stmts + ToTerm("end");
+            ArgVarnames.Rule = MakeStarRule(ArgVarnames, Comma, ArgVarname);
+            BlockArgs.Rule = "|" + ArgVarnames + "|" | Empty;
+            Block.Rule = Do + BlockArgs + Stmts + End;
             //Block.Rule = ToTerm("do") + ToTerm("end");
-            Lambda.Rule = ToTerm("->") + "|" + Args + "|" + ToTerm("do") + Stmts + ToTerm("end");
+            Lambda.Rule = ToTerm("->") + Do + BlockArgs + Stmts + End;
             //Lambda.Rule = ToTerm("->") + ToTerm("do") + ToTerm("end");
             Quote.Rule = "'" + SimpleExpr;
             QuasiQuote.Rule = "`" + SimpleExpr;
@@ -116,9 +127,9 @@ namespace LP.Parser
             //Primary.Rule = Numeric | Str | Bool | Nl | Symbol | VariableCall | Array | Hash | Block | Lambda;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
-            Funcall.Rule = FunctionName + "(" + Args + ")";
+            Funcall.Rule = FunctionName + Lbr + Args + Rbr;
             MethodCall.Rule = SimpleExpr + "." + Funcall;
-            SimpleExpr.Rule = "(" + Stmt + ")" | MethodCall | Funcall | Primary;
+            SimpleExpr.Rule = Lbr + Stmt + Rbr | MethodCall | Funcall | Primary;
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
             Assignment.Rule = VariableSet + ToTerm("=") + OpExpr;
             AssignmentExpr.Rule = OpExpr | Assignment;
@@ -126,13 +137,12 @@ namespace LP.Parser
 
             Expr.Rule = AssignmentExpr;
 
-            IfStmt.Rule = ToTerm("if(") + Expr + ToTerm(")") + Stmts + ToTerm("end");
-            CaseStmt.Rule = ToTerm("case(") + Expr + ToTerm(")") + ToTerm("end");
-            ArgVarnames.Rule = MakeStarRule(ArgVarnames, ToTerm(","), ArgVarname);
-            DefineFunction.Rule = ToTerm("def") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
-            DefineMacro.Rule = ToTerm("mac") + FunctionName + "(" + ArgVarnames + ")" + Stmts + ToTerm("end");
-            DefineClass.Rule = ToTerm("class")+ ClassName + Term + Stmts + ToTerm("end");
-            DefineModule.Rule = ToTerm("module") + ClassName + Term + Stmts + ToTerm("end");
+            IfStmt.Rule = ToTerm("if") + Lbr + Expr + Rbr + Stmts + End;
+            CaseStmt.Rule = ToTerm("case") + Lbr + Expr + Rbr + End;
+            DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + ArgVarnames + Rbr + Stmts + End;
+            DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + ArgVarnames + Rbr + Stmts + End;
+            DefineClass.Rule = ToTerm("class")+ ClassName + Term + Stmts + End;
+            DefineModule.Rule = ToTerm("module") + ClassName + Term + Stmts + End;
             Stmt.Rule = DefineClass | DefineModule | DefineFunction | DefineMacro | IfStmt | CaseStmt | Expr;
 
             Stmts.Rule = MakeStarRule(Stmts, Term, Stmt);

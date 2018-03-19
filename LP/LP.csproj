@@ -115,6 +115,7 @@
     <Compile Include="Node\AssocVal.cs" />
     <Compile Include="Node\BinExpr.cs" />
     <Compile Include="Node\Block.cs" />
+    <Compile Include="Node\BlockArgs.cs" />
     <Compile Include="Node\Bool.cs" />
     <Compile Include="Node\BracketedStmt.cs" />
     <Compile Include="Node\CaseStmt.cs" />
