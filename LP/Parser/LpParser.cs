@@ -52,7 +52,7 @@ namespace LP.Parser
             var ArgVarname = VarName;
 
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
-            var CallArgs = new NonTerminal("CallArgs", typeof(Node.ArgVarnames));
+            var CallArgs = new NonTerminal("CallArgs", typeof(Node.CallArgs));
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
             var Str = new NonTerminal("String", typeof(Node.String));
