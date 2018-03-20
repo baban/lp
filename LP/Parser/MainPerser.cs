@@ -29,20 +29,8 @@ namespace LP.Parser
                                                             string.Join(", ", args.ToArray()),
                                                             string.Join("; ", stmts.ToArray()));
 
-        static readonly Parser<string> DefModule = from a in Parse.String("module").Token().Text()
-                                                   from cname in Fname
-                                                   from b in Term
-                                                   from stmts in Stmt.Many().Except(Parse.String("end"))
-                                                   from c in Parse.String("end").Token()
-                                                   select string.Format("Module.new(:{1}) do {0} end",
-                                                      string.Join("; ", stmts), cname);
 
-
-        static readonly Parser<string> Funcall0 = from idf in Fname
-                                                  select idf + "()";
         static readonly Parser<string> Varcall = Varname.Or(GlobalVarname).Or(InstanceVarname).Or(ClassVarname).Token();
-
-        static readonly Parser<string> Primary = new Parser<string>[] { Nl, Numeric, Bool, String, Symbol, Array, Hash, Lambda, Block, Comment, Funcall, Varcall, Quote, QuasiQuote, QuestionQuote }.Aggregate((seed, nxt) => seed.Or(nxt)).Token();
 
         // arguments
         static readonly Parser<string> Arg = Parse.Ref(() => Stmt);

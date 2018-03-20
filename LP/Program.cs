@@ -101,7 +101,7 @@ namespace LP
             //string code = "class AAA; 1;2;3 end";
             //string code = "do |a,b| 1; 2 end";
             //string code = "1.to_s()";
-            string code = "([1,2,3])[1]";
+            string code = "[1,2,3][1]";
             //string code = "/* 111 */ 2";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();

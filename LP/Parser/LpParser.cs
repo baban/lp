@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Irony.Parsing;
@@ -46,9 +45,14 @@ namespace LP.Parser
             var Term = Semi | "\n";
             var Id = new IdentifierTerminal("identifier");
             var VarName = Id;
+            var AstVarName = "*" + Id;
+            var AmpVarName = "&" + Id;
             var ClassName = Id;
             var FunctionName = Id;
             var ArgVarname = VarName;
+
+            var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
+            var CallArgs = new NonTerminal("CallArgs", typeof(Node.ArgVarnames));
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
             var Str = new NonTerminal("String", typeof(Node.String));
@@ -82,7 +86,6 @@ namespace LP.Parser
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
             var CaseStmt = new NonTerminal("CaseStmt", typeof(Node.CaseStmt));
-            var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineMacro = new NonTerminal("DefineMacro", typeof(Node.DefineMacro));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
@@ -102,6 +105,12 @@ namespace LP.Parser
             MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
             this.MarkTransient(Stmt, Primary, Expr);
 
+            ArgVarnames.Rule = MakePlusRule(ArgVarnames, Comma, ArgVarname);
+            CallArgs.Rule = ArgVarnames | AstVarName | AmpVarName |
+                            ArgVarnames + Comma + AstVarName | ArgVarnames + Comma + AmpVarName | AstVarName + Comma + AmpVarName |
+                            ArgVarnames + Comma + AstVarName + Comma + AmpVarName |
+                            Empty;
+
             Numeric.Rule = new NumberLiteral("Number");
             Str.Rule = new StringLiteral("String", "\"");
             Bool.Rule = ToTerm("true") | "false";
@@ -113,8 +122,7 @@ namespace LP.Parser
             AssocVal.Rule = Stmt + ToTerm("=>") + Stmt;
             Assoc.Rule = MakeStarRule(Assoc, Comma, AssocVal) | Empty;
             Hash.Rule = ToTerm("{") + Assoc + ToTerm("}");
-            ArgVarnames.Rule = MakeStarRule(ArgVarnames, Comma, ArgVarname);
-            FenceArgs.Rule = "|" + ArgVarnames + "|" | Empty;
+            FenceArgs.Rule = "|" + CallArgs + "|" | Empty;
             Block.Rule = Do + FenceArgs + Stmts + End;
             Lambda.Rule = ToTerm("->") + Do + FenceArgs + Stmts + End;
             Quote.Rule = "'" + SimpleExpr;
@@ -127,7 +135,7 @@ namespace LP.Parser
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr;
             MethodCall.Rule = SimpleExpr + "." + FunctionName + Lbr + Args + Rbr;
-            ArrayAtExpr.Rule = SimpleExpr + "[" + SimpleExpr + "]";
+            ArrayAtExpr.Rule = Primary + "[" + SimpleExpr + "]";
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
 
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
@@ -137,10 +145,10 @@ namespace LP.Parser
 
             Expr.Rule = AssignmentExpr;
 
-            IfStmt.Rule = ToTerm("if") + Lbr + Expr + Rbr + Stmts + End;
+            IfStmt.Rule = "if" + Lbr + Expr + Rbr + Stmts + End;
             CaseStmt.Rule = ToTerm("case") + Lbr + Expr + Rbr + End;
-            DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + ArgVarnames + Rbr + Stmts + End;
-            DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + ArgVarnames + Rbr + Stmts + End;
+            DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
+            DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             DefineClass.Rule = ToTerm("class") + ClassName + Term + Stmts + End;
             DefineModule.Rule = ToTerm("module") + ClassName + Term + Stmts + End;
             Stmt.Rule = DefineClass | DefineModule | DefineFunction | DefineMacro | IfStmt | CaseStmt | Expr;
