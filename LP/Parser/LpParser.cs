@@ -35,6 +35,8 @@ namespace LP.Parser
             // TODO: public, internal, protected, private の宣言を変数、メソッド、クラスに追加
             // TODO: if文にelse,elifを追加
             // TODO: case文を拡張
+            // TODO: +=, -=, *= ...を追加
+            // TODO: 演算子のTermかどうかの選択肢を出す
 
             var Comma = ToTerm(",", "Comma");
             var Semi = ToTerm(";", "Semi");

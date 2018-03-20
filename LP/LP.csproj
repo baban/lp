@@ -159,10 +159,7 @@
     <Compile Include="Object\LpUnquote.cs" />
     <Compile Include="Node\VariableCall.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="Parser\BaseParser.cs" />
     <Compile Include="Parser\LpParser.cs" />
-    <Compile Include="Parser\MainPerser.cs" />
-    <Compile Include="Parser\StringParser.cs" />
     <Compile Include="Object\LpKernel.cs" />
     <Compile Include="Object\LpLambda.cs" />
     <Compile Include="Object\LpMethod.cs" />
