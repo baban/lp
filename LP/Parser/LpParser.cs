@@ -47,12 +47,12 @@ namespace LP.Parser
             var Term = Semi | "\n";
             var Id = new IdentifierTerminal("identifier");
             var VarName = Id;
-            var AstVarName = "*" + Id;
-            var AmpVarName = "&" + Id;
             var ClassName = Id;
             var FunctionName = Id;
             var ArgVarname = VarName;
 
+            var AstVarName = new NonTerminal("AstVarName", typeof(Node.CallArgs));
+            var AmpVarName = new NonTerminal("AmpVarName", typeof(Node.CallArgs));
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var CallArgs = new NonTerminal("CallArgs", typeof(Node.CallArgs));
 
@@ -107,6 +107,8 @@ namespace LP.Parser
             MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
             this.MarkTransient(Stmt, Primary, Expr);
 
+            AstVarName.Rule = ToTerm("*") + Id;
+            AmpVarName.Rule = ToTerm("&") + Id;
             ArgVarnames.Rule = MakePlusRule(ArgVarnames, Comma, ArgVarname);
             CallArgs.Rule = ArgVarnames | AstVarName | AmpVarName |
                             ArgVarnames + Comma + AstVarName | ArgVarnames + Comma + AmpVarName | AstVarName + Comma + AmpVarName |
@@ -114,7 +116,7 @@ namespace LP.Parser
                             Empty;
 
             Numeric.Rule = new NumberLiteral("Number");
-            Str.Rule = new StringLiteral("String", "\"");
+            Str.Rule = new StringLiteral("DoublqQuoteString", "\"") | new StringLiteral("SingleQuoteString", "'");
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
             Symbol.Rule = ":" + Id;
