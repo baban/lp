@@ -177,6 +177,9 @@ namespace LP.Parser
             StringLiteral term = new StringLiteral("String");
             term.AddStartEnd("'", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
             term.AddStartEnd("\"", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
+            term.AddStartEnd("%[", "]", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
+            term.AddStartEnd("%(", ")", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
+            term.AddStartEnd("%{", "}", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
 
             return term;
         }
