@@ -69,9 +69,10 @@ namespace LP.Parser
             ClassInstanceVarName.AddPrefix("@@", IdOptions.None);
 
             var ArgVarname = VarName;
+            var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var AstVarName = new NonTerminal("AstVarName", typeof(Node.CallArgs));
             var AmpVarName = new NonTerminal("AmpVarName", typeof(Node.CallArgs));
-            var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
+            var BlockArg = new NonTerminal("BlockArg", typeof(Node.Block));
             var CallArgs = new NonTerminal("CallArgs", typeof(Node.CallArgs));
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
@@ -112,6 +113,7 @@ namespace LP.Parser
             var CaseStmt = new NonTerminal("CaseStmt", typeof(Node.CaseStmt));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineMacro = new NonTerminal("DefineMacro", typeof(Node.DefineMacro));
+            var ParentClass = new NonTerminal("ParentClass");
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
             var DefineModule = new NonTerminal("DefineModule", typeof(Node.DefineModule));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
@@ -138,6 +140,7 @@ namespace LP.Parser
             AstVarName.Rule = ToTerm("*") + Id;
             AmpVarName.Rule = ToTerm("&") + Id;
             ArgVarnames.Rule = MakePlusRule(ArgVarnames, Comma, ArgVarname);
+            BlockArg.Rule = Block | Empty;
             CallArgs.Rule = ArgVarnames | AstVarName | AmpVarName |
                             ArgVarnames + Comma + AstVarName | ArgVarnames + Comma + AmpVarName | AstVarName + Comma + AmpVarName |
                             ArgVarnames + Comma + AstVarName + Comma + AmpVarName |
@@ -169,8 +172,8 @@ namespace LP.Parser
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | InstanceVariableCall;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
-            Funcall.Rule = FunctionName + Lbr + Args + Rbr;
-            MethodCall.Rule = SimpleExpr + "." + FunctionName + Lbr + Args + Rbr;
+            Funcall.Rule = FunctionName + Lbr + Args + Rbr + BlockArg;
+            MethodCall.Rule = SimpleExpr + "." + FunctionName + Lbr + Args + Rbr + BlockArg;
             ArrayAtExpr.Rule = Primary + "[" + SimpleExpr + "]";
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
 
@@ -185,6 +188,7 @@ namespace LP.Parser
             CaseStmt.Rule = ToTerm("case") + Lbr + Expr + Rbr + End;
             DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
+            ParentClass.Rule = ToTerm("<") + ClassName | Empty;
             DefineClass.Rule = ToTerm("class") + ClassName + Term + Stmts + End;
             DefineModule.Rule = ToTerm("module") + ClassName + Term + Stmts + End;
             Stmt.Rule = DefineClass | DefineModule | DefineFunction | DefineMacro | IfStmt | CaseStmt | Expr;
