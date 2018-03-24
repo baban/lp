@@ -125,12 +125,7 @@ namespace LP.Parser
                             ArgVarnames + Comma + AstVarName + Comma + AmpVarName |
                             Empty;
 
-            var Num = new NumberLiteral("Number");
-            Num.AddPrefix("0x", NumberOptions.Hex);
-            Num.AddPrefix("0d", NumberOptions.Default);
-            Num.AddPrefix("0o", NumberOptions.Octal);
-            Num.AddPrefix("0b", NumberOptions.Binary);
-            Numeric.Rule = Num;
+            Numeric.Rule = createNumberLiteral();
             Str.Rule = new StringLiteral("DoublqQuoteString", "\"") | new StringLiteral("SingleQuoteString", "'");
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
@@ -176,7 +171,18 @@ namespace LP.Parser
 
             Root = Stmts;
         }
-         
+
+        NumberLiteral createNumberLiteral()
+        {
+            var Num = new NumberLiteral("Number");
+            Num.AddPrefix("0x", NumberOptions.Hex);
+            Num.AddPrefix("0d", NumberOptions.Default);
+            Num.AddPrefix("0o", NumberOptions.Octal);
+            Num.AddPrefix("0", NumberOptions.Octal);
+            Num.AddPrefix("0b", NumberOptions.Binary);
+            return Num;
+        }
+
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)
         {
             var Table = table.ToArray();
