@@ -17,7 +17,7 @@ namespace LP.Parser
             new object[]{ OperandType.LEFT_UNARY,          new string[]{ "not" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "**" } },
             new object[]{ OperandType.LEFT_UNARY,             new string[]{ "-" } },
-            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "*","/", "%" } },
+            new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "*", "/", "%" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "+","-" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "<<",">>" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "&" } },
@@ -37,6 +37,8 @@ namespace LP.Parser
             // TODO: case文を拡張
             // TODO: +=, -=, *= ...を追加
             // TODO: 演算子のTermかどうかの選択肢を出す
+            // TODO: letの宣言
+            // TODO: autogensymの作成、var関数で、autogemsymの解除
 
             var Comma = ToTerm(",", "Comma");
             var Semi = ToTerm(";", "Semi");
@@ -44,13 +46,13 @@ namespace LP.Parser
             var Rbr = ToTerm(")", "Rbr");
             var Do = ToTerm("do", "Do");
             var End = ToTerm("end", "End");
-            var Term = Semi | "\n";
+            var Term = Semi | new NewLineTerminal("NewLine");
             var Id = new IdentifierTerminal("identifier");
             var VarName = Id;
             var ClassName = Id;
             var FunctionName = Id;
-            var ArgVarname = VarName;
 
+            var ArgVarname = VarName;
             var AstVarName = new NonTerminal("AstVarName", typeof(Node.CallArgs));
             var AmpVarName = new NonTerminal("AmpVarName", typeof(Node.CallArgs));
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
@@ -94,7 +96,15 @@ namespace LP.Parser
             var DefineModule = new NonTerminal("DefineModule", typeof(Node.DefineModule));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
 
+            var SpeStr = new QuotedValueLiteral("SpecialString", "%[", "]", System.TypeCode.String);
+
             var Stmts = new NonTerminal("Stmts", typeof(Node.Stmts));
+
+            this.AddTermsReportGroup("assignment", "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=");
+            this.AddTermsReportGroup("statement", "if", "case", "do", "end", "break", "next", "return", "yield");
+            this.AddTermsReportGroup("type declaration", "public", "private", "protected", "internal", 
+                                                         "class", "module");
+            this.AddTermsReportGroup("constant", "true", "false", "nl");
 
             CommentTerminal SingleLineComment = new CommentTerminal("SingleLineComment", "//", "\r", "\n", "\u2085", "\u2028", "\u2029");
             CommentTerminal DelimitedComment = new CommentTerminal("DelimitedComment", "/*", "*/");
@@ -115,7 +125,9 @@ namespace LP.Parser
                             ArgVarnames + Comma + AstVarName + Comma + AmpVarName |
                             Empty;
 
-            Numeric.Rule = new NumberLiteral("Number");
+            var Num = new NumberLiteral("Number");
+            Num.AddPrefix("0x", NumberOptions.Hex);
+            Numeric.Rule = Num;
             Str.Rule = new StringLiteral("DoublqQuoteString", "\"") | new StringLiteral("SingleQuoteString", "'");
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
@@ -149,7 +161,7 @@ namespace LP.Parser
 
             Expr.Rule = AssignmentExpr;
 
-            IfStmt.Rule = "if" + Lbr + Expr + Rbr + Stmts + End;
+            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + End;
             CaseStmt.Rule = ToTerm("case") + Lbr + Expr + Rbr + End;
             DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
