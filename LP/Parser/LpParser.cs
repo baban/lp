@@ -127,6 +127,9 @@ namespace LP.Parser
 
             var Num = new NumberLiteral("Number");
             Num.AddPrefix("0x", NumberOptions.Hex);
+            Num.AddPrefix("0d", NumberOptions.Default);
+            Num.AddPrefix("0o", NumberOptions.Octal);
+            Num.AddPrefix("0b", NumberOptions.Binary);
             Numeric.Rule = Num;
             Str.Rule = new StringLiteral("DoublqQuoteString", "\"") | new StringLiteral("SingleQuoteString", "'");
             Bool.Rule = ToTerm("true") | "false";
