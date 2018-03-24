@@ -110,7 +110,12 @@ namespace LP.Parser
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
+            var ElsIfStmt = new NonTerminal("ElsIfStmt");
+            var ElsIfStmts = new NonTerminal("ElsIfStmts");
+            var ElseStmt = new NonTerminal("ElseStmt");
             var CaseStmt = new NonTerminal("CaseStmt", typeof(Node.CaseStmt));
+            var WhenStmt = new NonTerminal("WhenStmt");
+            var WhenStmts = new NonTerminal("WhenStmts");
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineMacro = new NonTerminal("DefineMacro", typeof(Node.DefineMacro));
             var ParentClass = new NonTerminal("ParentClass");
@@ -184,8 +189,13 @@ namespace LP.Parser
 
             Expr.Rule = AssignmentExpr;
 
-            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + End;
-            CaseStmt.Rule = ToTerm("case") + Lbr + Expr + Rbr + End;
+            ElsIfStmt.Rule = ToTerm("elsif") + Expr + Term + Stmts;
+            ElsIfStmts.Rule = MakeStarRule(ElsIfStmts, ElsIfStmt);
+            ElseStmt.Rule = ToTerm("else") + Stmts | Empty;
+            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElsIfStmts + ElseStmt + End;
+            WhenStmt.Rule = ToTerm("when") + Expr + Term + Stmts;
+            WhenStmts.Rule = MakeStarRule(WhenStmts, WhenStmt);
+            CaseStmt.Rule = ToTerm("case") + Expr + Term + WhenStmts + ElseStmt + End;
             DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             ParentClass.Rule = ToTerm("<") + ClassName | Empty;
