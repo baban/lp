@@ -126,7 +126,7 @@ namespace LP.Parser
                             Empty;
 
             Numeric.Rule = createNumberLiteral();
-            Str.Rule = new StringLiteral("DoublqQuoteString", "\"") | new StringLiteral("SingleQuoteString", "'");
+            Str.Rule = createStringLiteral();
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
             Symbol.Rule = ":" + Id;
@@ -170,6 +170,15 @@ namespace LP.Parser
             Stmts.Rule = MakeStarRule(Stmts, Term, Stmt);
 
             Root = Stmts;
+        }
+
+        StringLiteral createStringLiteral()
+        {
+            StringLiteral term = new StringLiteral("String");
+            term.AddStartEnd("'", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
+            term.AddStartEnd("\"", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
+
+            return term;
         }
 
         NumberLiteral createNumberLiteral()
