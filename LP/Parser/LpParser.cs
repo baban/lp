@@ -47,10 +47,25 @@ namespace LP.Parser
             var Do = ToTerm("do", "Do");
             var End = ToTerm("end", "End");
             var Term = Semi | new NewLineTerminal("NewLine");
+
             var Id = new IdentifierTerminal("identifier");
-            var VarName = Id;
-            var ClassName = Id;
+            var ExclamationId = new IdentifierTerminal("ExclamationId");
+            ExclamationId.AddSuffix("!");
+            var QuestionId = new IdentifierTerminal("QuestionId");
+            QuestionId.AddSuffix("?");
+            var VarName = Id | QuestionId | ExclamationId;
+
             var FunctionName = Id;
+            var ClassName = Id;
+            var SymbolId = new IdentifierTerminal("SymbolId");
+            SymbolId.AllFirstChars = ":";
+            SymbolId.AddPrefix(":", IdOptions.None);
+            /*
+            var InstanceVarName = new IdentifierTerminal("InstanceVarName");
+            InstanceVarName.AddPrefix("@", IdOptions.None);
+            var ClassInstanceVarName = new IdentifierTerminal("ClassInstanceVarName");
+            ClassInstanceVarName.AddPrefix("@@", IdOptions.None);
+            */
 
             var ArgVarname = VarName;
             var AstVarName = new NonTerminal("AstVarName", typeof(Node.CallArgs));
@@ -129,7 +144,7 @@ namespace LP.Parser
             Str.Rule = createStringLiteral();
             Bool.Rule = ToTerm("true") | "false";
             Nl.Rule = ToTerm("nl");
-            Symbol.Rule = ":" + Id;
+            Symbol.Rule = SymbolId;
             Regex.Rule = new RegexLiteral("Regex");
             ArrayItems.Rule = MakeStarRule(ArrayItems, Comma, Stmt);
             Array.Rule = ToTerm("[") + ArrayItems + ToTerm("]");
