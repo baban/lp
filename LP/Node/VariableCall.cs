@@ -23,8 +23,6 @@ namespace LP.Node
             thread.CurrentNode = this;
             string Varname = node.Token.Text;
 
-            System.Console.WriteLine(Varname);
-
             var scope = thread.CurrentScope;
             var slot = scope.Info.GetSlot(Varname);
             var value = (Object.LpObject)thread.CurrentScope.GetValue(slot.Index);

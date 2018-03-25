@@ -117,6 +117,7 @@
     <Compile Include="Node\BinExpr.cs" />
     <Compile Include="Node\Block.cs" />
     <Compile Include="Node\CallArgs.cs" />
+    <Compile Include="Node\ClassInstanceVariable.cs" />
     <Compile Include="Node\FenceArgs.cs" />
     <Compile Include="Node\Bool.cs" />
     <Compile Include="Node\BracketedStmt.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Node\Funcall.cs" />
     <Compile Include="Node\Hash.cs" />
     <Compile Include="Node\IfStmt.cs" />
+    <Compile Include="Node\InstanceVariableCall.cs" />
     <Compile Include="Node\LeftUnary.cs" />
     <Compile Include="Node\MethodCall.cs" />
     <Compile Include="Node\Nl.cs" />

@@ -106,7 +106,8 @@ namespace LP
             //string code = "a?=1; a?";
             //string code = "b? = 2; b?";
             //string code = "@a = 3; @a";
-            string code = "@@a = 4; @@a";
+            //string code = "@@a = 4; @@a";
+            string code = "1";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");

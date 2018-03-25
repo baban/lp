@@ -92,8 +92,8 @@ namespace LP.Parser
             var Quote = new NonTerminal("Quote", typeof(Node.Quote));
             var QuasiQuote = new NonTerminal("QuasiQuote", typeof(Node.QuasiQuote));
             var QuestionQuote = new NonTerminal("QuestionQuote", typeof(Node.QuestionQuote));
-            var InstanceVariableCall = new NonTerminal("InstanceVariableCall", typeof(Node.VariableCall));
-            var ClassInstanceVariableCall = new NonTerminal("ClassInstanceVariableCall", typeof(Node.VariableCall));
+            var InstanceVariableCall = new NonTerminal("InstanceVariableCall", typeof(Node.InstanceVariableCall));
+            var ClassInstanceVariableCall = new NonTerminal("ClassInstanceVariableCall", typeof(Node.ClassInstanceVariableCall));
             var VariableCall = new NonTerminal("VariableCall", typeof(Node.VariableCall));
             var InstanceVariableSet = new NonTerminal("InstanceVariableSet", typeof(Node.VariableCall));
             var ClassInstanceVariableSet = new NonTerminal("ClassInstanceVariableSet", typeof(Node.VariableCall));
@@ -174,7 +174,7 @@ namespace LP.Parser
             InstanceVariableSet.Rule = InstanceVarName;
             ClassInstanceVariableCall.Rule = ClassInstanceVarName;
             ClassInstanceVariableSet.Rule = ClassInstanceVarName;
-            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | InstanceVariableCall;
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | InstanceVariableCall | ClassInstanceVariableCall;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr + BlockArg;
@@ -183,7 +183,9 @@ namespace LP.Parser
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
 
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
-            Assignment.Rule = VariableSet + ToTerm("=") + OpExpr | InstanceVariableSet + ToTerm("=") + OpExpr | ClassInstanceVariableSet + ToTerm("=") + OpExpr;
+            Assignment.Rule = makeChainOperators(new string[] { "=" }, VariableSet, OpExpr)  |
+                              makeChainOperators(new string[] { "=" }, InstanceVariableSet, OpExpr) |
+                              makeChainOperators(new string[] { "=" }, ClassInstanceVariableSet, OpExpr);
             AssignmentExpr.Rule = OpExpr | Assignment;
             RegisterOperators(0, "=");
 
