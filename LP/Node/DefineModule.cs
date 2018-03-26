@@ -14,13 +14,14 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            className = nodes[1];
-            Body = AddChild("Body", nodes[3]);
+            //className = nodes[2];
+            //Body = AddChild("Body", nodes[4]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+            /*
             var klass = Object.LpClass.initialize(className.Token.Text, Body);
             var scope = thread.CurrentScope;
             var newScopeInfo = new ScopeInfo(thread.CurrentNode, false);
@@ -30,6 +31,8 @@ namespace LP.Node
             thread.CurrentNode = Parent;
 
             return klass;
+            */
+            return null;
         }
     }
 }

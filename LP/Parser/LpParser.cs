@@ -55,7 +55,7 @@ namespace LP.Parser
             QuestionId.AddSuffix("?");
             var VarName = Id | QuestionId | ExclamationId;
 
-            var FunctionName = VarName;
+            var FunctionName = Id;
             var ClassName = Id;
             var SymbolId = new IdentifierTerminal("SymbolId");
             SymbolId.AllFirstChars = ":";
@@ -68,11 +68,13 @@ namespace LP.Parser
             ClassInstanceVarName.AllFirstChars = "@";
             ClassInstanceVarName.AddPrefix("@@", IdOptions.None);
 
+            var Modifier = ToTerm("public") | "internal" | "protected" | "private" | Empty;
+
             var ArgVarname = VarName;
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
             var AstVarName = new NonTerminal("AstVarName", typeof(Node.CallArgs));
             var AmpVarName = new NonTerminal("AmpVarName", typeof(Node.CallArgs));
-            var BlockArg = new NonTerminal("BlockArg", typeof(Node.Block));
+            var BlockArg = new NonTerminal("BlockArg", typeof(Node.BlockArg));
             var CallArgs = new NonTerminal("CallArgs", typeof(Node.CallArgs));
 
             var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
@@ -87,7 +89,7 @@ namespace LP.Parser
             var Assoc = new NonTerminal("Assoc", typeof(Node.Assoc));
             var Hash = new NonTerminal("Hash", typeof(Node.Hash));
             var FenceArgs = new NonTerminal("FenceArgs", typeof(Node.FenceArgs));
-            var Block = new NonTerminal("Block", typeof(Node.Block));
+            var Block = new NonTerminal("Block", typeof(Node.BlockArg));
             var Lambda = new NonTerminal("Lambda", typeof(Node.Block));
             var Quote = new NonTerminal("Quote", typeof(Node.Quote));
             var QuasiQuote = new NonTerminal("QuasiQuote", typeof(Node.QuasiQuote));
@@ -139,7 +141,7 @@ namespace LP.Parser
             RegisterBracePair("(", ")");
             //IsWhitespaceOrDelimiter("{}[](),:;+-*/%&|^!~<>=");
             //this.Delimiters = "{}[](),:;+-*/%&|^!~<>=";
-            MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":");
+            MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":", ".");
             this.MarkTransient(Stmt, Primary, Expr);
 
             AstVarName.Rule = ToTerm("*") + Id;
@@ -178,7 +180,7 @@ namespace LP.Parser
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr + BlockArg;
-            MethodCall.Rule = SimpleExpr + "." + FunctionName + Lbr + Args + Rbr + BlockArg;
+            MethodCall.Rule = Primary + "." + FunctionName + Lbr + Args + Rbr + BlockArg;
             ArrayAtExpr.Rule = Primary + "[" + SimpleExpr + "]";
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
 

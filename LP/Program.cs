@@ -91,33 +91,46 @@ namespace LP
             sw.Start();
             */
             //string code = readFile(argv[0]);
-            //string code = "def hoge() 1; 2; 3 end";
-            //string code = "abc=1+5*5; abc";
-            //string code = "def bbb(a,b,c) 1; 2; c end; bbb(1,2,3)";
-            //string code = "a='(1+2); ?a";
-            //string code = "a='(1+2); `(1+3)";
-            //string code = "a='(2+3); `(1+?a)";
-            //string code = "1+a";
-            //string code = "class AAA; 1;2;3 end";
-            //string code = "do |a,b| 1; 2 end";
-            //string code = "1.to_s()";
-            //string code = ":aaaa";
             //string code = "/* 111 */ 2";
+            //string code = "1";
+            //string code = ":aaaa";
+            //string code = "\"Hello\"";
+            //string code = "true";
+            //string code = "nl";
+            //string code = "/regex/";
+            //string code = "[]";
+            //string code = "{}";
+            //string code = "do |a| end";
+            //string code = "-> do |a| end";
             //string code = "a?=1; a?";
             //string code = "b? = 2; b?";
             //string code = "@a = 3; @a";
             //string code = "@@a = 4; @@a";
-            string code = "1";
+            //string code = "1; 2; 3";
+            //string code = "a='(1+2); ?a";
+            //string code = "a='(1+2); `(1+3)";
+            //string code = "a='(2+3); `(1+?a)";
+            //string code = "1+a";
+            //string code = "1+1";
+            //string code = "2*3";
+            string code = "1.to_s()";
+            //string code = "def hoge(a) 1; 2; 3 end";
+            //string code = "abc=1+5*5; abc";
+            //string code = "def bbb(a,b,c) 1; 2; c end; bbb(1,2,3)";
+            //string code = "class Aaa; 1;2;3 end";
+            //string code = "module Aaa; 1;2;3 end";
+            //string code = "public module Aaa; 1;2;3 end";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
             var language = new LanguageData(parser);
             //Console.WriteLine("initialize language");
             ScriptApp app = new ScriptApp(language);
-            //Console.WriteLine("parse");
+            Console.WriteLine("parse");
             var tree = app.Parser.Parse(code);
             //Console.WriteLine("tree");
-            
+            //Console.WriteLine(tree);
+
             /*
             if (tree.HasErrors())
             {
@@ -127,7 +140,7 @@ namespace LP
                 return 0;
             }
             */
-            
+
 
             Console.WriteLine("evaluate");
             
