@@ -14,9 +14,9 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            System.Console.WriteLine(nodes[2].Token.Text);
-            className = nodes[2];
-            //Body = AddChild("Body", nodes[4]);
+            System.Console.WriteLine(nodes[1].Token.Text);
+            className = nodes[1];
+            Body = AddChild("Body", nodes[2]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
@@ -28,7 +28,7 @@ namespace LP.Node
             //thread.PushClosureScope(newScopeInfo, thread.CurrentScope, new object[] { });
             //Body.Evaluate(thread);
             //thread.PopScope();
-            //thread.CurrentNode = Parent;
+            thread.CurrentNode = Parent;
 
             return klass;
         }

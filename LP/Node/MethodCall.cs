@@ -11,6 +11,7 @@ namespace LP.Node
         public AstNode Expr { get; private set; }
         public ParseTreeNode functionName { get; private set; }
         public AstNode Args { get; private set; }
+        public AstNode BlockArg { get; private set; }
 
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
@@ -20,6 +21,7 @@ namespace LP.Node
             Expr = AddChild("Expr", nodes[0]);
             functionName = nodes[1];
             Args = AddChild("Args", nodes[2]);
+            BlockArg = AddChild("BlockArg", nodes[3]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)

@@ -46,7 +46,7 @@ namespace LP.Parser
             var Rbr = ToTerm(")", "Rbr");
             var Do = ToTerm("do", "Do");
             var End = ToTerm("end", "End");
-            var Term = Semi | new NewLineTerminal("NewLine");
+            var Term = Semi;
 
             var Id = new IdentifierTerminal("identifier");
             var ExclamationId = new IdentifierTerminal("ExclamationId");
@@ -185,9 +185,12 @@ namespace LP.Parser
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
 
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
+            Assignment.Rule = VariableSet + "=" + OpExpr;
+            /*
             Assignment.Rule = makeChainOperators(new string[] { "=" }, VariableSet, OpExpr)  |
                               makeChainOperators(new string[] { "=" }, InstanceVariableSet, OpExpr) |
                               makeChainOperators(new string[] { "=" }, ClassInstanceVariableSet, OpExpr);
+            */
             AssignmentExpr.Rule = OpExpr | Assignment;
             RegisterOperators(0, "=");
 

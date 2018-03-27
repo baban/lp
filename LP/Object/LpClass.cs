@@ -49,10 +49,9 @@ namespace LP.Object
         {
             obj.methods["new"] = new LpMethod(new BinMethod(new_), 1);
             obj.methods["inspect"] = new LpMethod(new BinMethod(inspect),0);
+            //obj.methods["to_s"] = new BinMethod(to_s);
+            //obj.methods["display"] = new BinMethod(display);
             /*
-            obj.methods["inspect"] = new BinMethod(inspect);
-            obj.methods["to_s"] = new BinMethod(to_s);
-            obj.methods["display"] = new BinMethod(display);
             obj.methods["size"] = new BinMethod(size);
 
             obj.methods["<<"] = new BinMethod(add);
