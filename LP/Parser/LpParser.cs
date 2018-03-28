@@ -68,7 +68,7 @@ namespace LP.Parser
             ClassInstanceVarName.AllFirstChars = "@";
             ClassInstanceVarName.AddPrefix("@@", IdOptions.None);
 
-            var Modifier = ToTerm("public") | "internal" | "protected" | "private" | Empty;
+            var Modifier = new NonTerminal("Modifier", typeof(Node.Modifier));
 
             var ArgVarname = VarName;
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
@@ -144,6 +144,8 @@ namespace LP.Parser
             MarkPunctuation(";", ",", "(", ")", "{", "}", "[", "]", ":", ".");
             this.MarkTransient(Stmt, Primary, Expr);
 
+            Modifier.Rule = ToTerm("public") | "internal" | "protected" | "private" | Empty;
+
             AstVarName.Rule = ToTerm("*") + Id;
             AmpVarName.Rule = ToTerm("&") + Id;
             ArgVarnames.Rule = MakePlusRule(ArgVarnames, Comma, ArgVarname);
@@ -199,15 +201,16 @@ namespace LP.Parser
             ElsIfStmt.Rule = ToTerm("elsif") + Expr + Term + Stmts;
             ElsIfStmts.Rule = MakeStarRule(ElsIfStmts, ElsIfStmt);
             ElseStmt.Rule = ToTerm("else") + Stmts | Empty;
-            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElsIfStmts + ElseStmt + End;
+            //IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElsIfStmts + ElseStmt + End;
+            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + End;
             WhenStmt.Rule = ToTerm("when") + Expr + Term + Stmts;
             WhenStmts.Rule = MakeStarRule(WhenStmts, WhenStmt);
             CaseStmt.Rule = ToTerm("case") + Expr + Term + WhenStmts + ElseStmt + End;
             DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             ParentClass.Rule = ToTerm("<") + ClassName | Empty;
-            DefineClass.Rule = ToTerm("class") + ClassName + Term + Stmts + End;
-            DefineModule.Rule = ToTerm("module") + ClassName + Term + Stmts + End;
+            DefineClass.Rule = Modifier + ToTerm("class") + ClassName + Term + Stmts + End;
+            DefineModule.Rule = Modifier + ToTerm("module") + ClassName + Term + Stmts + End;
             Stmt.Rule = DefineClass | DefineModule | DefineFunction | DefineMacro | IfStmt | CaseStmt | Expr;
 
             Stmts.Rule = MakeStarRule(Stmts, Term, Stmt);

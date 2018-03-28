@@ -49,8 +49,8 @@ namespace LP.Object
         {
             obj.methods["new"] = new LpMethod(new BinMethod(new_), 1);
             obj.methods["inspect"] = new LpMethod(new BinMethod(inspect),0);
-            //obj.methods["to_s"] = new BinMethod(to_s);
-            //obj.methods["display"] = new BinMethod(display);
+            obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
+            obj.methods["display"] = new LpMethod(new BinMethod(display), 0);
             /*
             obj.methods["size"] = new BinMethod(size);
 
@@ -125,6 +125,12 @@ namespace LP.Object
         {
             var str = string.Format("#<{0}:{1:x8}>", className, self.GetHashCode());
             return LpString.initialize(str);
+        }
+
+        static LpObject display(LpObject self, LpObject[] args, LpObject block = null)
+        {
+            Console.WriteLine(to_s(self, args, block).stringValue);
+            return LpNl.initialize();
         }
     }
 }

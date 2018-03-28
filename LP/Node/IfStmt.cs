@@ -21,13 +21,12 @@ namespace LP.Node
 
         protected override object DoEvaluate(ScriptThread thread)
         {
-            return null;
-            /*
             thread.CurrentNode = this;
-            string result = "if(" + Expr.Evaluate(thread).ToString() + ")" + Stmts.Evaluate(thread).ToString() + " end";
+            //string result = "if(" + Expr.Evaluate(thread).ToString() + ")" + Stmts.Evaluate(thread).ToString() + " end";
             thread.CurrentNode = Parent;
-            return result;
-            */
+
+            //return result;
+            return null;
         }
     }
 }

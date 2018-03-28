@@ -14,13 +14,14 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            //className = nodes[2];
-            //Body = AddChild("Body", nodes[4]);
+            className = nodes[2];
+            Body = AddChild("Body", nodes[4]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+            var klass = Object.LpNl.initialize();
             /*
             var klass = Object.LpClass.initialize(className.Token.Text, Body);
             var scope = thread.CurrentScope;
@@ -28,11 +29,11 @@ namespace LP.Node
             thread.PushClosureScope(newScopeInfo, thread.CurrentScope, new object[] { });
             Body.Evaluate(thread);
             thread.PopScope();
+
+            */
             thread.CurrentNode = Parent;
 
             return klass;
-            */
-            return null;
         }
     }
 }

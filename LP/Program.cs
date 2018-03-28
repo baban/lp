@@ -113,13 +113,15 @@ namespace LP
             //string code = "1+a";
             //string code = "1+1";
             //string code = "2*3";
-            string code = "1.to_s()";
+            //string code = "1.to_s()";
             //string code = "def hoge(a) 1; 2; 3 end";
             //string code = "abc=1+5*5; abc";
             //string code = "def bbb(a,b,c) 1; 2; c end; bbb(1,2,3)";
             //string code = "class Aaa; 1;2;3 end";
+            string code = "public class Aaa; 1;2;3 end";
             //string code = "module Aaa; 1;2;3 end";
             //string code = "public module Aaa; 1;2;3 end";
+            //string code = "if true; 1 end";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
