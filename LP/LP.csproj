@@ -138,6 +138,7 @@
     <Compile Include="Node\Modifier.cs" />
     <Compile Include="Node\Nl.cs" />
     <Compile Include="Node\Numeric.cs" />
+    <Compile Include="Node\ParentClass.cs" />
     <Compile Include="Node\Primary.cs" />
     <Compile Include="Node\QuasiQuote.cs" />
     <Compile Include="Node\QuestionQuote.cs" />

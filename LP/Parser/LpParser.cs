@@ -120,7 +120,7 @@ namespace LP.Parser
             var WhenStmts = new NonTerminal("WhenStmts");
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineMacro = new NonTerminal("DefineMacro", typeof(Node.DefineMacro));
-            var ParentClass = new NonTerminal("ParentClass");
+            var ParentClass = new NonTerminal("ParentClass", typeof(Node.ParentClass));
             var DefineClass = new NonTerminal("DefineClass", typeof(Node.DefineClass));
             var DefineModule = new NonTerminal("DefineModule", typeof(Node.DefineModule));
             var Stmt = new NonTerminal("Stmt", typeof(Node.Stmt));
@@ -209,7 +209,7 @@ namespace LP.Parser
             DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             ParentClass.Rule = ToTerm("<") + ClassName | Empty;
-            DefineClass.Rule = Modifier + ToTerm("class") + ClassName + Term + Stmts + End;
+            DefineClass.Rule = Modifier + ToTerm("class") + ClassName + ParentClass + Term + Stmts + End;
             DefineModule.Rule = Modifier + ToTerm("module") + ClassName + Term + Stmts + End;
             Stmt.Rule = DefineClass | DefineModule | DefineFunction | DefineMacro | IfStmt | CaseStmt | Expr;
 
