@@ -15,9 +15,9 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            functionName = nodes[1];
-            CallArgs = AddChild("CallArgs", nodes[2]);
-            Body = AddChild("Body", nodes[3]);
+            functionName = nodes[2];
+            CallArgs = AddChild("CallArgs", nodes[3]);
+            Body = AddChild("Body", nodes[4]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)

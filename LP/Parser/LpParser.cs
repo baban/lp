@@ -206,8 +206,8 @@ namespace LP.Parser
             WhenStmt.Rule = ToTerm("when") + Expr + Term + Stmts;
             WhenStmts.Rule = MakeStarRule(WhenStmts, WhenStmt);
             CaseStmt.Rule = ToTerm("case") + Expr + Term + WhenStmts + ElseStmt + End;
-            DefineFunction.Rule = ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
-            DefineMacro.Rule = ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
+            DefineFunction.Rule = Modifier + ToTerm("def") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
+            DefineMacro.Rule = Modifier + ToTerm("mac") + FunctionName + Lbr + CallArgs + Rbr + Stmts + End;
             ParentClass.Rule = ToTerm("<") + ClassName | Empty;
             DefineClass.Rule = Modifier + ToTerm("class") + ClassName + ParentClass + Term + Stmts + End;
             DefineModule.Rule = Modifier + ToTerm("module") + ClassName + Term + Stmts + End;
