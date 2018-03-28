@@ -153,6 +153,8 @@
     <Compile Include="Node\String.cs" />
     <Compile Include="Node\Symbol.cs" />
     <Compile Include="Node\Assignment.cs" />
+    <Compile Include="Node\WhenStmt.cs" />
+    <Compile Include="Node\WhenStmts.cs" />
     <Compile Include="Object\LpArray.cs" />
     <Compile Include="Object\LpBase.cs" />
     <Compile Include="Object\LpBlock.cs" />

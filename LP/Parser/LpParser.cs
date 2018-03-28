@@ -16,7 +16,7 @@ namespace LP.Parser
             new object[]{ OperandType.LEFT_UNARY,             new string[]{ "!", "~" } },
             new object[]{ OperandType.LEFT_UNARY,          new string[]{ "not" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "**" } },
-            new object[]{ OperandType.LEFT_UNARY,             new string[]{ "-" } },
+            //new object[]{ OperandType.LEFT_UNARY,             new string[]{ "-" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "*", "/", "%" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "+","-" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "<<",">>" } },
@@ -32,9 +32,6 @@ namespace LP.Parser
 
         public LpGrammer() : base(true)
         {
-            // TODO: public, internal, protected, private の宣言を変数、メソッド、クラスに追加
-            // TODO: if文にelse,elifを追加
-            // TODO: case文を拡張
             // TODO: +=, -=, *= ...を追加
             // TODO: 演算子のTermかどうかの選択肢を出す
             // TODO: letの宣言
@@ -116,8 +113,8 @@ namespace LP.Parser
             var ElsIfStmts = new NonTerminal("ElsIfStmts", typeof(Node.ElsIfStmts));
             var ElseStmt = new NonTerminal("ElseStmt", typeof(Node.ElseStmt));
             var CaseStmt = new NonTerminal("CaseStmt", typeof(Node.CaseStmt));
-            var WhenStmt = new NonTerminal("WhenStmt");
-            var WhenStmts = new NonTerminal("WhenStmts");
+            var WhenStmt = new NonTerminal("WhenStmt", typeof(Node.WhenStmt));
+            var WhenStmts = new NonTerminal("WhenStmts", typeof(Node.WhenStmts));
             var DefineFunction = new NonTerminal("DefineFunction", typeof(Node.DefineFunction));
             var DefineMacro = new NonTerminal("DefineMacro", typeof(Node.DefineMacro));
             var ParentClass = new NonTerminal("ParentClass", typeof(Node.ParentClass));
