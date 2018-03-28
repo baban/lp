@@ -120,6 +120,9 @@
     <Compile Include="Node\BlockArg.cs" />
     <Compile Include="Node\CallArgs.cs" />
     <Compile Include="Node\ClassInstanceVariable.cs" />
+    <Compile Include="Node\ElseStmt.cs" />
+    <Compile Include="Node\ElsIfStmt.cs" />
+    <Compile Include="Node\ElsIfStmts.cs" />
     <Compile Include="Node\FenceArgs.cs" />
     <Compile Include="Node\Bool.cs" />
     <Compile Include="Node\BracketedStmt.cs" />

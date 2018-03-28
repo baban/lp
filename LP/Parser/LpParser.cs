@@ -112,9 +112,9 @@ namespace LP.Parser
             var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
-            var ElsIfStmt = new NonTerminal("ElsIfStmt");
-            var ElsIfStmts = new NonTerminal("ElsIfStmts");
-            var ElseStmt = new NonTerminal("ElseStmt");
+            var ElsIfStmt = new NonTerminal("ElsIfStmt", typeof(Node.ElsIfStmt));
+            var ElsIfStmts = new NonTerminal("ElsIfStmts", typeof(Node.ElsIfStmts));
+            var ElseStmt = new NonTerminal("ElseStmt", typeof(Node.ElseStmt));
             var CaseStmt = new NonTerminal("CaseStmt", typeof(Node.CaseStmt));
             var WhenStmt = new NonTerminal("WhenStmt");
             var WhenStmts = new NonTerminal("WhenStmts");
@@ -201,8 +201,7 @@ namespace LP.Parser
             ElsIfStmt.Rule = ToTerm("elsif") + Expr + Term + Stmts;
             ElsIfStmts.Rule = MakeStarRule(ElsIfStmts, ElsIfStmt);
             ElseStmt.Rule = ToTerm("else") + Stmts | Empty;
-            //IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElsIfStmts + ElseStmt + End;
-            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + End;
+            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElsIfStmts + ElseStmt + End;
             WhenStmt.Rule = ToTerm("when") + Expr + Term + Stmts;
             WhenStmts.Rule = MakeStarRule(WhenStmts, WhenStmt);
             CaseStmt.Rule = ToTerm("case") + Expr + Term + WhenStmts + ElseStmt + End;
