@@ -65,12 +65,17 @@ namespace LP.Parser
             ClassInstanceVarName.AllFirstChars = "@";
             ClassInstanceVarName.AddPrefix("@@", IdOptions.None);
 
+            var Declater = new NonTerminal("Declater", typeof(Node.Modifier));
+            Declater.Rule = ToTerm("let") | Empty;
+            var Decletion = new NonTerminal("Declation");
+            Decletion.Rule = Declater + VarName;
+
             var Modifier = new NonTerminal("Modifier", typeof(Node.Modifier));
 
             var ArgVarname = VarName;
             var ArgVarnames = new NonTerminal("ArgVarnames", typeof(Node.ArgVarnames));
-            var AstVarName = new NonTerminal("AstVarName", typeof(Node.CallArgs));
-            var AmpVarName = new NonTerminal("AmpVarName", typeof(Node.CallArgs));
+            var AstVarName = new NonTerminal("AstVarname", typeof(Node.AstVarname));
+            var AmpVarName = new NonTerminal("AmpVarname", typeof(Node.AmpVarname));
             var BlockArg = new NonTerminal("BlockArg", typeof(Node.BlockArg));
             var CallArgs = new NonTerminal("CallArgs", typeof(Node.CallArgs));
 
@@ -184,7 +189,7 @@ namespace LP.Parser
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
 
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
-            Assignment.Rule = VariableSet + "=" + OpExpr;
+            Assignment.Rule = Declater + VariableSet + "=" + OpExpr;
             /*
             Assignment.Rule = makeChainOperators(new string[] { "=" }, VariableSet, OpExpr)  |
                               makeChainOperators(new string[] { "=" }, InstanceVariableSet, OpExpr) |

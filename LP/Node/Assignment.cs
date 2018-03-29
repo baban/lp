@@ -17,8 +17,8 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            VarNode = nodes[0];
-            Right = AddChild("Right", nodes[2]);
+            VarNode = nodes[1];
+            Right = AddChild("Right", nodes[3]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)

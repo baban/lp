@@ -16,7 +16,6 @@ namespace LP.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            System.Console.WriteLine("MethodCall");
             var nodes = treeNode.GetMappedChildNodes();
             Expr = AddChild("Expr", nodes[0]);
             functionName = nodes[1];
@@ -27,7 +26,6 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            System.Console.WriteLine("DoEvaluate");
 
             var val = (Object.LpObject)Expr.Evaluate(thread);
             var args = (Object.LpObject[])Args.Evaluate(thread);
