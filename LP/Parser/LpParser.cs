@@ -65,11 +65,6 @@ namespace LP.Parser
             ClassInstanceVarName.AllFirstChars = "@";
             ClassInstanceVarName.AddPrefix("@@", IdOptions.None);
 
-            var Declater = new NonTerminal("Declater", typeof(Node.Modifier));
-            Declater.Rule = ToTerm("let") | Empty;
-            var Decletion = new NonTerminal("Declation");
-            Decletion.Rule = Declater + VarName;
-
             var Modifier = new NonTerminal("Modifier", typeof(Node.Modifier));
 
             var ArgVarname = VarName;
@@ -96,12 +91,13 @@ namespace LP.Parser
             var Quote = new NonTerminal("Quote", typeof(Node.Quote));
             var QuasiQuote = new NonTerminal("QuasiQuote", typeof(Node.QuasiQuote));
             var QuestionQuote = new NonTerminal("QuestionQuote", typeof(Node.QuestionQuote));
-            var InstanceVariableCall = new NonTerminal("InstanceVariableCall", typeof(Node.InstanceVariableCall));
-            var ClassInstanceVariableCall = new NonTerminal("ClassInstanceVariableCall", typeof(Node.ClassInstanceVariableCall));
             var VariableCall = new NonTerminal("VariableCall", typeof(Node.VariableCall));
-            var InstanceVariableSet = new NonTerminal("InstanceVariableSet", typeof(Node.VariableCall));
-            var ClassInstanceVariableSet = new NonTerminal("ClassInstanceVariableSet", typeof(Node.VariableCall));
-            var VariableSet = new NonTerminal("VariableSet", typeof(Node.VariableCall));
+            var DeclareVariableReference = new NonTerminal("DeclareVariableReference", typeof(Node.DeclareVariableReference));
+            var VariableReference = new NonTerminal("VariableReference", typeof(Node.VariableReference));
+            var InstanceVariableCall = new NonTerminal("InstanceVariableCall", typeof(Node.InstanceVariableCall));
+            var InstanceVariableReference = new NonTerminal("VariableReference", typeof(Node.VariableReference));
+            var ClassInstanceVariableCall = new NonTerminal("ClassInstanceVariableCall", typeof(Node.ClassInstanceVariableCall));
+            var VariableSet = new NonTerminal("VariableSet", typeof(Node.VariableSet));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Expr));
@@ -175,11 +171,13 @@ namespace LP.Parser
             QuasiQuote.Rule = "`" + SimpleExpr;
             QuestionQuote.Rule = "?" + VariableCall;
             VariableCall.Rule = VarName;
-            VariableSet.Rule = VarName;
+            VariableReference.Rule = VarName;
+            DeclareVariableReference.Rule = VarName;
             InstanceVariableCall.Rule = InstanceVarName;
-            InstanceVariableSet.Rule = InstanceVarName;
+            InstanceVariableReference.Rule = InstanceVarName;
             ClassInstanceVariableCall.Rule = ClassInstanceVarName;
-            ClassInstanceVariableSet.Rule = ClassInstanceVarName;
+            //VariableSet.Rule = DeclareVariableReference | VariableReference;
+            VariableSet.Rule = DeclareVariableReference;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | InstanceVariableCall | ClassInstanceVariableCall;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
@@ -189,7 +187,7 @@ namespace LP.Parser
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
 
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
-            Assignment.Rule = Declater + VariableSet + "=" + OpExpr;
+            Assignment.Rule = VariableSet + "=" + OpExpr;
             /*
             Assignment.Rule = makeChainOperators(new string[] { "=" }, VariableSet, OpExpr)  |
                               makeChainOperators(new string[] { "=" }, InstanceVariableSet, OpExpr) |

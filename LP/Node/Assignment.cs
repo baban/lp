@@ -10,27 +10,30 @@ namespace LP.Node
 {
     public class Assignment : AstNode
     {
-        public ParseTreeNode VarNode;
-        public AstNode Right { get; private set; }
+        public AstNode VarNode;
+        public AstNode Value { get; private set; }
 
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            VarNode = nodes[1];
-            Right = AddChild("Right", nodes[3]);
+            VarNode = AddChild("Right", nodes[0]);
+            Value = AddChild("Value", nodes[2]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            string Varname = VarNode.ChildNodes.First().Token.Text;
-            var right = (Object.LpObject)Right.Evaluate(thread);
-            var scope = thread.CurrentScope;
-            var slot = scope.AddSlot(Varname);
-            scope.SetValue(slot.Index, right);
-            var value = (Object.LpObject)thread.CurrentScope.GetValue(slot.Index);
+
+            var value = (Object.LpObject)Value.Evaluate(thread);
+            var reference = (object[])VarNode.Evaluate(thread);
+
+            var Varname = (string)reference[0];
+            var dic = (IDictionary<string, object>)reference[1];
+            dic[Varname] = value;
+
             thread.CurrentNode = Parent;
+
             return value;
         }
     }

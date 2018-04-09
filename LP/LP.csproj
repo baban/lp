@@ -122,6 +122,7 @@
     <Compile Include="Node\BlockArg.cs" />
     <Compile Include="Node\CallArgs.cs" />
     <Compile Include="Node\ClassInstanceVariable.cs" />
+    <Compile Include="Node\DeclareVariableReference.cs" />
     <Compile Include="Node\ElseStmt.cs" />
     <Compile Include="Node\ElsIfStmt.cs" />
     <Compile Include="Node\ElsIfStmts.cs" />
@@ -155,6 +156,8 @@
     <Compile Include="Node\String.cs" />
     <Compile Include="Node\Symbol.cs" />
     <Compile Include="Node\Assignment.cs" />
+    <Compile Include="Node\VariableReference.cs" />
+    <Compile Include="Node\VariableSet.cs" />
     <Compile Include="Node\WhenStmt.cs" />
     <Compile Include="Node\WhenStmts.cs" />
     <Compile Include="Object\LpArray.cs" />
