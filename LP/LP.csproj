@@ -108,6 +108,7 @@
     <Compile Include="Error\LpNoMethodError.cs" />
     <Compile Include="Error\LpSyntaxError.cs" />
     <Compile Include="Error\NameError.cs" />
+    <Compile Include="InstanceVariableReference.cs" />
     <Compile Include="Node\AmpVarname.cs" />
     <Compile Include="Node\Args.cs" />
     <Compile Include="Node\ArgVarnames.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Node\BlockArg.cs" />
     <Compile Include="Node\CallArgs.cs" />
     <Compile Include="Node\ClassInstanceVariable.cs" />
+    <Compile Include="Node\DeclareVariable.cs" />
     <Compile Include="Node\DeclareVariableReference.cs" />
     <Compile Include="Node\ElseStmt.cs" />
     <Compile Include="Node\ElsIfStmt.cs" />

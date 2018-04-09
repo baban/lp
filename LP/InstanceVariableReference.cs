@@ -6,9 +6,10 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class DeclareVariableReference : AstNode
+    public class InstanceVariableReference : AstNode
     {
         string Varname;
+        AstNode Node;
 
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
@@ -16,12 +17,15 @@ namespace LP.Node
 
             var nodes = treeNode.GetMappedChildNodes();
 
-            Varname = nodes.Last().Token.Text;
+            Node = AddChild("Node", nodes[0]);
+            Varname = nodes[0].Token.Text;
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+
+            System.Console.WriteLine("aaaaa");
 
             var scope = thread.CurrentScope;
             var dic = scope.AsDictionary();
