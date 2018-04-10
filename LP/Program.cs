@@ -104,10 +104,10 @@ namespace LP
             //string code = "-> do |a| end";
             //string code = "a=1";
             //string code = "a=1; a";
-            string code = "let a=1; a";
+            //string code = "let a=1; a";
             //string code = "b? = 2; b?";
             //string code = "@a = 3; @a";
-            //string code = "@@a = 4; @@a";
+            string code = "@@a = 4; @@a";
             //string code = "let a";
             //string code = "1; 2; 3";
             //string code = "a='(1+2); ?a";

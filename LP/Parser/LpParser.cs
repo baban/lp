@@ -34,7 +34,6 @@ namespace LP.Parser
         {
             // TODO: +=, -=, *= ...を追加
             // TODO: 演算子のTermかどうかの選択肢を出す
-            // TODO: letの宣言
             // TODO: autogensymの作成、var関数で、autogemsymの解除
 
             var Comma = ToTerm(",", "Comma");
@@ -96,8 +95,9 @@ namespace LP.Parser
             var DeclareVariableReference = new NonTerminal("DeclareVariableReference", typeof(Node.DeclareVariableReference));
             var VariableReference = new NonTerminal("VariableReference", typeof(Node.VariableReference));
             var InstanceVariableCall = new NonTerminal("InstanceVariableCall", typeof(Node.InstanceVariableCall));
-            var InstanceVariableReference = new NonTerminal("VariableReference", typeof(Node.InstanceVariableReference));
+            var InstanceVariableReference = new NonTerminal("InstanceVariableReference", typeof(Node.InstanceVariableReference));
             var ClassInstanceVariableCall = new NonTerminal("ClassInstanceVariableCall", typeof(Node.ClassInstanceVariableCall));
+            var ClassInstanceVariableReference = new NonTerminal("ClassInstanceVariableReference", typeof(Node.InstanceVariableReference));
             var VariableSet = new NonTerminal("VariableSet", typeof(Node.VariableSet));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
@@ -178,7 +178,8 @@ namespace LP.Parser
             InstanceVariableCall.Rule = InstanceVarName;
             InstanceVariableReference.Rule = InstanceVarName;
             ClassInstanceVariableCall.Rule = ClassInstanceVarName;
-            VariableSet.Rule = DeclareVariableReference | VariableReference | InstanceVariableReference;
+            ClassInstanceVariableReference.Rule = ClassInstanceVarName;
+            VariableSet.Rule = DeclareVariableReference | VariableReference | InstanceVariableReference | ClassInstanceVariableReference;
             Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | InstanceVariableCall | ClassInstanceVariableCall;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
@@ -188,11 +189,6 @@ namespace LP.Parser
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
             Assignment.Rule = VariableSet + "=" + OpExpr;
-            /*
-            Assignment.Rule = makeChainOperators(new string[] { "=" }, VariableSet, OpExpr)  |
-                              makeChainOperators(new string[] { "=" }, InstanceVariableSet, OpExpr) |
-                              makeChainOperators(new string[] { "=" }, ClassInstanceVariableSet, OpExpr);
-            */
             AssignmentExpr.Rule = OpExpr | Assignment | DeclareVariable;
             RegisterOperators(0, "=");
 
