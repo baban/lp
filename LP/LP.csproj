@@ -89,10 +89,6 @@
     <Reference Include="Microsoft.Scripting.Debugging">
       <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Scripting.Debugging.dll</HintPath>
     </Reference>
-    <Reference Include="Sprache, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Sprache.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

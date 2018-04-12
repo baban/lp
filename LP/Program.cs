@@ -235,8 +235,6 @@ namespace LP
                 }
                 catch ( Error.LpError e ){
                     printError( e );
-                } catch ( Sprache.ParseException e ) {
-                    printException(e);
                 }
             } while (true);
         }
