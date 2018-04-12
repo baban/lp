@@ -188,7 +188,7 @@ namespace LP.Parser
             ArrayAtExpr.Rule = Primary + "[" + SimpleExpr + "]";
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
-            Assignment.Rule = VariableSet + "=" + OpExpr;
+            Assignment.Rule = VariableSet + ToTerm("=") + OpExpr;
             AssignmentExpr.Rule = OpExpr | Assignment | DeclareVariable;
             RegisterOperators(0, "=");
 

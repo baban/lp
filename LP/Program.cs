@@ -39,14 +39,12 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            runNode(new string []{ });
-            return;
-
+            //runNode(new string []{ });
+            //return;
             if (args.Length == 0) {
                 sysInit("", args, 0);
                 consoleReadFile();
             }
-
             var options = new Options();
             //コマンドライン引数を解析する
             bool isSuccess = CommandLine.Parser.Default.ParseArguments(args, options);
@@ -61,6 +59,12 @@ namespace LP
                 if ( options.Evaluate != null )
                 {
                     sysInit("", args, 0);
+                    Console.WriteLine("initialize");
+                    var parser = new Parser.LpGrammer();
+                    var language = new LanguageData(parser);
+                    ScriptApp app = new ScriptApp(language);
+                    Console.WriteLine("parse");
+                    //var tree = app.Parser.Parse(code);
                     //LpParser.execute(options.Evaluate);
                     return;
                 }
@@ -90,7 +94,7 @@ namespace LP
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             */
-            //string code = readFile(argv[0]);
+            string code = readFile(argv[0]);
             //string code = "/* 111 */ 2";
             //string code = "1";
             //string code = ":aaaa";
@@ -107,7 +111,7 @@ namespace LP
             //string code = "let a=1; a";
             //string code = "b? = 2; b?";
             //string code = "@a = 3; @a";
-            string code = "@@a = 4; @@a";
+            //string code = "@@a = 4; @@a";
             //string code = "let a";
             //string code = "1; 2; 3";
             //string code = "a='(1+2); ?a";
@@ -116,6 +120,8 @@ namespace LP
             //string code = "1+a";
             //string code = "1+1";
             //string code = "2*3";
+            //string code = "!true";
+            //string code = "1+2*3+4";
             //string code = "1.to_s()";
             //string code = "def hoge() end";
             //string code = "def hoge(a) 1; 2; 3 end";
