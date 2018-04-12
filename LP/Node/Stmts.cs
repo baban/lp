@@ -11,8 +11,16 @@ namespace LP.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
-            var nodes = treeNode.GetMappedChildNodes();
-            nodes.ForEach((node) => AddChild("Stmt", node));
+            try
+            {
+                var nodes = treeNode.GetMappedChildNodes();
+                nodes.ForEach((node) => AddChild("Stmt", node));
+            }
+            catch (System.Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+                return;
+            }
         }
 
         protected override object DoEvaluate(ScriptThread thread)
@@ -26,9 +34,9 @@ namespace LP.Node
             }
             catch(System.Exception e)
             {
-                System.Console.WriteLine("aaaaaaa");
                 var traces = thread.GetStackTrace();
                 var location = thread.CurrentNode.Location;
+                System.Console.WriteLine(e.Message);
                 System.Console.WriteLine(location);
                 return null;
             }

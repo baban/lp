@@ -214,14 +214,23 @@ namespace LP
                 line = Console.ReadLine();
                 try {
                     var tree = app.Parser.Parse(line);
-                    Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
-                    if (result == null)
+                    if (tree == null)
                     {
-                        Console.WriteLine("null");
-                    }
-                    else
+                        Console.WriteLine("parse error");
+                    } else
                     {
-                        result.funcall("display", new Object.LpObject[] { }, null);
+                        Console.WriteLine(tree.HasErrors());
+                        Console.WriteLine(tree.ParserMessages);
+                        Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
+                        if (result == null)
+                        {
+                            Console.WriteLine("null");
+                        }
+                        else
+                        {
+                            result.funcall("display", new Object.LpObject[] { }, null);
+                        }
+
                     }
                 }
                 catch ( Error.LpError e ){
