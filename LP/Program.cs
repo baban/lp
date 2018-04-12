@@ -199,6 +199,13 @@ namespace LP
             printVersion();
             //Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
             //Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
+            Console.WriteLine("initialize");
+            var parser = new Parser.LpGrammer();
+            //Console.WriteLine("initialize parser");
+            var language = new LanguageData(parser);
+            //Console.WriteLine("initialize language");
+            ScriptApp app = new ScriptApp(language);
+            Console.WriteLine("parse");
 
             string line = null;
 
@@ -206,8 +213,18 @@ namespace LP
                 Console.Write(" >> ");
                 line = Console.ReadLine();
                 try {
-                    //LpParser.execute(line).funcall("inspect",null,null).funcall("display",null,null);
-                } catch( Error.LpError e ){
+                    var tree = app.Parser.Parse(line);
+                    Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
+                    if (result == null)
+                    {
+                        Console.WriteLine("null");
+                    }
+                    else
+                    {
+                        result.funcall("display", new Object.LpObject[] { }, null);
+                    }
+                }
+                catch ( Error.LpError e ){
                     printError( e );
                 } catch ( Sprache.ParseException e ) {
                     printException(e);
