@@ -6,7 +6,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class DefineMacro : AstNode
+    public class DefineMacro : LpBase
     {
         public ParseTreeNode functionName { get; private set; }
         public AstNode CallArgs { get; private set; }

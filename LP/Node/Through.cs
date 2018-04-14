@@ -1,34 +1,26 @@
-﻿using System.Linq;
-using Irony.Ast;
+﻿using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
 using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class DeclareVariable : LpBase
+    public class Through : LpBase
     {
-        string Varname;
-
+        public AstNode Node { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            Varname = nodes[0].Token.Text;
+            Node = AddChild("Node", nodes[0]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-
-            var ret = Object.LpNl.initialize();
-            var scope = thread.CurrentScope;
-            var dic = scope.AsDictionary();
-            dic[Varname] = ret;
-
+            Object.LpObject result = (Object.LpObject)Node.Evaluate(thread);
             thread.CurrentNode = Parent;
-
-            return ret;
+            return result;
         }
     }
 }

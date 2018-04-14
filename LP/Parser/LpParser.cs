@@ -101,14 +101,14 @@ namespace LP.Parser
             var VariableSet = new NonTerminal("VariableSet", typeof(Node.VariableSet));
             var Primary = new NonTerminal("Primary", typeof(Node.Primary));
 
-            var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Expr));
+            var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Through));
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall", typeof(Node.MethodCall));
             var ArrayAtExpr = new NonTerminal("ArrayAtExpr", typeof(Node.ArrayAtExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Assignment = new NonTerminal("Assignment", typeof(Node.Assignment));
-            var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Expr));
+            var AssignmentExpr = new NonTerminal("AssignmentExpr", typeof(Node.Through));
 
             var IfStmt = new NonTerminal("IfStmt", typeof(Node.IfStmt));
             var ElsIfStmt = new NonTerminal("ElsIfStmt", typeof(Node.ElsIfStmt));
@@ -251,7 +251,6 @@ namespace LP.Parser
             return OpExpr;
         }
 
-
         NonTerminal makeExpr(OperandType type, int precedence, string[] operands, NonTerminal primaryExpr)
         {
             var Expr = new NonTerminal("Expr(" + string.Join(",", operands) + ")", typeof(Node.Expr));
@@ -279,7 +278,7 @@ namespace LP.Parser
 
         BnfExpression makeLeftUnaryOperator(string op, NonTerminal beforeExpr)
         {
-            var Expr = new NonTerminal("LeftUnaryExpr", typeof(Node.LeftUnary));
+            var Expr = new NonTerminal("LeftUnaryExpr(" + op + ")", typeof(Node.LeftUnary));
             Expr.Rule = beforeExpr + op;
             return Expr;
         }
@@ -291,7 +290,7 @@ namespace LP.Parser
 
         BnfExpression makeRightUnaryOperator(string op, NonTerminal afterExpr)
         {
-            var Expr = new NonTerminal("RightUnaryExpr", typeof(Node.RightUnary));
+            var Expr = new NonTerminal("RightUnaryExpr(" + op + ")", typeof(Node.RightUnary));
             Expr.Rule = op + afterExpr;
             return Expr;
         }
@@ -303,7 +302,7 @@ namespace LP.Parser
 
         BnfExpression makeChainOperator(string op, NonTerminal beforeExpr, NonTerminal afterExpr)
         {
-            var BinExpr = new NonTerminal("BinExpr", typeof(Node.BinExpr));
+            var BinExpr = new NonTerminal("BinExpr(" + op + ")", typeof(Node.BinExpr));
             BinExpr.Rule = beforeExpr + ToTerm(op) + afterExpr;
             return BinExpr;
         }

@@ -6,7 +6,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class Funcall : AstNode
+    public class Funcall : LpBase
     {
         public ParseTreeNode functionName { get; private set; }
         public AstNode Args { get; private set; }

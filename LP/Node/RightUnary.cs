@@ -5,7 +5,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class RightUnary : AstNode
+    public class RightUnary : LpBase
     {
         public AstNode Node { get; private set; }
         public ParseTreeNode Op;

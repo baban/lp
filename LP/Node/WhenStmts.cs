@@ -6,7 +6,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class WhenStmts : AstNode
+    public class WhenStmts : LpBase
     {
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
