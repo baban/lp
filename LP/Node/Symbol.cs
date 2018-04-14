@@ -8,7 +8,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class Symbol : AstNode
+    public class Symbol : LpBase
     {
         public AstNode Node { get; private set; }
         public ParseTreeNode node;

@@ -6,7 +6,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class Modifier : AstNode
+    public class Modifier : LpBase
     {
         public AstNode Pairs { get; private set; }
 

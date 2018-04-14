@@ -142,6 +142,7 @@
     <Compile Include="Node\IfStmt.cs" />
     <Compile Include="Node\InstanceVariableCall.cs" />
     <Compile Include="Node\LeftUnary.cs" />
+    <Compile Include="Node\LpBase.cs" />
     <Compile Include="Node\MethodCall.cs" />
     <Compile Include="Node\Modifier.cs" />
     <Compile Include="Node\Nl.cs" />

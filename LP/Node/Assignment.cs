@@ -8,7 +8,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class Assignment : AstNode
+    public class Assignment : LpBase
     {
         public AstNode VarNode;
         public AstNode Value { get; private set; }

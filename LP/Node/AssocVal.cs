@@ -5,7 +5,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class AssocVal : AstNode
+    public class AssocVal : LpBase
     {
         public AstNode Key { get; private set; }
         public AstNode Value { get; private set; }

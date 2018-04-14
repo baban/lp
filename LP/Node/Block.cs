@@ -7,7 +7,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class Block : AstNode
+    public class Block : LpBase
     {
         AstNode ArgVarNames = null;
         AstNode Body = null;

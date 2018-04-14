@@ -6,7 +6,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class DeclareVariableReference : AstNode
+    public class DeclareVariableReference : LpBase
     {
         string Varname;
 

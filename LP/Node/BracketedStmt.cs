@@ -5,7 +5,7 @@ using Irony.Parsing;
 
 namespace LP.Node
 {
-    public class BracketedStmt : AstNode
+    public class BracketedStmt : LpBase
     {
         public AstNode Node { get; private set; }
         public override void Init(AstContext context, ParseTreeNode treeNode)
