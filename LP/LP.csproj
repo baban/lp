@@ -158,6 +158,7 @@
     <Compile Include="Node\String.cs" />
     <Compile Include="Node\Symbol.cs" />
     <Compile Include="Node\Assignment.cs" />
+    <Compile Include="Node\Through.cs" />
     <Compile Include="Node\VariableReference.cs" />
     <Compile Include="Node\VariableSet.cs" />
     <Compile Include="Node\WhenStmt.cs" />
