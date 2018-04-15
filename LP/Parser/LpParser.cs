@@ -104,6 +104,7 @@ namespace LP.Parser
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Through));
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
+            var ClassCall = new NonTerminal("ClassCall", typeof(Node.ClassCall));
             var MethodCall = new NonTerminal("MethodCall", typeof(Node.MethodCall));
             var ArrayAtExpr = new NonTerminal("ArrayAtExpr", typeof(Node.ArrayAtExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
@@ -184,6 +185,7 @@ namespace LP.Parser
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr + BlockArg;
+            //ClassCall.Rule = ClassName;
             MethodCall.Rule = Primary + "." + FunctionName + Lbr + Args + Rbr + BlockArg;
             ArrayAtExpr.Rule = Primary + "[" + SimpleExpr + "]";
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;

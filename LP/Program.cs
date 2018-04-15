@@ -39,8 +39,8 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            //runNode(new string []{ });
-            //return;
+            runNode(new string []{ });
+            return;
             if (args.Length == 0) {
                 sysInit("", args, 0);
                 consoleReadFile();
@@ -94,7 +94,7 @@ namespace LP
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             */
-            string code = readFile(argv[0]);
+            //string code = readFile(argv[0]);
             //string code = "/* 111 */ 2";
             //string code = "1";
             //string code = ":aaaa";
@@ -123,6 +123,8 @@ namespace LP
             //string code = "!true";
             //string code = "1+2*3+4";
             //string code = "1.to_s()";
+            //string code = "Console";
+            string code = "Console.WriteLine(\"Hello,World\")";
             //string code = "def hoge() end";
             //string code = "def hoge(a) 1; 2; 3 end";
             //string code = "def hoge(a, b) 1; 2; 3 end";
