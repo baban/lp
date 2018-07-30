@@ -8,6 +8,7 @@ namespace LP.Node
 {
     public class WhenStmts : LpBase
     {
+        
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
@@ -16,8 +17,10 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+            Object.LpObject result = Object.LpNl.initialize();
             thread.CurrentNode = Parent;
-            return null;
+
+            return result;
         }
     }
 }

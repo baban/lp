@@ -17,7 +17,7 @@ namespace LP.Node
             var nodes = treeNode.GetMappedChildNodes();
             Expr = AddChild("IfExpr", nodes[1]);
             Stmts = AddChild("Stmts", nodes[2]);
-            if(nodes.Count > 4)
+            if (nodes.Count > 4)
             {
                 ElseStmts = AddChild("ElseStmts", nodes[nodes.Count-2]);
             }

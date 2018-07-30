@@ -12,7 +12,7 @@ namespace LP.Node
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
-            Node = AddChild("Node", nodes[0]);
+            //Node = AddChild("Node", nodes[0]);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
@@ -20,18 +20,13 @@ namespace LP.Node
             thread.CurrentNode = this;
 
             var scope = thread.CurrentScope;
-            var slot = scope.Info.GetSlot("_case");
-            var function = (Object.LpObject)scope.GetValue(slot.Index);
+            //var slot = scope.Info.GetSlot("_case");
+            //var function = (Object.LpObject)scope.GetValue(slot.Index);
 
-            Object.LpObject result = null;
+            Object.LpObject result = Object.LpNl.initialize();
             thread.CurrentNode = Parent;
+
             return result;
-            /*
-            thread.CurrentNode = this;
-            string result = "if(" + Expr.Evaluate(thread).ToString() + ")" + Stmts.Evaluate(thread).ToString() + " end";
-            thread.CurrentNode = Parent;
-            return result;
-            */
         }
     }
 }
