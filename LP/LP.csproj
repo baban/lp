@@ -99,8 +99,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlockArg.cs" />
-    <Compile Include="Element\LpMemberInfo.cs" />
-    <Compile Include="Element\OverloadInfo.cs" />
     <Compile Include="Error\LpArgumentError.cs" />
     <Compile Include="Error\LpIOError.cs" />
     <Compile Include="Error\LpNoMethodError.cs" />
@@ -120,7 +118,6 @@
     <Compile Include="Node\Block.cs" />
     <Compile Include="Node\BlockArg.cs" />
     <Compile Include="Node\CallArgs.cs" />
-    <Compile Include="Node\ClassCall.cs" />
     <Compile Include="Node\ClassInstanceVariable.cs" />
     <Compile Include="Node\DeclareVariable.cs" />
     <Compile Include="Node\DeclareVariableReference.cs" />

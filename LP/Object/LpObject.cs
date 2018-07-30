@@ -161,12 +161,15 @@ namespace LP.Object
                 Type type = Type.GetType("System.Console");
                 var methods = type.GetMethods();
 
+                var klass = LpClass.initialize("Console");
+
                 Dictionary<string, List<System.Reflection.MethodInfo>> infos = new Dictionary<string, List<System.Reflection.MethodInfo>>();
                 methods.ToList().ForEach((a) =>
                 {
                     if (!infos.ContainsKey(a.Name))
                     {
                         infos[a.Name] = new List<System.Reflection.MethodInfo>();
+                        //klass.methods["WriteLine"] = infos[a.Name];
                     }
                     infos[a.Name].Add(a);
                 });

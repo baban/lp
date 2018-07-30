@@ -124,7 +124,7 @@ namespace LP
             //string code = "1+2*3+4";
             //string code = "1.to_s()";
             //string code = "Console";
-            string code = "Console.WriteLine(\"Hello,World\")";
+            //string code = "Console.WriteLine(\"Hello,World\")";
             //string code = "def hoge() end";
             //string code = "def hoge(a) 1; 2; 3 end";
             //string code = "def hoge(a, b) 1; 2; 3 end";
@@ -136,7 +136,7 @@ namespace LP
             //string code = "public class A < B; 1;2;3 end";
             //string code = "module Aaa; 1;2;3 end";
             //string code = "public module Aaa; 1;2;3 end";
-            //string code = "if true; 1 end";
+            string code = "if true; 1 end";
             //string code = "if true; 1 else 2 end";
             //string code = "if true; 1 elsif false; 2 end";
             //string code = "case 1; end";
@@ -199,8 +199,8 @@ namespace LP
         static void consoleReadFile()
         {
             printVersion();
-            //Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
-            //Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
+            // Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
+            // Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
