@@ -136,8 +136,8 @@ namespace LP
             //string code = "public class A < B; 1;2;3 end";
             //string code = "module Aaa; 1;2;3 end";
             //string code = "public module Aaa; 1;2;3 end";
-            string code = "if true; 1 end";
-            //string code = "if true; 1 else 2 end";
+            //string code = "if true; 1 end";
+            string code = "if false; 1 else 2 end";
             //string code = "if true; 1 elsif false; 2 end";
             //string code = "case 1; end";
             //string code = "case 1; else 1 end";

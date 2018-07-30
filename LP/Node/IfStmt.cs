@@ -19,7 +19,7 @@ namespace LP.Node
             Stmts = AddChild("Stmts", nodes[2]);
             if(nodes.Count > 4)
             {
-                ElseStmts = AddChild("ElseStmts", nodes[4]);
+                ElseStmts = AddChild("ElseStmts", nodes[nodes.Count-2]);
             }
         }
 
