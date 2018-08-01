@@ -138,10 +138,10 @@ namespace LP
             //string code = "public module Aaa; 1;2;3 end";
             //string code = "if true; 1 end";
             //string code = "if false; 1 else 2 end";
-            //string code = "if true; 1 elsif false; 2 end";
+            //string code = "if false; 1 elsif true; 2 end";
             //string code = "case 1; end";
-            //string code = "case false; else 1 end";
-            string code = "case 1; when 1; 1 end";
+            string code = "case false; else 1 end";
+            //string code = "case 1; when 1; 3 end";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");

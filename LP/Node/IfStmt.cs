@@ -7,20 +7,34 @@ namespace LP.Node
 {
     public class IfStmt : LpBase
     {
-        public AstNode Expr { get; private set; }
-        public AstNode Stmts { get; private set; }
-        public AstNode ElseStmts { get; private set; }
+        AstNode Expr;
+        AstNode Stmts;
+        AstNode ElsIfStmts;
+        AstNode ElseStmt;
 
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
             var nodes = treeNode.GetMappedChildNodes();
+            nodes.ForEach((node) => {
+                if(node.AstNode != null)
+                {
+                    var t = node.AstNode.GetType().ToString();
+                    switch (t)
+                    {
+                        case "LP.Node.Stmts":
+                            Stmts = AddChild("Stmts", node);
+                            break;
+                        case "LP.Node.ElsIfStmts":
+                            ElsIfStmts = AddChild("ElsIfStmts", node);
+                            break;
+                        case "LP.Node.ElseStmt":
+                            ElseStmt = AddChild("ElseStmts", node);
+                            break;
+                    }
+                }
+            });
             Expr = AddChild("IfExpr", nodes[1]);
-            Stmts = AddChild("Stmts", nodes[2]);
-            if (nodes.Count > 4)
-            {
-                ElseStmts = AddChild("ElseStmts", nodes[nodes.Count-2]);
-            }
         }
 
         protected override object DoEvaluate(ScriptThread thread)
@@ -33,17 +47,19 @@ namespace LP.Node
             {
                 result = (Object.LpObject)Stmts.Evaluate(thread);
             }
-            else
+            else if (ElsIfStmts != null)
             {
-                if (ElseStmts != null)
-                {
-                    result = (Object.LpObject)ElseStmts.Evaluate(thread);
-                }
-                else
-                {
-                    result = null;
-                }
+                result = (Object.LpObject)ElsIfStmts.Evaluate(thread);
             }
+
+            if (result != null && ElseStmt != null)
+            {
+                result = (Object.LpObject)ElseStmt.Evaluate(thread);
+            } else
+            {
+                result = Object.LpNl.initialize();
+            }
+
             thread.CurrentNode = Parent;
 
             return result;

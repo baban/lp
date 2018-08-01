@@ -199,9 +199,7 @@ namespace LP.Parser
             ElsIfStmt.Rule = ToTerm("elsif") + Expr + Term + Stmts;
             ElsIfStmts.Rule = MakeStarRule(ElsIfStmts, ElsIfStmt);
             ElseStmt.Rule = ToTerm("else") + Stmts | Empty;
-            //IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElsIfStmts + ElseStmt + End;
-            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElseStmt + End;
-            //IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + End;
+            IfStmt.Rule = ToTerm("if") + Expr + Term + Stmts + ElsIfStmts + ElseStmt + End;
             WhenStmt.Rule = ToTerm("when") + Expr + Term + Stmts;
             WhenStmts.Rule = MakeStarRule(WhenStmts, WhenStmt);
             CaseStmt.Rule = ToTerm("case") + Expr + Term + WhenStmts + ElseStmt + End;

@@ -8,8 +8,8 @@ namespace LP.Node
 {
     public class WhenStmt : LpBase
     {
-        public AstNode Expr { get; private set; }
-        public AstNode Stmts { get; private set; }
+        AstNode Expr = null;
+        AstNode Stmts = null;
 
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
@@ -21,12 +21,7 @@ namespace LP.Node
 
         protected override object DoEvaluate(ScriptThread thread)
         {
-            thread.CurrentNode = this;
-            Object.LpObject result = Object.LpNl.initialize();
-
-            thread.CurrentNode = Parent;
-
-            return result;
+            return new AstNode[] { Expr, Stmts };
         }
     }
 }
