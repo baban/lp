@@ -20,6 +20,7 @@ namespace LP.Node
             thread.CurrentNode = this;
             Object.LpObject[] result = ChildNodes.Select((node) => (Object.LpObject)node.Evaluate(thread)).ToArray();
             thread.CurrentNode = Parent;
+
             return result;
         }
     }
