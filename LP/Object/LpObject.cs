@@ -156,11 +156,60 @@ namespace LP.Object
         /// <returns></returns>
         public LpObject execMethod(string name, LpObject self, LpObject[] args, LpObject block)
         {
+            if ("WriteLine" == name)
+            {
+                Type type = Type.GetType("System.Console");
+                var methods = type.GetMethods();
+
+                var klass = LpClass.initialize("Console");
+
+                Dictionary<string, List<System.Reflection.MethodInfo>> infos = new Dictionary<string, List<System.Reflection.MethodInfo>>();
+                methods.ToList().ForEach((a) =>
+                {
+                    if (!infos.ContainsKey(a.Name))
+                    {
+                        infos[a.Name] = new List<System.Reflection.MethodInfo>();
+                        //klass.methods["WriteLine"] = infos[a.Name];
+                    }
+                    infos[a.Name].Add(a);
+                });
+                var arrayTypes = new string[] { "System.String" };
+                var squuezedMethods = infos["WriteLine"];
+                squuezedMethods.ForEach((m) => {
+                    var parameters = m.GetParameters();
+                    if (parameters.Length == arrayTypes.Length)
+                    {
+                        if (isRightParameter(parameters, arrayTypes))
+                        {
+                            Console.WriteLine(m);
+                            m.Invoke(null, new object[] { "Hello,World" });
+                            return;
+                        }
+                    }
+                });
+                return Object.LpNl.initialize();
+            }
+
             if (null == methods[name]) return null;
 
             return doMethod(methods[name], self, args, block);
         }
 
+        static bool isRightParameter(System.Reflection.ParameterInfo[] parameters, string[] arrayTypes)
+        {
+            if (parameters.Length != arrayTypes.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                if (parameters[i].ParameterType.ToString() != arrayTypes[i])
+                    return false;
+            }
+
+            return true;
+        }
 
         public LpObject doMethod(System.Object method, LpObject self, LpObject[] args, LpObject block)
         {

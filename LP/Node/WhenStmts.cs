@@ -11,13 +11,19 @@ namespace LP.Node
         public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
+            var nodes = treeNode.GetMappedChildNodes();
+            nodes.ForEach((node) => AddChild("WhenStmt", node));
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
+
+            var result = ChildNodes.Select((node)=> { return (AstNode[])node.Evaluate(thread);  }).ToArray();
+
             thread.CurrentNode = Parent;
-            return null;
+
+            return result;
         }
     }
 }

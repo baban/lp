@@ -24,10 +24,27 @@ namespace LP.Node
             string Varname = node.Token.Text;
 
             var scope = thread.CurrentScope;
-            var slot = scope.Info.GetSlot(Varname);
-            var value = (Object.LpObject)thread.CurrentScope.GetValue(slot.Index);
+            var dic = scope.AsDictionary();
+
+            Object.LpObject value = null;
+            if (dic.ContainsKey(Varname))
+            {
+                value = (Object.LpObject)dic[Varname];
+            } else if(Varname == "Console")
+            {
+                System.Console.WriteLine("Console");
+                value = classCall(Varname);
+            }
+
             thread.CurrentNode = Parent;
+
             return value;
+        }
+
+        private Object.LpObject classCall(string className)
+        {
+            var klass = Object.LpClass.initialize(className);
+            return klass;
         }
     }
 }

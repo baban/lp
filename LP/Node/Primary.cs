@@ -21,8 +21,7 @@ namespace LP.Node
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-            Object.LpObject result = null;
-            result = (Object.LpObject)Node.Evaluate(thread);
+            Object.LpObject result = (Object.LpObject)Node.Evaluate(thread);
             thread.CurrentNode = Parent;
 
             return result;

@@ -64,8 +64,6 @@ namespace LP
                     var language = new LanguageData(parser);
                     ScriptApp app = new ScriptApp(language);
                     Console.WriteLine("parse");
-                    //var tree = app.Parser.Parse(code);
-                    //LpParser.execute(options.Evaluate);
                     return;
                 }
 
@@ -94,7 +92,7 @@ namespace LP
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             */
-            string code = readFile(argv[0]);
+            //string code = readFile(argv[0]);
             //string code = "/* 111 */ 2";
             //string code = "1";
             //string code = ":aaaa";
@@ -123,6 +121,8 @@ namespace LP
             //string code = "!true";
             //string code = "1+2*3+4";
             //string code = "1.to_s()";
+            //string code = "Console";
+            //string code = "Console.WriteLine(\"Hello,World\")";
             //string code = "def hoge() end";
             //string code = "def hoge(a) 1; 2; 3 end";
             //string code = "def hoge(a, b) 1; 2; 3 end";
@@ -135,11 +135,11 @@ namespace LP
             //string code = "module Aaa; 1;2;3 end";
             //string code = "public module Aaa; 1;2;3 end";
             //string code = "if true; 1 end";
-            //string code = "if true; 1 else 2 end";
-            //string code = "if true; 1 elsif false; 2 end";
+            //string code = "if false; 1 else 2 end";
+            //string code = "if false; 1 elsif true; 2 end";
             //string code = "case 1; end";
-            //string code = "case 1; else 1 end";
-            //string code = "case 1; when 1; 1 end";
+            //string code = "case false; else 1 end";
+            string code = "case 1; when 1; 3 end";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
@@ -163,29 +163,27 @@ namespace LP
 
 
             Console.WriteLine("evaluate");
-            
-            Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
-            if (result == null)
-            {
-                Console.WriteLine("null");
-            }
-            else
-            {
-                Console.WriteLine(result);
-                Console.WriteLine("result: {0}", result);
-                result.funcall("display", new Object.LpObject[] { }, null);
-            }
-            Console.WriteLine("Finish");
-            /*
+
+            Object.LpObject result = null;
             try
             {
-                LpParser.execute(code);
+                result = (Object.LpObject)app.Evaluate(tree);
+                if (result == null)
+                {
+                    Console.WriteLine("null");
+                }
+                else
+                {
+                    Console.WriteLine(result);
+                    Console.WriteLine("result: {0}", result);
+                    result.funcall("display", new Object.LpObject[] { }, null);
+                }
             }
             catch (Error.LpError e)
             {
                 Console.WriteLine(e.ToString());
             }
-            */
+            Console.WriteLine("Finish");
             /*
             sw.Stop();
             Console.WriteLine(sw.Elapsed.TotalSeconds);
@@ -197,8 +195,8 @@ namespace LP
         static void consoleReadFile()
         {
             printVersion();
-            //Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
-            //Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
+            // Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
+            // Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
@@ -219,8 +217,6 @@ namespace LP
                         Console.WriteLine("parse error");
                     } else
                     {
-                        Console.WriteLine(tree.HasErrors());
-                        Console.WriteLine(tree.ParserMessages);
                         Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
                         if (result == null)
                         {
@@ -230,7 +226,6 @@ namespace LP
                         {
                             result.funcall("display", new Object.LpObject[] { }, null);
                         }
-
                     }
                 }
                 catch ( Error.LpError e ){
