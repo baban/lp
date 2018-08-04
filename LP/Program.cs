@@ -39,8 +39,8 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            //runNode(new string []{ });
-            //return;
+            runNode(new string []{ });
+            return;
             if (args.Length == 0) {
                 sysInit("", args, 0);
                 consoleReadFile();
@@ -122,7 +122,7 @@ namespace LP
             //string code = "1+2*3+4";
             //string code = "1.to_s()";
             //string code = "Console";
-            //string code = "Console.WriteLine(\"Hello,World\")";
+            string code = "Console.WriteLine(\"Hello,World\")";
             //string code = "def hoge() end";
             //string code = "def hoge(a) 1; 2; 3 end";
             //string code = "def hoge(a, b) 1; 2; 3 end";
@@ -139,7 +139,7 @@ namespace LP
             //string code = "if false; 1 elsif true; 2 end";
             //string code = "case 1; end";
             //string code = "case false; else 1 end";
-            string code = "case 1; when 1; 3 end";
+            //string code = "case 1; when 1; 3 end";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
@@ -252,10 +252,10 @@ namespace LP
         }
 
         static string readFile( string filename ){
-            if (!System.IO.File.Exists(filename))
+            if (!File.Exists(filename))
                 return null;
 
-            StreamReader sr = new StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
+            StreamReader sr = new StreamReader(filename, Encoding.GetEncoding("UTF-8"));
             var str = sr.ReadToEnd();
             sr.Close();
             return str;

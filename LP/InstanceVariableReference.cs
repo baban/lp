@@ -19,16 +19,11 @@ namespace LP.Node
 
             Node = AddChild("Node", nodes[0]);
             Varname = nodes[0].Token.Text;
-            System.Console.WriteLine("aaaaa");
-            System.Console.WriteLine(Varname);
         }
 
         protected override object DoEvaluate(ScriptThread thread)
         {
             thread.CurrentNode = this;
-
-            System.Console.WriteLine("aaaaa");
-            System.Console.WriteLine(Varname);
 
             var scope = thread.CurrentScope;
             var dic = scope.AsDictionary();

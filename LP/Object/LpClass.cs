@@ -64,7 +64,7 @@ namespace LP.Object
         private static LpObject createClassTemplate(string className)
         {
             if (className != "Class") {
-                return LpClass.initialize();
+                return initialize();
             }
 
             if (classes.ContainsKey(className))
@@ -94,9 +94,7 @@ namespace LP.Object
 
             if (null != block)
             {
-                //Util.LpIndexer.push(klass);
                 block.funcall("call", block, new LpObject[] { }, null);
-                //Util.LpIndexer.pop();
             }
             klass.methods["new"] = new LpMethod(new BinMethod(initialize), -1);
 
@@ -104,7 +102,7 @@ namespace LP.Object
         }
 
         private static LpObject create_mold_class( string class_name ) {
-            LpObject kls = LpClass.initialize().Clone();
+            LpObject kls = initialize().Clone();
             kls.class_name = class_name;
             //kls.methods = (Hashtable)kls.methods.Clone();
             return kls;

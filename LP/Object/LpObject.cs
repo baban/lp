@@ -169,12 +169,12 @@ namespace LP.Object
                     if (!infos.ContainsKey(a.Name))
                     {
                         infos[a.Name] = new List<System.Reflection.MethodInfo>();
-                        //klass.methods["WriteLine"] = infos[a.Name];
+                        //klass.methods[a.Name] = infos[a.Name];
                     }
                     infos[a.Name].Add(a);
                 });
                 var arrayTypes = new string[] { "System.String" };
-                var squuezedMethods = infos["WriteLine"];
+                var squuezedMethods = infos[name];
                 squuezedMethods.ForEach((m) => {
                     var parameters = m.GetParameters();
                     if (parameters.Length == arrayTypes.Length)
@@ -187,7 +187,7 @@ namespace LP.Object
                         }
                     }
                 });
-                return Object.LpNl.initialize();
+                return LpNl.initialize();
             }
 
             if (null == methods[name]) return null;
