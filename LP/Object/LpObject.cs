@@ -121,8 +121,6 @@ namespace LP.Object
 
         public LpObject funcall(string name, LpObject self, LpObject[] args, LpObject block )
         {
-            name = trueFname(name);
-
             LpObject ret = execMethod(name, self, args, block);
 
             if (ret != null) return ret;
@@ -158,41 +156,84 @@ namespace LP.Object
         {
             if ("WriteLine" == name)
             {
-                Type type = Type.GetType("System.Console");
-                var methods = type.GetMethods();
-
                 var klass = LpClass.initialize("Console");
-
-                Dictionary<string, List<System.Reflection.MethodInfo>> infos = new Dictionary<string, List<System.Reflection.MethodInfo>>();
-                methods.ToList().ForEach((a) =>
-                {
-                    if (!infos.ContainsKey(a.Name))
-                    {
-                        infos[a.Name] = new List<System.Reflection.MethodInfo>();
-                        //klass.methods[a.Name] = infos[a.Name];
-                    }
-                    infos[a.Name].Add(a);
-                });
                 var arrayTypes = new string[] { "System.String" };
-                var squuezedMethods = infos[name];
-                squuezedMethods.ForEach((m) => {
-                    var parameters = m.GetParameters();
-                    if (parameters.Length == arrayTypes.Length)
-                    {
-                        if (isRightParameter(parameters, arrayTypes))
-                        {
-                            Console.WriteLine(m);
-                            m.Invoke(null, new object[] { "Hello,World" });
-                            return;
-                        }
-                    }
-                });
-                return LpNl.initialize();
+                var method = squuezeMethod(self, name, arrayTypes);
+                if(method != null)
+                {
+                    var convertedArgs = convertArgs(args);
+                    object result = method.Invoke(null, convertedArgs);
+                    return convertReturnValue(result);
+                }
             }
 
             if (null == methods[name]) return null;
 
             return doMethod(methods[name], self, args, block);
+        }
+
+        object[] convertArgs(LpObject[] args)
+        {
+            Func<LpObject, object> f = (o) => {
+                switch (o.class_name)
+                {
+                    case "String":
+                    case "Symbol":
+                        return o.stringValue;
+                    case "Boolean":
+                        return o.boolValue;
+                    case "Numeric":
+                        return o.doubleValue;
+                    default:
+                        return null;
+                }
+            };
+            return args.Select(f).ToArray();
+        }
+
+        LpObject convertReturnValue(object result) {
+            if (null == result)
+                return LpNl.initialize();
+
+            var t = result.GetType();
+            switch (t.ToString())
+            {
+                case "System.UInt16":
+                case "System.UInt32":
+                case "System.UInt64":
+                case "System.Int16":
+                case "System.Int32":
+                case "System.Int64":
+                    return LpNumeric.initialize((int)result);
+                case "System.Double":
+                    return LpNumeric.initialize((double)result);
+                case "System.String":
+                case "System.Symbol":
+                    return LpString.initialize((string)result);
+                default:
+                    return LpNl.initialize();
+            }
+        }
+
+        System.Reflection.MethodInfo squuezeMethod(LpObject self, string name, string[] arrayTypes)
+        {
+            Type type = Type.GetType("System.Console");
+            var methods = type.GetMethods();
+
+            Dictionary<string, List<System.Reflection.MethodInfo>> infos = new Dictionary<string, List<System.Reflection.MethodInfo>>();
+            methods.ToList().ForEach((a) =>
+            {
+                if (!infos.ContainsKey(a.Name))
+                    infos[a.Name] = new List<System.Reflection.MethodInfo>();
+                infos[a.Name].Add(a);
+            });
+
+            var squuezedMethods = infos[name];
+            var method = squuezedMethods.Find((m) => {
+                var parameters = m.GetParameters();
+                return (parameters.Length == arrayTypes.Length && isRightParameter(parameters, arrayTypes));
+            });
+            return method;
         }
 
         static bool isRightParameter(System.Reflection.ParameterInfo[] parameters, string[] arrayTypes)
@@ -233,13 +274,6 @@ namespace LP.Object
                         return null;
                 }
             }
-        }
-
-        private string trueFname(string name)
-        {
-            if (name[0] == '(') name = name.Replace("(", "").Replace(")", "");
-
-            return name;
         }
 
         public LpObject setVariable(String name, LpObject obj)
