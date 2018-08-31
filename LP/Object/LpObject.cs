@@ -108,12 +108,7 @@ namespace LP.Object
             //throw new Error.NameError();
             return null;
         }
-        /*
-        public Ast.LpAstNode macroexpand(Ast.LpAstNode[] args, Ast.LpAstNode block = null)
-        {
-            return statements.First();
-        }
-        */
+
         public LpObject funcall(string name, LpObject[] args, LpObject block = null)
         {
             return funcall(name, this, args, block);
@@ -156,8 +151,8 @@ namespace LP.Object
         {
             if ("WriteLine" == name)
             {
-                var klass = LpClass.initialize("Console");
-                var arrayTypes = new string[] { "System.String" };
+                // メソッドが存在するかチェック
+                var arrayTypes = translateArrayTypes(args);
                 var method = squuezeMethod(self, name, arrayTypes);
                 if(method != null)
                 {
@@ -170,6 +165,22 @@ namespace LP.Object
             if (null == methods[name]) return null;
 
             return doMethod(methods[name], self, args, block);
+        }
+
+        string[] translateArrayTypes(LpObject[] args)
+        {
+            var typus = args.Select((arg) => {
+                switch (arg.class_name) {
+                    case "String":
+                    case "Symbol":
+                        return "System.String";
+                    case "Numeric":
+                        return "System.Int32";
+                    default:
+                        return "System.Object";
+                };
+            });
+            return typus.ToArray();
         }
 
         object[] convertArgs(LpObject[] args)
