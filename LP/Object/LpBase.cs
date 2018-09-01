@@ -24,6 +24,9 @@ namespace LP.Object
         public Hashtable methods = new Hashtable();
         public Hashtable variables = new Hashtable();
 
+        public bool isBinaryClass = false;
+        public bool isMethodCached = false;
+
         public bool? boolValue = null;
         public double? doubleValue = null;
         public string stringValue = null;

@@ -85,7 +85,7 @@ namespace LP
             return 0;
         }
 
-        static long runNode(string[] argv)
+        static long testRrunNode(string[] argv)
         {
             /*
             Console.WriteLine("benckmark:start");
@@ -122,7 +122,7 @@ namespace LP
             //string code = "1+2*3+4";
             //string code = "1.to_s()";
             //string code = "Console";
-            //string code = "Console.WriteLine(\"Hello,World\")";
+            string code = "Console.WriteLine(\"Hello,World\")";
             //string code = "def hoge() end";
             //string code = "def hoge(a) 1; 2; 3 end";
             //string code = "def hoge(a, b) 1; 2; 3 end";
@@ -139,7 +139,7 @@ namespace LP
             //string code = "if false; 1 elsif true; 2 end";
             //string code = "case 1; end";
             //string code = "case false; else 1 end";
-            string code = "case 1; when 1; 3 end";
+            //string code = "case 1; when 1; 3 end";
             Console.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
@@ -189,6 +189,40 @@ namespace LP
             Console.WriteLine(sw.Elapsed.TotalSeconds);
             Console.WriteLine("benckmark:end");
             */
+            return 0;
+        }
+
+        static long runNode(string[] argv)
+        {
+            string fileName = argv[0];
+            string code = readFile(fileName);
+
+            var parser = new Parser.LpGrammer();
+            var language = new LanguageData(parser);
+            ScriptApp app = new ScriptApp(language);
+            var tree = app.Parser.Parse(code);
+
+            Object.LpObject result = null;
+            try
+            {
+                result = (Object.LpObject)app.Evaluate(tree);
+                if (result == null)
+                {
+                    Console.WriteLine("null");
+                }
+                else
+                {
+                    Console.WriteLine(result);
+                    Console.WriteLine("result: {0}", result);
+                    result.funcall("display", new Object.LpObject[] { }, null);
+                }
+            }
+            catch (Error.LpError e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            Console.WriteLine("Finish");
+
             return 0;
         }
 
@@ -252,10 +286,10 @@ namespace LP
         }
 
         static string readFile( string filename ){
-            if (!System.IO.File.Exists(filename))
+            if (!File.Exists(filename))
                 return null;
 
-            StreamReader sr = new StreamReader(filename, System.Text.Encoding.GetEncoding("UTF-8"));
+            StreamReader sr = new StreamReader(filename, Encoding.GetEncoding("UTF-8"));
             var str = sr.ReadToEnd();
             sr.Close();
             return str;

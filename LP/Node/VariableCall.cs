@@ -30,10 +30,9 @@ namespace LP.Node
             if (dic.ContainsKey(Varname))
             {
                 value = (Object.LpObject)dic[Varname];
-            } else if(Varname == "Console")
+            } else if(isBinaryClassName(Varname))
             {
-                System.Console.WriteLine("Console");
-                value = classCall(Varname);
+                value = binaryClassCall(Varname);
             }
 
             thread.CurrentNode = Parent;
@@ -41,9 +40,14 @@ namespace LP.Node
             return value;
         }
 
-        private Object.LpObject classCall(string className)
+        bool isBinaryClassName(string name)
         {
-            var klass = Object.LpClass.initialize(className);
+            return name == "Console";
+        }
+
+        private Object.LpObject binaryClassCall(string className)
+        {
+            var klass = Object.LpClass.initialize(className, true);
             return klass;
         }
     }

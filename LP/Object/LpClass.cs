@@ -24,9 +24,9 @@ namespace LP.Object
             return init( className, stmts );
         }
 
-        public static LpObject initialize(string className)
+        public static LpObject initialize(string className, bool isBinary = false)
         {
-            return init(className, new AstNode());
+            return init(className, new AstNode(), isBinary);
         }
 
         public static LpObject initialize(string className, AstNode stmts)
@@ -34,11 +34,12 @@ namespace LP.Object
             return init(className, stmts);
         }
 
-        private static LpObject init(string className, AstNode stmts)
+        private static LpObject init(string className, AstNode stmts, bool isBinary = false)
         {
             LpObject obj = createClassTemplate( className );
             obj.class_name = className;
             obj.statements = stmts;
+            obj.isBinaryClass = isBinary;
             classes[obj.class_name] = obj;
 
             return obj;
@@ -64,7 +65,7 @@ namespace LP.Object
         private static LpObject createClassTemplate(string className)
         {
             if (className != "Class") {
-                return LpClass.initialize();
+                return initialize();
             }
 
             if (classes.ContainsKey(className))
@@ -94,9 +95,7 @@ namespace LP.Object
 
             if (null != block)
             {
-                //Util.LpIndexer.push(klass);
                 block.funcall("call", block, new LpObject[] { }, null);
-                //Util.LpIndexer.pop();
             }
             klass.methods["new"] = new LpMethod(new BinMethod(initialize), -1);
 
@@ -104,7 +103,7 @@ namespace LP.Object
         }
 
         private static LpObject create_mold_class( string class_name ) {
-            LpObject kls = LpClass.initialize().Clone();
+            LpObject kls = initialize().Clone();
             kls.class_name = class_name;
             //kls.methods = (Hashtable)kls.methods.Clone();
             return kls;

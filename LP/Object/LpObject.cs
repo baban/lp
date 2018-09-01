@@ -108,12 +108,7 @@ namespace LP.Object
             //throw new Error.NameError();
             return null;
         }
-        /*
-        public Ast.LpAstNode macroexpand(Ast.LpAstNode[] args, Ast.LpAstNode block = null)
-        {
-            return statements.First();
-        }
-        */
+
         public LpObject funcall(string name, LpObject[] args, LpObject block = null)
         {
             return funcall(name, this, args, block);
@@ -121,8 +116,6 @@ namespace LP.Object
 
         public LpObject funcall(string name, LpObject self, LpObject[] args, LpObject block )
         {
-            name = trueFname(name);
-
             LpObject ret = execMethod(name, self, args, block);
 
             if (ret != null) return ret;
@@ -156,38 +149,9 @@ namespace LP.Object
         /// <returns></returns>
         public LpObject execMethod(string name, LpObject self, LpObject[] args, LpObject block)
         {
-            if ("WriteLine" == name)
+            if (self.isBinaryClass && self.isMethodCached == false)
             {
-                Type type = Type.GetType("System.Console");
-                var methods = type.GetMethods();
-
-                var klass = LpClass.initialize("Console");
-
-                Dictionary<string, List<System.Reflection.MethodInfo>> infos = new Dictionary<string, List<System.Reflection.MethodInfo>>();
-                methods.ToList().ForEach((a) =>
-                {
-                    if (!infos.ContainsKey(a.Name))
-                    {
-                        infos[a.Name] = new List<System.Reflection.MethodInfo>();
-                        //klass.methods["WriteLine"] = infos[a.Name];
-                    }
-                    infos[a.Name].Add(a);
-                });
-                var arrayTypes = new string[] { "System.String" };
-                var squuezedMethods = infos["WriteLine"];
-                squuezedMethods.ForEach((m) => {
-                    var parameters = m.GetParameters();
-                    if (parameters.Length == arrayTypes.Length)
-                    {
-                        if (isRightParameter(parameters, arrayTypes))
-                        {
-                            Console.WriteLine(m);
-                            m.Invoke(null, new object[] { "Hello,World" });
-                            return;
-                        }
-                    }
-                });
-                return Object.LpNl.initialize();
+                cacheReflectMethods(self);
             }
 
             if (null == methods[name]) return null;
@@ -195,20 +159,22 @@ namespace LP.Object
             return doMethod(methods[name], self, args, block);
         }
 
-        static bool isRightParameter(System.Reflection.ParameterInfo[] parameters, string[] arrayTypes)
+        void cacheReflectMethods(LpObject self)
         {
-            if (parameters.Length != arrayTypes.Length)
-            {
-                return false;
-            }
+            var className = "System.Console";
+            Type type = Type.GetType(className);
+            var ms = type.GetMethods();
 
-            for (int i = 0; i < parameters.Length; i++)
+            Dictionary<string, List<System.Reflection.MethodInfo>> infos = new Dictionary<string, List<System.Reflection.MethodInfo>>();
+            ms.ToList().ForEach((a) =>
             {
-                if (parameters[i].ParameterType.ToString() != arrayTypes[i])
-                    return false;
-            }
+                if (!infos.ContainsKey(a.Name))
+                    infos[a.Name] = new List<System.Reflection.MethodInfo>();
+                infos[a.Name].Add(a);
+            });
 
-            return true;
+            infos.ToList().ForEach((info) => methods[info.Key] = new LpMethod(info.Value) );
+            self.isMethodCached = true;
         }
 
         public LpObject doMethod(System.Object method, LpObject self, LpObject[] args, LpObject block)
@@ -225,21 +191,14 @@ namespace LP.Object
                 switch (klass.class_name)
                 {
                     case "Macro":
-                        return Object.LpMacro.call((LpObject)method, args, block);
+                        return LpMacro.call((LpObject)method, args, block);
                     case "Lambda":
                     case "Block":
-                        return Object.LpLambda.call((LpObject)method, args, block);
+                        return LpLambda.call((LpObject)method, args, block);
                     default:
                         return null;
                 }
             }
-        }
-
-        private string trueFname(string name)
-        {
-            if (name[0] == '(') name = name.Replace("(", "").Replace(")", "");
-
-            return name;
         }
 
         public LpObject setVariable(String name, LpObject obj)
