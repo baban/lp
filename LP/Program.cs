@@ -39,8 +39,8 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            runNode(new string []{ });
-            return;
+            //runNode(new string []{ });
+            //return;
             if (args.Length == 0) {
                 sysInit("", args, 0);
                 consoleReadFile();
@@ -85,7 +85,7 @@ namespace LP
             return 0;
         }
 
-        static long runNode(string[] argv)
+        static long testRrunNode(string[] argv)
         {
             /*
             Console.WriteLine("benckmark:start");
@@ -189,6 +189,40 @@ namespace LP
             Console.WriteLine(sw.Elapsed.TotalSeconds);
             Console.WriteLine("benckmark:end");
             */
+            return 0;
+        }
+
+        static long runNode(string[] argv)
+        {
+            string fileName = argv[0];
+            string code = readFile(fileName);
+
+            var parser = new Parser.LpGrammer();
+            var language = new LanguageData(parser);
+            ScriptApp app = new ScriptApp(language);
+            var tree = app.Parser.Parse(code);
+
+            Object.LpObject result = null;
+            try
+            {
+                result = (Object.LpObject)app.Evaluate(tree);
+                if (result == null)
+                {
+                    Console.WriteLine("null");
+                }
+                else
+                {
+                    Console.WriteLine(result);
+                    Console.WriteLine("result: {0}", result);
+                    result.funcall("display", new Object.LpObject[] { }, null);
+                }
+            }
+            catch (Error.LpError e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            Console.WriteLine("Finish");
+
             return 0;
         }
 
