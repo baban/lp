@@ -11,6 +11,8 @@ namespace LP.Object
     {
         static string className = "Method";
 
+        List<System.Reflection.MethodInfo> reflections = null;
+
         public LpMethod(BinMethod m) { 
             arguments = new Util.LpArguments();
             method = m;
@@ -20,6 +22,12 @@ namespace LP.Object
         {
             arguments = new Util.LpArguments( arity );
             method = m;
+        }
+
+        public LpMethod(List<System.Reflection.MethodInfo> rs)
+        {
+            arguments = new Util.LpArguments();
+            reflections = rs;
         }
 
         public static LpObject initialize()
@@ -83,21 +91,104 @@ namespace LP.Object
         public LpObject funcall(LpObject self, LpObject[] args, LpObject block = null)
         {
             var dstArgs = arguments.putVariables(args, block);
-            return method(self, dstArgs, block);
+
+            if (reflections != null) {
+                var arrayTypes = translateArrayTypes(args);
+                var convertedArgs = convertArgs(args);
+                var info = findMethodInfo(self, arrayTypes);
+                object result = info.Invoke(null, convertedArgs);
+
+                return convertReturnValue(result);
+            } else {
+                return method(self, dstArgs, block);
+            }
         }
 
-        private LpObject evalStatements(LpObject self, LpObject[] args, LpObject block = null)
+        System.Reflection.MethodInfo findMethodInfo(LpObject self, string[] arrayTypes)
         {
-            return null;
-            /*
-            arguments.setVariables(self, args, block);
-            LpObject ret = LpNl.initialize();
-            self.statements.ForEach(delegate(string stmt)
-            {
-                ret = LpParser.STMT.Parse(stmt);
+            var squuezedMethods = reflections;
+            var method = squuezedMethods.Find((m) => {
+                var parameters = m.GetParameters();
+                return (parameters.Length == arrayTypes.Length && isRightParameter(parameters, arrayTypes));
             });
-            return ret;
-             */
+            return method;
+        }
+
+        static bool isRightParameter(System.Reflection.ParameterInfo[] parameters, string[] arrayTypes)
+        {
+            if (parameters.Length != arrayTypes.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                if (parameters[i].ParameterType.ToString() != arrayTypes[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        string[] translateArrayTypes(LpObject[] args)
+        {
+            var typus = args.Select((arg) => {
+                switch (arg.class_name)
+                {
+                    case "String":
+                    case "Symbol":
+                        return "System.String";
+                    case "Numeric":
+                        return "System.Int32";
+                    default:
+                        return "System.Object";
+                };
+            });
+            return typus.ToArray();
+        }
+
+        object[] convertArgs(LpObject[] args)
+        {
+            Func<LpObject, object> f = (o) => {
+                switch (o.class_name)
+                {
+                    case "String":
+                    case "Symbol":
+                        return o.stringValue;
+                    case "Boolean":
+                        return o.boolValue;
+                    case "Numeric":
+                        return o.doubleValue;
+                    default:
+                        return null;
+                }
+            };
+            return args.Select(f).ToArray();
+        }
+
+        LpObject convertReturnValue(object result)
+        {
+            if (null == result)
+                return LpNl.initialize();
+
+            var t = result.GetType();
+            switch (t.ToString())
+            {
+                case "System.UInt16":
+                case "System.UInt32":
+                case "System.UInt64":
+                case "System.Int16":
+                case "System.Int32":
+                case "System.Int64":
+                    return LpNumeric.initialize((int)result);
+                case "System.Double":
+                    return LpNumeric.initialize((double)result);
+                case "System.String":
+                case "System.Symbol":
+                    return LpString.initialize((string)result);
+                default:
+                    return LpNl.initialize();
+            }
         }
     }
 

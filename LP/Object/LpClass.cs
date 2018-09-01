@@ -24,9 +24,9 @@ namespace LP.Object
             return init( className, stmts );
         }
 
-        public static LpObject initialize(string className)
+        public static LpObject initialize(string className, bool isBinary = false)
         {
-            return init(className, new AstNode());
+            return init(className, new AstNode(), isBinary);
         }
 
         public static LpObject initialize(string className, AstNode stmts)
@@ -34,11 +34,12 @@ namespace LP.Object
             return init(className, stmts);
         }
 
-        private static LpObject init(string className, AstNode stmts)
+        private static LpObject init(string className, AstNode stmts, bool isBinary = false)
         {
             LpObject obj = createClassTemplate( className );
             obj.class_name = className;
             obj.statements = stmts;
+            obj.isBinaryClass = isBinary;
             classes[obj.class_name] = obj;
 
             return obj;

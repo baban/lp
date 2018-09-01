@@ -149,17 +149,9 @@ namespace LP.Object
         /// <returns></returns>
         public LpObject execMethod(string name, LpObject self, LpObject[] args, LpObject block)
         {
-            if ("WriteLine" == name)
+            if (self.isBinaryClass && self.isMethodCached == false)
             {
-                // メソッドが存在するかチェック
-                var arrayTypes = translateArrayTypes(args);
-                var method = squuezeMethod(self, name, arrayTypes);
-                if(method != null)
-                {
-                    var convertedArgs = convertArgs(args);
-                    object result = method.Invoke(null, convertedArgs);
-                    return convertReturnValue(result);
-                }
+                cacheReflectMethods(self);
             }
 
             if (null == methods[name]) return null;
@@ -167,100 +159,22 @@ namespace LP.Object
             return doMethod(methods[name], self, args, block);
         }
 
-        string[] translateArrayTypes(LpObject[] args)
+        void cacheReflectMethods(LpObject self)
         {
-            var typus = args.Select((arg) => {
-                switch (arg.class_name) {
-                    case "String":
-                    case "Symbol":
-                        return "System.String";
-                    case "Numeric":
-                        return "System.Int32";
-                    default:
-                        return "System.Object";
-                };
-            });
-            return typus.ToArray();
-        }
-
-        object[] convertArgs(LpObject[] args)
-        {
-            Func<LpObject, object> f = (o) => {
-                switch (o.class_name)
-                {
-                    case "String":
-                    case "Symbol":
-                        return o.stringValue;
-                    case "Boolean":
-                        return o.boolValue;
-                    case "Numeric":
-                        return o.doubleValue;
-                    default:
-                        return null;
-                }
-            };
-            return args.Select(f).ToArray();
-        }
-
-        LpObject convertReturnValue(object result) {
-            if (null == result)
-                return LpNl.initialize();
-
-            var t = result.GetType();
-            switch (t.ToString())
-            {
-                case "System.UInt16":
-                case "System.UInt32":
-                case "System.UInt64":
-                case "System.Int16":
-                case "System.Int32":
-                case "System.Int64":
-                    return LpNumeric.initialize((int)result);
-                case "System.Double":
-                    return LpNumeric.initialize((double)result);
-                case "System.String":
-                case "System.Symbol":
-                    return LpString.initialize((string)result);
-                default:
-                    return LpNl.initialize();
-            }
-        }
-
-        System.Reflection.MethodInfo squuezeMethod(LpObject self, string name, string[] arrayTypes)
-        {
-            Type type = Type.GetType("System.Console");
-            var methods = type.GetMethods();
+            var className = "System.Console";
+            Type type = Type.GetType(className);
+            var ms = type.GetMethods();
 
             Dictionary<string, List<System.Reflection.MethodInfo>> infos = new Dictionary<string, List<System.Reflection.MethodInfo>>();
-            methods.ToList().ForEach((a) =>
+            ms.ToList().ForEach((a) =>
             {
                 if (!infos.ContainsKey(a.Name))
                     infos[a.Name] = new List<System.Reflection.MethodInfo>();
                 infos[a.Name].Add(a);
             });
 
-            var squuezedMethods = infos[name];
-            var method = squuezedMethods.Find((m) => {
-                var parameters = m.GetParameters();
-                return (parameters.Length == arrayTypes.Length && isRightParameter(parameters, arrayTypes));
-            });
-            return method;
-        }
-
-        static bool isRightParameter(System.Reflection.ParameterInfo[] parameters, string[] arrayTypes)
-        {
-            if (parameters.Length != arrayTypes.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                if (parameters[i].ParameterType.ToString() != arrayTypes[i])
-                    return false;
-            }
-
-            return true;
+            infos.ToList().ForEach((info) => methods[info.Key] = new LpMethod(info.Value) );
+            self.isMethodCached = true;
         }
 
         public LpObject doMethod(System.Object method, LpObject self, LpObject[] args, LpObject block)
@@ -277,10 +191,10 @@ namespace LP.Object
                 switch (klass.class_name)
                 {
                     case "Macro":
-                        return Object.LpMacro.call((LpObject)method, args, block);
+                        return LpMacro.call((LpObject)method, args, block);
                     case "Lambda":
                     case "Block":
-                        return Object.LpLambda.call((LpObject)method, args, block);
+                        return LpLambda.call((LpObject)method, args, block);
                     default:
                         return null;
                 }
