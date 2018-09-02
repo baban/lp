@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LP.Object
 {
@@ -71,7 +67,7 @@ namespace LP.Object
             //self.arguments.putVariables(args, block);
 
 
-            LpObject ret = Object.LpNl.initialize();
+            LpObject ret = LpNl.initialize();
             /*
             foreach (Ast.LpAstNode stmt in self.statements)
             {
@@ -83,7 +79,7 @@ namespace LP.Object
             return ret;
         }
 
-        static Object.LpObject bind(LpObject self, LpObject[] args, LpObject block = null)
+        static LpObject bind(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
             //var ctx = Util.LpIndexer.getLatestClass();

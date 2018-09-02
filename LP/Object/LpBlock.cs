@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Irony.Ast;
-using Irony.Interpreter;
 using Irony.Interpreter.Ast;
-using Irony.Parsing;
 
 namespace LP.Object
 {
@@ -42,6 +36,7 @@ namespace LP.Object
             return obj;
         }
         */
+
         private static LpObject createClassTemplate()
         {
             if (classes.ContainsKey(className))
@@ -85,7 +80,6 @@ namespace LP.Object
 
         static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
         {
-            //Util.LpIndexer.push(self);
             self.arguments.putVariables(args, block);
 
             LpObject ret = LpNl.initialize();
@@ -96,7 +90,6 @@ namespace LP.Object
                 ret = stmt.Evaluate();
             }
             */
-            //Util.LpIndexer.pop();
             return ret;
         }
     }

@@ -89,7 +89,7 @@ namespace LP.Object
         {
             var so = to_s(self, args);
             Console.WriteLine(so.stringValue);
-            return Object.LpNl.initialize();
+            return LpNl.initialize();
         }
 
         public static LpObject call(LpObject self, LpObject[] args, LpObject block = null)
@@ -98,7 +98,7 @@ namespace LP.Object
             var dstArgs = (null == args) ? new LpObject[] { } : args;
             self.arguments.setVariables(self, dstArgs, block);
 
-            LpObject ret = Object.LpNl.initialize();
+            LpObject ret = LpNl.initialize();
             /*
             foreach (Ast.LpAstNode stmt in self.statements)
             {
@@ -124,7 +124,7 @@ namespace LP.Object
             return null;
         }
 
-        static Object.LpObject bind(LpObject self, LpObject[] args, LpObject block = null)
+        static LpObject bind(LpObject self, LpObject[] args, LpObject block = null)
         {
             var name = args[0].stringValue;
             //var ctx =Util.LpIndexer.getLatestClass();

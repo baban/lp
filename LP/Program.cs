@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using Irony.Parsing;
 using Irony.Interpreter;
@@ -39,8 +36,9 @@ namespace LP
     {
         static void Main(string[] args)
         {
-            //runNode(new string []{ });
+            //runTestCode();
             //return;
+
             if (args.Length == 0) {
                 sysInit("", args, 0);
                 consoleReadFile();
@@ -85,7 +83,7 @@ namespace LP
             return 0;
         }
 
-        static long testRrunNode(string[] argv)
+        static long runTestCode()
         {
             /*
             Console.WriteLine("benckmark:start");
