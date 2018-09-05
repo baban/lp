@@ -28,6 +28,7 @@ namespace LpTest.Ast
             var s = node.GetType().GetMethod("toSource", BindingFlags.Public | BindingFlags.Instance).Invoke(node, new object[] { false });
             Assert.AreEqual("hoge(1, 2)", s);
         }
+
         /*
         [Test]
         public void toSource2()

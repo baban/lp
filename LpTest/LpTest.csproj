@@ -35,6 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca48ace7223ead47, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Irony\Irony\bin\Debug\Irony.dll</HintPath>
+    </Reference>
+    <Reference Include="Irony.Interpreter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca48ace7223ead47, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Irony\Irony.Interpreter\obj\Debug\Irony.Interpreter.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -61,6 +69,7 @@
     <Compile Include="Ast\LpAstStmtsTest.cs" />
     <Compile Include="Benchmark\Parser.cs" />
     <Compile Include="Error\LpErrorTest.cs" />
+    <Compile Include="Node\NumberNodeTest.cs" />
     <Compile Include="Object\LpArrayTest.cs" />
     <Compile Include="Object\LpBlockTest.cs" />
     <Compile Include="Object\LpBoolTest.cs" />
@@ -80,6 +89,7 @@
     <Compile Include="Object\LpSymbolTest.cs" />
     <Compile Include="Object\LpUnQuoteTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHelper.cs" />
     <Compile Include="Util\LpArgumentsTest.cs" />
     <Compile Include="Util\LpIndexerTest.cs" />
   </ItemGroup>

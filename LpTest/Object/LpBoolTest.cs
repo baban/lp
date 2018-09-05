@@ -43,6 +43,7 @@ namespace LpTest.Object
             Assert.AreEqual(true, o.GetType().InvokeMember("boolValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, o, null));
         }
     }
+
     /*
     [TestFixture]
     class LpBoolTest
