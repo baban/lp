@@ -15,7 +15,7 @@ namespace LpTest.Ast
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.LpParser");
+            Type t = mod.GetType("LP.Parser.LpGrammer");
             return t;
         }
 
