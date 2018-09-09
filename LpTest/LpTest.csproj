@@ -93,15 +93,14 @@
     <Compile Include="Util\LpArgumentsTest.cs" />
     <Compile Include="Util\LpIndexerTest.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LP\LP.csproj">
       <Project>{29f03fff-df58-4a73-b60e-58ccdea58682}</Project>
       <Name>LP</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

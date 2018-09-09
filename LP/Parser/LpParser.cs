@@ -6,7 +6,7 @@ using Irony.Interpreter;
 namespace LP.Parser
 {
     [Language("LpGrammar")]
-    public class LpGrammer : InterpretedLanguageGrammar
+    class LpGrammer : InterpretedLanguageGrammar
     {
         enum OperandType { CHARIN_OPERATOR, OPERAND, LEFT_UNARY, RIGHT_UNARY };
         static readonly List<object[]> operandTable = new List<object[]> {
@@ -44,11 +44,16 @@ namespace LP.Parser
             var Term = Semi;
 
             var Id = new IdentifierTerminal("identifier");
+            Id.CaseRestriction = CaseRestriction.FirstLower;
             var ExclamationId = new IdentifierTerminal("ExclamationId");
+            ExclamationId.CaseRestriction = CaseRestriction.FirstLower;
             ExclamationId.AddSuffix("!");
             var QuestionId = new IdentifierTerminal("QuestionId");
+            QuestionId.CaseRestriction = CaseRestriction.FirstLower;
             QuestionId.AddSuffix("?");
             var VarName = Id | QuestionId | ExclamationId;
+
+            var ConstantVarName = VarName;
 
             var FunctionName = Id;
             var ClassName = Id;
@@ -226,7 +231,11 @@ namespace LP.Parser
             return term;
         }
 
-        NumberLiteral createNumberLiteral()
+        public static int hoge() {
+            return 1;
+        }
+
+        static NumberLiteral createNumberLiteral()
         {
             var Num = new NumberLiteral("Number");
             Num.AddPrefix("0x", NumberOptions.Hex);

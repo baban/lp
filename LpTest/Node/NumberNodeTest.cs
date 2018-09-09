@@ -15,7 +15,7 @@ namespace LpTest.Node
         {
             Assembly asm = Assembly.LoadFrom("LP.exe");
             Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.LpParser.LpGrammer");
+            Type t = mod.GetType("LP.Parser.LpGrammer");
             return t;
         }
 
@@ -23,17 +23,9 @@ namespace LpTest.Node
         public void IntTest()
         {
             Type t = initParser();
-            
-            var node = t.GetMethod("createNumberLiteral", BindingFlags.NonPublic | BindingFlags.Static);
-            //var node = t.GetMethod("createNumberLiteral", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { });
-
-            var Num = new NumberLiteral("Number");
-            Num.AddPrefix("0x", NumberOptions.Hex);
-            Num.AddPrefix("0d", NumberOptions.Default);
-            Num.AddPrefix("0o", NumberOptions.Octal);
-            Num.AddPrefix("0", NumberOptions.Octal);
-            Num.AddPrefix("0b", NumberOptions.Binary);
-
+            var m = t.GetMethod("createNumberLiteral", BindingFlags.NonPublic | BindingFlags.Static);
+            NumberLiteral Num = (NumberLiteral)m.Invoke(null, null);
+           
             Parser parser; Token token;
             parser = TestHelper.CreateParser(Num);
 
