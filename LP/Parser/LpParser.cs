@@ -43,14 +43,9 @@ namespace LP.Parser
             var End = ToTerm("end", "End");
             var Term = Semi;
 
-            var Id = new IdentifierTerminal("identifier");
-            Id.CaseRestriction = CaseRestriction.FirstLower;
-            var ExclamationId = new IdentifierTerminal("ExclamationId");
-            ExclamationId.CaseRestriction = CaseRestriction.FirstLower;
-            ExclamationId.AddSuffix("!");
-            var QuestionId = new IdentifierTerminal("QuestionId");
-            QuestionId.CaseRestriction = CaseRestriction.FirstLower;
-            QuestionId.AddSuffix("?");
+            var Id = createIdentifier();
+            var ExclamationId = createExclamationIdentifier();
+            var QuestionId = createQuestionIdentifier();
             var VarName = Id | QuestionId | ExclamationId;
 
             var ConstantVarName = VarName;
@@ -219,7 +214,7 @@ namespace LP.Parser
             Root = Stmts;
         }
 
-        StringLiteral createStringLiteral()
+        static StringLiteral createStringLiteral()
         {
             StringLiteral term = new StringLiteral("String");
             term.AddStartEnd("'", StringOptions.AllowsAllEscapes | StringOptions.AllowsLineBreak);
@@ -231,10 +226,6 @@ namespace LP.Parser
             return term;
         }
 
-        public static int hoge() {
-            return 1;
-        }
-
         static NumberLiteral createNumberLiteral()
         {
             var Num = new NumberLiteral("Number");
@@ -244,6 +235,28 @@ namespace LP.Parser
             Num.AddPrefix("0", NumberOptions.Octal);
             Num.AddPrefix("0b", NumberOptions.Binary);
             return Num;
+        }
+
+        static IdentifierTerminal createIdentifier() {
+            var Id = new IdentifierTerminal("identifier");
+            Id.CaseRestriction = CaseRestriction.FirstLower;
+            return Id;
+        }
+
+        static IdentifierTerminal createExclamationIdentifier()
+        {
+            var ExclamationId = new IdentifierTerminal("ExclamationId");
+            ExclamationId.CaseRestriction = CaseRestriction.FirstLower;
+            ExclamationId.AddSuffix("!");
+            return ExclamationId;
+        }
+
+        static IdentifierTerminal createQuestionIdentifier()
+        {
+            var QuestionId = new IdentifierTerminal("QuestionId");
+            QuestionId.CaseRestriction = CaseRestriction.FirstLower;
+            QuestionId.AddSuffix("?");
+            return QuestionId;
         }
 
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)

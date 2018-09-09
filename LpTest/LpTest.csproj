@@ -69,7 +69,7 @@
     <Compile Include="Ast\LpAstStmtsTest.cs" />
     <Compile Include="Benchmark\Parser.cs" />
     <Compile Include="Error\LpErrorTest.cs" />
-    <Compile Include="Node\NumberNodeTest.cs" />
+    <Compile Include="Node\NodeTest.cs" />
     <Compile Include="Object\LpArrayTest.cs" />
     <Compile Include="Object\LpBlockTest.cs" />
     <Compile Include="Object\LpBoolTest.cs" />
