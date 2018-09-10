@@ -26,11 +26,27 @@ namespace LpTest
                 Root.Rule = rule;
             }
 
+            public TerminalTestGrammar(BnfExpression expr, string terminator = null) : base(caseSensitive: true)
+            {
+                var rule = expr;
+                base.Root = new NonTerminal("Root");
+                Root.Rule = rule;
+            }
+
         }//class
+
 
         public static Parser CreateParser(Terminal terminal, string terminator = "end")
         {
             var grammar = new TerminalTestGrammar(terminal, terminator);
+            var parser = new Parser(grammar);
+            CheckGrammarErrors(parser);
+            return parser;
+        }
+
+        public static Parser CreateParser(BnfExpression expr, string terminator = "end")
+        {
+            var grammar = new TerminalTestGrammar(expr);
             var parser = new Parser(grammar);
             CheckGrammarErrors(parser);
             return parser;

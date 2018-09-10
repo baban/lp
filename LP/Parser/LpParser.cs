@@ -259,6 +259,16 @@ namespace LP.Parser
             return QuestionId;
         }
 
+        static BnfExpression createVarName()
+        {
+            var Id = createIdentifier();
+            var ExclamationId = createExclamationIdentifier();
+            var QuestionId = createQuestionIdentifier();
+            var VarName = Id | QuestionId | ExclamationId;
+
+            return VarName;
+        }
+
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)
         {
             var Table = table.ToArray();
