@@ -48,10 +48,10 @@ namespace LP.Parser
             var QuestionId = createQuestionIdentifier();
             var VarName = Id | QuestionId | ExclamationId;
 
-            var ConstantVarName = VarName;
+            var ConstantVarName = createConstIdentifier();
 
             var FunctionName = Id;
-            var ClassName = Id;
+            var ClassName = ConstantVarName;
             var SymbolId = new IdentifierTerminal("SymbolId");
             SymbolId.AllFirstChars = ":";
             SymbolId.AddPrefix(":", IdOptions.None);
@@ -267,6 +267,13 @@ namespace LP.Parser
             var VarName = Id | QuestionId | ExclamationId;
 
             return VarName;
+        }
+
+        static IdentifierTerminal createConstIdentifier()
+        {
+            var Id = new IdentifierTerminal("identifier");
+            Id.CaseRestriction = CaseRestriction.FirstUpper;
+            return Id;
         }
 
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)

@@ -78,6 +78,12 @@ namespace LpTest.Node
 
             token = parser.ParseInput("Hoge");
             Assert.AreNotEqual(token.Text, "Hoge");
+
+            token = parser.ParseInput("var_name");
+            Assert.AreEqual(token.Text, "var_name");
+
+            token = parser.ParseInput("VAR_NAME");
+            Assert.AreNotEqual(token.Text, "VAR_NAME");
         }
 
         [TestMethod]
@@ -133,6 +139,26 @@ namespace LpTest.Node
             token = parser.ParseInput("baz?");
             Assert.AreEqual(token.Text, "baz?");
 
+        }
+
+        [TestMethod]
+        public void createConstIdentifierTest()
+        {
+            Type t = initParser();
+            var m = t.GetMethod("createConstIdentifier", BindingFlags.NonPublic | BindingFlags.Static);
+            var expr = (IdentifierTerminal)m.Invoke(null, null);
+
+            Parser parser = TestHelper.CreateParser(expr);
+            Token token;
+
+            token = parser.ParseInput("Hoge");
+            Assert.AreEqual(token.Text, "Hoge");
+
+            token = parser.ParseInput("hoge");
+            Assert.AreNotEqual(token.Text, "hoge");
+
+            token = parser.ParseInput("CONST_VAR_NAME");
+            Assert.AreEqual(token.Text, "CONST_VAR_NAME");
         }
     }
 }
