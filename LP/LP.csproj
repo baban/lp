@@ -119,6 +119,7 @@
     <Compile Include="Node\BlockArg.cs" />
     <Compile Include="Node\CallArgs.cs" />
     <Compile Include="Node\ClassInstanceVariable.cs" />
+    <Compile Include="Node\ConstVariableCall.cs" />
     <Compile Include="Node\DeclareVariable.cs" />
     <Compile Include="Node\DeclareVariableReference.cs" />
     <Compile Include="Node\ElseStmt.cs" />

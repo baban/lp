@@ -72,7 +72,7 @@ namespace LP.Parser
             var BlockArg = new NonTerminal("BlockArg", typeof(Node.BlockArg));
             var CallArgs = new NonTerminal("CallArgs", typeof(Node.CallArgs));
 
-            var Numeric = new NonTerminal("Primary", typeof(Node.Numeric));
+            var Numeric = new NonTerminal("Numeric", typeof(Node.Numeric));
             var Str = new NonTerminal("String", typeof(Node.String));
             var Bool = new NonTerminal("Boolean", typeof(Node.Bool));
             var Nl = new NonTerminal("Nl", typeof(Node.Nl));
@@ -89,7 +89,9 @@ namespace LP.Parser
             var Quote = new NonTerminal("Quote", typeof(Node.Quote));
             var QuasiQuote = new NonTerminal("QuasiQuote", typeof(Node.QuasiQuote));
             var QuestionQuote = new NonTerminal("QuestionQuote", typeof(Node.QuestionQuote));
-            var VariableCall = new NonTerminal("VariableCall", typeof(Node.VariableCall));
+            var VariableCall = new NonTerminal("ConstVariableCall", typeof(Node.VariableCall));
+            var ConstVariableCall = new NonTerminal("VariableCall", typeof(Node.ConstVariableCall));
+            var ConstVariableReference = new NonTerminal("VariableCall", typeof(Node.DeclareVariableReference));
             var DeclareVariable = new NonTerminal("DeclareVariableReference", typeof(Node.DeclareVariable));
             var DeclareVariableReference = new NonTerminal("DeclareVariableReference", typeof(Node.DeclareVariableReference));
             var VariableReference = new NonTerminal("VariableReference", typeof(Node.VariableReference));
@@ -103,7 +105,6 @@ namespace LP.Parser
             var SimpleExpr = new NonTerminal("SimpleExpr", typeof(Node.Through));
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
-            //var ClassCall = new NonTerminal("ClassCall", typeof(Node.ClassCall));
             var MethodCall = new NonTerminal("MethodCall", typeof(Node.MethodCall));
             var ArrayAtExpr = new NonTerminal("ArrayAtExpr", typeof(Node.ArrayAtExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
@@ -173,18 +174,19 @@ namespace LP.Parser
             QuestionQuote.Rule = "?" + VariableCall;
             VariableCall.Rule = VarName;
             VariableReference.Rule = VarName;
-            DeclareVariableReference.Rule = ToTerm("let") + Id;
-            DeclareVariable.Rule = ToTerm("let") + Id;
+            ConstVariableReference.Rule = ConstantVarName;
+            ConstVariableCall.Rule = ConstantVarName;
+            DeclareVariableReference.Rule = ToTerm("let") + VarName;
+            DeclareVariable.Rule = ToTerm("let") + VarName;
             InstanceVariableCall.Rule = InstanceVarName;
             InstanceVariableReference.Rule = InstanceVarName;
             ClassInstanceVariableCall.Rule = ClassInstanceVarName;
             ClassInstanceVariableReference.Rule = ClassInstanceVarName;
-            VariableSet.Rule = DeclareVariableReference | VariableReference | InstanceVariableReference | ClassInstanceVariableReference;
-            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | InstanceVariableCall | ClassInstanceVariableCall;
+            VariableSet.Rule = DeclareVariableReference | VariableReference | ConstVariableReference | InstanceVariableReference | ClassInstanceVariableReference;
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | ConstVariableCall | InstanceVariableCall | ClassInstanceVariableCall;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr + BlockArg;
-            //ClassCall.Rule = ClassName;
             MethodCall.Rule = Primary + "." + FunctionName + Lbr + Args + Rbr + BlockArg;
             ArrayAtExpr.Rule = Primary + "[" + SimpleExpr + "]";
             SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
