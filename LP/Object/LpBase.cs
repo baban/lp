@@ -16,7 +16,7 @@ namespace LP.Object
         public List<BinMethod> methodInfos = null;
         public Util.LpArguments arguments = null;
         public delegate LpObject BinMethod(LpObject self, LpObject[] args, LpObject block = null);
-        public Hashtable methods = new Hashtable();
+        public Dictionary<string, object> methods = new Dictionary<string, object>();
         public Dictionary<string, object> variables = new Dictionary<string, object>();
 
         public bool isBinaryClass = false;
