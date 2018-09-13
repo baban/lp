@@ -22,11 +22,9 @@ namespace LP.Node
             thread.CurrentNode = this;
 
             var state = Node.Evaluate(thread);
-            //var scope = thread.CurrentScope;
-            //var dic = scope.AsDictionary();
 
             thread.CurrentNode = Parent;
-            //return new object[] { "a", dic };
+
             return state;
         }
     }

@@ -106,7 +106,8 @@ namespace LP.Parser
             var Args = new NonTerminal("Args", typeof(Node.Args));
             var Funcall = new NonTerminal("Funcall", typeof(Node.Funcall));
             var MethodCall = new NonTerminal("MethodCall", typeof(Node.MethodCall));
-            var Specifier = new NonTerminal("Specifier", typeof(Node.Specifier));
+            var SpecifierCall = new NonTerminal("SpecifierCall", typeof(Node.SpecifierCall));
+            var SpecifierReferece = new NonTerminal("SpecifierReferece", typeof(Node.SpecifierReference));
             var ArrayAtExpr = new NonTerminal("ArrayAtExpr", typeof(Node.ArrayAtExpr));
             var Expr = new NonTerminal("Expr", typeof(Node.Expr));
             var Assignment = new NonTerminal("Assignment", typeof(Node.Assignment));
@@ -183,15 +184,16 @@ namespace LP.Parser
             InstanceVariableReference.Rule = InstanceVarName;
             ClassInstanceVariableCall.Rule = ClassInstanceVarName;
             ClassInstanceVariableReference.Rule = ClassInstanceVarName;
-            VariableSet.Rule = DeclareVariableReference | VariableReference | ConstVariableReference | InstanceVariableReference | ClassInstanceVariableReference;
-            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | ConstVariableCall | InstanceVariableCall | ClassInstanceVariableCall | Specifier;
+            SpecifierCall.Rule = Primary + "::" + ConstantVarName;
+            SpecifierReferece.Rule = Primary + "::" + ConstantVarName;
+            VariableSet.Rule = DeclareVariableReference | VariableReference | ConstVariableReference | InstanceVariableReference | ClassInstanceVariableReference | SpecifierReferece;
+            Primary.Rule = Numeric | Str | Bool | Nl | Symbol | Regex | Array | Hash | Block | Lambda | Quote | QuasiQuote | QuestionQuote | VariableCall | ConstVariableCall | InstanceVariableCall | ClassInstanceVariableCall;
 
             Args.Rule = MakeStarRule(Args, Comma, Stmt);
             Funcall.Rule = FunctionName + Lbr + Args + Rbr + BlockArg;
             MethodCall.Rule = Primary + "." + FunctionName + Lbr + Args + Rbr + BlockArg;
             ArrayAtExpr.Rule = Primary + "[" + SimpleExpr + "]";
-            SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | Funcall | Primary;
-            Specifier.Rule = Primary + "::" + ConstantVarName;
+            SimpleExpr.Rule = Lbr + Stmt + Rbr | ArrayAtExpr | MethodCall | SpecifierCall | Funcall | Primary;
             var OpExpr = makeExpressions(operandTable, SimpleExpr);
             Assignment.Rule = VariableSet + ToTerm("=") + OpExpr;
             AssignmentExpr.Rule = OpExpr | Assignment | DeclareVariable;
