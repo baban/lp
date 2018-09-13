@@ -151,6 +151,7 @@
     <Compile Include="Node\Quote.cs" />
     <Compile Include="Node\Regex.cs" />
     <Compile Include="Node\RightUnary.cs" />
+    <Compile Include="Node\Specifier.cs" />
     <Compile Include="Node\Stmt.cs" />
     <Compile Include="Node\Stmts.cs" />
     <Compile Include="Node\String.cs" />
