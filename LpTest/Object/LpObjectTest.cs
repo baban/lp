@@ -19,7 +19,7 @@ namespace LpTest.Object
 
         private Type initParser()
         {
-            return getModule("LP.LpParser");
+            return getModule("LP.Parser");
         }
 
         private Type initModule()

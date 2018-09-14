@@ -37,13 +37,13 @@ namespace LP.Object
         {
             // Lv0
             // TODO: method_missing
-            // TODO: method_matching
             // TODO: define_operand
-            // TODO: super
+            // TODO: super_method
             // TODO: set variable
             // TODO: get variable
+            // TODO: set const variable
+            // TODO: get const variable
             obj.methods["__send__"] = new LpMethod(new BinMethod(send), -1);
-            obj.methods["alias"] = new LpMethod(new BinMethod(alias), 2);
             obj.methods["class"] = new LpMethod(new BinMethod(class_), 0);
             obj.methods["eq?"] = new LpMethod(new BinMethod(eq), 1);
             obj.methods["equal?"] = new LpMethod(new BinMethod(equal), 1);
@@ -62,6 +62,7 @@ namespace LP.Object
             // Lv1
             // TODO: blank?
             // TODO: tap
+            obj.methods["alias"] = new LpMethod(new BinMethod(alias), 2);
             obj.methods["do"] = new LpMethod(new BinMethod(instance_eval), 0);
             obj.methods["=="] = new LpMethod(new BinMethod(eq), 1);
             obj.methods["==="] = new LpMethod(new BinMethod(equal), 1);
@@ -83,30 +84,6 @@ namespace LP.Object
         public override bool Equals(object obj)
         {
             return obj == this;
-        }
-
-        public LpObject varcall(string name)
-        {
-            //variable
-            var variale = variables[name] as LpObject;
-            if (variale != null)
-                return variale;
-            
-            // class
-            if (classes.ContainsKey(name))
-            {
-                return classes[name] as LpObject;
-            }
-
-            // method
-            try {
-                return funcall( name, null, null );
-            } catch( Error.LpNoMethodError e ){
-                //throw new Error.NameError();
-            }
-
-            //throw new Error.NameError();
-            return null;
         }
 
         public LpObject funcall(string name, LpObject[] args, LpObject block = null)

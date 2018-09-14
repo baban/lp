@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Irony.Parsing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Reflection;
 
 namespace LpTest
 {
@@ -35,6 +36,14 @@ namespace LpTest
 
         }//class
 
+
+        public static Type InitParser()
+        {
+            Assembly asm = Assembly.LoadFrom("LP.exe");
+            Module mod = asm.GetModule("LP.exe");
+            Type t = mod.GetType("LP.Parser.LpGrammer");
+            return t;
+        }
 
         public static Parser CreateParser(Terminal terminal, string terminator = "end")
         {

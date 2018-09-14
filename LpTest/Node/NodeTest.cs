@@ -11,18 +11,10 @@ namespace LpTest.Node
     [TestClass]
     public class NodeTest
     {
-        private Type initParser()
-        {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Parser.LpGrammer");
-            return t;
-        }
-
         [TestMethod]
         public void numberLiteralTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createNumberLiteral", BindingFlags.NonPublic | BindingFlags.Static);
             NumberLiteral Num = (NumberLiteral)m.Invoke(null, null);
 
@@ -46,7 +38,7 @@ namespace LpTest.Node
         [TestMethod]
         public void stringLiteralTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createStringLiteral", BindingFlags.NonPublic | BindingFlags.Static);
             StringLiteral literal = (StringLiteral)m.Invoke(null, null);
 
@@ -66,7 +58,7 @@ namespace LpTest.Node
         [TestMethod]
         public void createIdentifierTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createIdentifier", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (IdentifierTerminal)m.Invoke(null, null);
 
@@ -89,7 +81,7 @@ namespace LpTest.Node
         [TestMethod]
         public void createExclamationIdentifierTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createExclamationIdentifier", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (IdentifierTerminal)m.Invoke(null, null);
 
@@ -106,7 +98,7 @@ namespace LpTest.Node
         [TestMethod]
         public void createQuestionIdentifierTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createQuestionIdentifier", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (IdentifierTerminal)m.Invoke(null, null);
 
@@ -123,7 +115,7 @@ namespace LpTest.Node
         [TestMethod]
         public void varNameTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createVarName", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (BnfExpression)m.Invoke(null, null);
 
@@ -144,7 +136,7 @@ namespace LpTest.Node
         [TestMethod]
         public void createConstIdentifierTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createConstIdentifier", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (IdentifierTerminal)m.Invoke(null, null);
 
@@ -164,7 +156,7 @@ namespace LpTest.Node
         [TestMethod]
         public void createSymbolIdTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createSymbolId", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (IdentifierTerminal)m.Invoke(null, null);
 
@@ -179,7 +171,7 @@ namespace LpTest.Node
         [TestMethod]
         public void createInstanceVarNameTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createInstanceVarName", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (IdentifierTerminal)m.Invoke(null, null);
 
@@ -194,7 +186,7 @@ namespace LpTest.Node
         [TestMethod]
         public void createClassInstanceVarNameTest()
         {
-            Type t = initParser();
+            Type t = TestHelper.InitParser();
             var m = t.GetMethod("createClassInstanceVarName", BindingFlags.NonPublic | BindingFlags.Static);
             var expr = (IdentifierTerminal)m.Invoke(null, null);
 
