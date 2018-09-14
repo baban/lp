@@ -160,5 +160,49 @@ namespace LpTest.Node
             token = parser.ParseInput("CONST_VAR_NAME");
             Assert.AreEqual(token.Text, "CONST_VAR_NAME");
         }
+
+        [TestMethod]
+        public void createSymbolIdTest()
+        {
+            Type t = initParser();
+            var m = t.GetMethod("createSymbolId", BindingFlags.NonPublic | BindingFlags.Static);
+            var expr = (IdentifierTerminal)m.Invoke(null, null);
+
+            Parser parser = TestHelper.CreateParser(expr);
+            Token token;
+
+            token = parser.ParseInput(":hoge");
+            Assert.AreEqual(token.Text, ":hoge");
+
+        }
+
+        [TestMethod]
+        public void createInstanceVarNameTest()
+        {
+            Type t = initParser();
+            var m = t.GetMethod("createInstanceVarName", BindingFlags.NonPublic | BindingFlags.Static);
+            var expr = (IdentifierTerminal)m.Invoke(null, null);
+
+            Parser parser = TestHelper.CreateParser(expr);
+            Token token;
+
+            token = parser.ParseInput("@hoge");
+            Assert.AreEqual(token.Text, "@hoge");
+
+        }
+
+        [TestMethod]
+        public void createClassInstanceVarNameTest()
+        {
+            Type t = initParser();
+            var m = t.GetMethod("createClassInstanceVarName", BindingFlags.NonPublic | BindingFlags.Static);
+            var expr = (IdentifierTerminal)m.Invoke(null, null);
+
+            Parser parser = TestHelper.CreateParser(expr);
+            Token token;
+
+            token = parser.ParseInput("@@hoge");
+            Assert.AreEqual(token.Text, "@@hoge");
+        }
     }
 }

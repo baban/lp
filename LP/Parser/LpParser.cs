@@ -52,16 +52,10 @@ namespace LP.Parser
 
             var FunctionName = Id;
             var ClassName = ConstantVarName;
-            var SymbolId = new IdentifierTerminal("SymbolId");
-            SymbolId.AllFirstChars = ":";
-            SymbolId.AddPrefix(":", IdOptions.None);
+            var SymbolId = createSymbolId();
             
-            var InstanceVarName = new IdentifierTerminal("InstanceVarName");
-            InstanceVarName.AllFirstChars = "@";
-            InstanceVarName.AddPrefix("@", IdOptions.None);
-            var ClassInstanceVarName = new IdentifierTerminal("ClassInstanceVarName");
-            ClassInstanceVarName.AllFirstChars = "@";
-            ClassInstanceVarName.AddPrefix("@@", IdOptions.None);
+            var InstanceVarName = createInstanceVarName();
+            var ClassInstanceVarName = createClassInstanceVarName();
 
             var Modifier = new NonTerminal("Modifier", typeof(Node.Modifier));
 
@@ -280,6 +274,33 @@ namespace LP.Parser
             var Id = new IdentifierTerminal("identifier");
             Id.CaseRestriction = CaseRestriction.FirstUpper;
             return Id;
+        }
+
+        static IdentifierTerminal createSymbolId()
+        {
+            var SymbolId = new IdentifierTerminal("SymbolId");
+            SymbolId.AllFirstChars = ":";
+            SymbolId.AddPrefix(":", IdOptions.NameIncludesPrefix);
+
+            return SymbolId;
+        }
+
+        static IdentifierTerminal createInstanceVarName()
+        {
+            var InstanceVarName = new IdentifierTerminal("InstanceVarName");
+            InstanceVarName.AllFirstChars = "@";
+            InstanceVarName.AddPrefix("@", IdOptions.NameIncludesPrefix);
+
+            return InstanceVarName;
+        }
+
+        static IdentifierTerminal createClassInstanceVarName()
+        {
+            var ClassInstanceVarName = new IdentifierTerminal("ClassInstanceVarName");
+            ClassInstanceVarName.AllFirstChars = "@@";
+            ClassInstanceVarName.AddPrefix("@", IdOptions.NameIncludesPrefix);
+
+            return ClassInstanceVarName;
         }
 
         NonTerminal makeExpressions(List<object[]> table, NonTerminal expr)
