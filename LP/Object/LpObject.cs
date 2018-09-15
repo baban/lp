@@ -199,7 +199,7 @@ namespace LP.Object
             string src = args[0].stringValue;
             string dst = args[1].stringValue;
             self.methods[dst] = (LpMethod)self.methods[src];
-            return Object.LpSymbol.initialize(dst);
+            return LpSymbol.initialize(dst);
         }
 
         protected static LpObject class_(LpObject self, LpObject[] args, LpObject block = null)
@@ -292,7 +292,9 @@ namespace LP.Object
 
         protected static LpObject send(LpObject self, LpObject[] args, LpObject block = null)
         {
-            return self.funcall(args[0].stringValue, args, block);
+            var methodName = args[0].stringValue;
+            var sendedArgs = args.Skip(1).Take(args.Length - 1).ToArray();
+            return self.funcall(methodName, sendedArgs, block);
         }
 
         protected static LpObject to_s(LpObject self, LpObject[] args = null, LpObject block = null)
