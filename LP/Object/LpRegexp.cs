@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpRegexp : LpBase
+    public class LpRegexp : LpBase
     {
         static string className = "Regexp";
 

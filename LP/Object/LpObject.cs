@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace LP.Object
 {
-    class LpObject : LpBase
+    public class LpObject : LpBase
     {
         static string className = "Object";
 
@@ -295,9 +295,11 @@ namespace LP.Object
             return self.funcall(args[0].stringValue, args, block);
         }
 
-        protected static LpObject to_s(LpObject self, LpObject[] args, LpObject block = null)
+        protected static LpObject to_s(LpObject self, LpObject[] args = null, LpObject block = null)
         {
-            return LpString.initialize(self.ToString());
+            var hashCode = self.GetHashCode();
+            var str = string.Format("<obj {0}>", hashCode.ToString("x4"));
+            return LpString.initialize(str);
         }
 
         protected static LpObject to_bool(LpObject self, LpObject[] args, LpObject block = null)

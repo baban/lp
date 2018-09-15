@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpFile : LpBase
+    public class LpFile : LpBase
     {
         static string className = "File";
 

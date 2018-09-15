@@ -3,7 +3,7 @@ using Irony.Interpreter.Ast;
 
 namespace LP.Object
 {
-    class LpQuote : LpBase
+    public class LpQuote : LpBase
     {
         static string className = "Quote";
 

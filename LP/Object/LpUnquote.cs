@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LP.Object
 {
-    class LpUnquote : LpBase
+    public class LpUnquote : LpBase
     {
         public LpObject initialize(string s)
         {

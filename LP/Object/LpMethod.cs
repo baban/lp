@@ -5,7 +5,7 @@ using System.Linq;
 namespace LP.Object
 {
     // TODO: メソッドの定義位置を記録するべき
-    class LpMethod : LpBase
+    public class LpMethod : LpBase
     {
         static string className = "Method";
 

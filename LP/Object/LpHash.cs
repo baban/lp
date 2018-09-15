@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace LP.Object
 {
     // Lv1
-    class LpHash : LpBase
+    public class LpHash : LpBase
     {
         static string className = "Hash";
 

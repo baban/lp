@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LP.Object
 {
-    class LpSymbol : LpBase
+    public class LpSymbol : LpBase
     {
         protected static Dictionary<string, LpObject> symbols = new Dictionary<string, LpObject>();
         static string className = "Symbol";

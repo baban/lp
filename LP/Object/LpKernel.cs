@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Object
 {
-    class LpKernel : LpBase
+    public class LpKernel : LpBase
     {
         static string className = "Kernel";
 

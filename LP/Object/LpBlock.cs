@@ -4,7 +4,7 @@ using Irony.Interpreter.Ast;
 
 namespace LP.Object
 {
-    class LpBlock : LpBase
+    public class LpBlock : LpBase
     {
         static string className = "Block";
 

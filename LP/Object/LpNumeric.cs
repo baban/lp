@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace LP.Object
 {
-    class LpNumeric : LpBase
+    public class LpNumeric : LpBase
     {
         static string className = "Numeric";
 

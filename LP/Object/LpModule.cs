@@ -2,7 +2,7 @@
 
 namespace LP.Object
 {
-    class LpModule : LpBase
+    public class LpModule : LpBase
     {
         static string className = "Module";
 

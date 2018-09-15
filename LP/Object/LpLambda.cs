@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace LP.Object
 {
-    class LpLambda : LpBase
+    public class LpLambda : LpBase
     {
         static string className = "Lambda";
 

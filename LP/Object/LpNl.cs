@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace LP.Object
 {
-    class LpNl : LpBase
+    public class LpNl : LpBase
     {
         static string className = "Nl";
 

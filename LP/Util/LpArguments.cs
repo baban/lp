@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LP.Util
 {
-    class LpArguments
+    public class LpArguments
     {
         public string[] arguments = new string[] { };
         bool loose = false;

@@ -10,7 +10,7 @@ namespace LP.Object
     // `?x => unbound variable x
     // ?実行する => ?文字列化 => マクロに押し込み
 
-    class LpQuasiQuote : LpBase
+    public class LpQuasiQuote : LpBase
     {
         static string className = "QuasiQuote";
 

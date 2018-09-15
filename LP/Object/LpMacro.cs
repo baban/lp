@@ -2,7 +2,7 @@
 
 namespace LP.Object
 {
-    class LpMacro : LpBase
+    public class LpMacro : LpBase
     {
         static string className = "Macro";
 

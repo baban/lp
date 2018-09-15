@@ -4,7 +4,7 @@ using Irony.Interpreter.Ast;
 
 namespace LP.Object
 {
-    class LpBase
+    public class LpBase
     {
         public static Dictionary<string, LpObject> classes = new Dictionary<string, LpObject>();
 

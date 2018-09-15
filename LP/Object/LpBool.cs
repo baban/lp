@@ -2,7 +2,7 @@
 
 namespace LP.Object
 {
-    class LpBool : LpBase
+    public class LpBool : LpBase
     {
         static string className = "Bool";
 
