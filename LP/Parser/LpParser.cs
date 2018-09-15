@@ -144,12 +144,11 @@ namespace LP.Parser
 
             AstVarName.Rule = ToTerm("*") + Id;
             AmpVarName.Rule = ToTerm("&") + Id;
-            ArgVarnames.Rule = MakePlusRule(ArgVarnames, Comma, ArgVarname);
+            ArgVarnames.Rule = MakeStarRule(ArgVarnames, Comma, ArgVarname);
             BlockArg.Rule = Block | Empty;
             CallArgs.Rule = ArgVarnames | AstVarName | AmpVarName |
                             ArgVarnames + Comma + AstVarName | ArgVarnames + Comma + AmpVarName | AstVarName + Comma + AmpVarName |
-                            ArgVarnames + Comma + AstVarName + Comma + AmpVarName |
-                            Empty;
+                            ArgVarnames + Comma + AstVarName + Comma + AmpVarName;
 
             Numeric.Rule = createNumberLiteral();
             Str.Rule = createStringLiteral();

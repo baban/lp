@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using Irony.Parsing;
 using Irony.Interpreter;
+using System.Diagnostics;
 
 namespace LP
 {
@@ -138,13 +139,13 @@ namespace LP
             //string code = "case 1; end";
             //string code = "case false; else 1 end";
             //string code = "case 1; when 1; 3 end";
-            Console.WriteLine("initialize");
+            Debug.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
             var language = new LanguageData(parser);
             //Console.WriteLine("initialize language");
             ScriptApp app = new ScriptApp(language);
-            Console.WriteLine("parse");
+            Debug.WriteLine("parse");
             var tree = app.Parser.Parse(code);
             //Console.WriteLine("tree");
             //Console.WriteLine(tree);
@@ -160,7 +161,7 @@ namespace LP
             */
 
 
-            Console.WriteLine("evaluate");
+            Debug.WriteLine("evaluate");
 
             Object.LpObject result = null;
             try
@@ -168,7 +169,7 @@ namespace LP
                 result = (Object.LpObject)app.Evaluate(tree);
                 if (result == null)
                 {
-                    Console.WriteLine("null");
+                    Debug.WriteLine("null");
                 }
                 else
                 {
@@ -181,7 +182,7 @@ namespace LP
             {
                 Console.WriteLine(e.ToString());
             }
-            Console.WriteLine("Finish");
+            Debug.WriteLine("Finish");
             /*
             sw.Stop();
             Console.WriteLine(sw.Elapsed.TotalSeconds);
@@ -206,7 +207,7 @@ namespace LP
                 result = (Object.LpObject)app.Evaluate(tree);
                 if (result == null)
                 {
-                    Console.WriteLine("null");
+                    Debug.WriteLine("null");
                 }
                 else
                 {
@@ -219,7 +220,7 @@ namespace LP
             {
                 Console.WriteLine(e.ToString());
             }
-            Console.WriteLine("Finish");
+            Debug.WriteLine("Finish");
 
             return 0;
         }
@@ -246,13 +247,13 @@ namespace LP
                     var tree = app.Parser.Parse(line);
                     if (tree == null)
                     {
-                        Console.WriteLine("parse error");
+                        Debug.WriteLine("parse error");
                     } else
                     {
                         Object.LpObject result = (Object.LpObject)app.Evaluate(tree);
                         if (result == null)
                         {
-                            Console.WriteLine("null");
+                            Debug.WriteLine("null");
                         }
                         else
                         {
