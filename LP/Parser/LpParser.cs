@@ -6,7 +6,7 @@ using Irony.Interpreter;
 namespace LP.Parser
 {
     [Language("LpGrammar")]
-    class LpGrammer : InterpretedLanguageGrammar
+    public class LpGrammer : InterpretedLanguageGrammar
     {
         enum OperandType { CHARIN_OPERATOR, OPERAND, LEFT_UNARY, RIGHT_UNARY };
         static readonly List<object[]> operandTable = new List<object[]> {
