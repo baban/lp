@@ -29,18 +29,20 @@ namespace LP.Parser
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "and", "or" } }
         };
 
+        KeyTerm Comma = null;
+        KeyTerm Semi = null;
+        KeyTerm Lbr = null;
+        KeyTerm Rbr = null;
+        KeyTerm Do = null;
+        KeyTerm End = null;
+
         public LpGrammer() : base(true)
         {
             // TODO: +=, -=, *= ...を追加
             // TODO: 演算子のTermかどうかの選択肢を出す
             // TODO: autogensymの作成、var関数で、autogemsymの解除
 
-            var Comma = ToTerm(",", "Comma");
-            var Semi = ToTerm(";", "Semi");
-            var Lbr = ToTerm("(", "Lbr");
-            var Rbr = ToTerm(")", "Rbr");
-            var Do = ToTerm("do", "Do");
-            var End = ToTerm("end", "End");
+            createKeyTerms();
             var Term = Semi;
 
             var Id = createIdentifier();
@@ -211,6 +213,15 @@ namespace LP.Parser
             Stmts.Rule = MakeStarRule(Stmts, Term, Stmt);
 
             Root = Stmts;
+        }
+
+        void createKeyTerms(){
+            Comma = ToTerm(",", "Comma");
+            Semi = ToTerm(";", "Semi");
+            Lbr = ToTerm("(", "Lbr");
+            Rbr = ToTerm(")", "Rbr");
+            Do = ToTerm("do", "Do");
+            End = ToTerm("end", "End");
         }
 
         static StringLiteral createStringLiteral()
