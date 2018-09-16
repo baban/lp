@@ -46,9 +46,7 @@ namespace LP.Parser
             var Term = Semi;
 
             var Id = createIdentifier();
-            var ExclamationId = createExclamationIdentifier();
-            var QuestionId = createQuestionIdentifier();
-            var VarName = Id | QuestionId | ExclamationId;
+            var VarName = Id;
 
             var ConstantVarName = createConstIdentifier();
 
@@ -144,9 +142,9 @@ namespace LP.Parser
 
             Modifier.Rule = ToTerm("public") | "internal" | "protected" | "private" | Empty;
 
-            AstVarName.Rule = ToTerm("*") + Id;
-            AmpVarName.Rule = ToTerm("&") + Id;
-            ArgVarnames.Rule = MakeStarRule(ArgVarnames, Comma, ArgVarname);
+            AstVarName.Rule = ToTerm("*") + VarName;
+            AmpVarName.Rule = ToTerm("&") + VarName;
+            ArgVarnames.Rule = MakeStarRule(ArgVarnames, Comma, Id);
             BlockArg.Rule = Block | Empty;
             CallArgs.Rule = ArgVarnames | AstVarName | AmpVarName |
                             ArgVarnames + Comma + AstVarName | ArgVarnames + Comma + AmpVarName | AstVarName + Comma + AmpVarName |
@@ -250,33 +248,9 @@ namespace LP.Parser
         static IdentifierTerminal createIdentifier() {
             var Id = new IdentifierTerminal("identifier");
             Id.CaseRestriction = CaseRestriction.FirstLower;
+            Id.AddSuffix("?");
+            Id.AddSuffix("!");
             return Id;
-        }
-
-        static IdentifierTerminal createExclamationIdentifier()
-        {
-            var ExclamationId = new IdentifierTerminal("ExclamationId");
-            ExclamationId.CaseRestriction = CaseRestriction.FirstLower;
-            ExclamationId.AddSuffix("!");
-            return ExclamationId;
-        }
-
-        static IdentifierTerminal createQuestionIdentifier()
-        {
-            var QuestionId = new IdentifierTerminal("QuestionId");
-            QuestionId.CaseRestriction = CaseRestriction.FirstLower;
-            QuestionId.AddSuffix("?");
-            return QuestionId;
-        }
-
-        static BnfExpression createVarName()
-        {
-            var Id = createIdentifier();
-            var ExclamationId = createExclamationIdentifier();
-            var QuestionId = createQuestionIdentifier();
-            var VarName = Id | QuestionId | ExclamationId;
-
-            return VarName;
         }
 
         static IdentifierTerminal createConstIdentifier()
@@ -289,6 +263,8 @@ namespace LP.Parser
         static IdentifierTerminal createSymbolId()
         {
             var SymbolId = new IdentifierTerminal("SymbolId");
+            SymbolId.AddSuffix("?");
+            SymbolId.AddSuffix("!");
             SymbolId.AllFirstChars = ":";
             SymbolId.AddPrefix(":", IdOptions.NameIncludesPrefix);
 
