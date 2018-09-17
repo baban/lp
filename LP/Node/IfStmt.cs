@@ -51,13 +51,15 @@ namespace LP.Node
             {
                 result = (Object.LpObject)ElsIfStmts.Evaluate(thread);
             }
-
-            if (result != null && ElseStmt != null)
+            if (result == null)
             {
-                result = (Object.LpObject)ElseStmt.Evaluate(thread);
-            } else
-            {
-                result = Object.LpNl.initialize();
+                if (ElseStmt != null){
+                    result = (Object.LpObject)ElseStmt.Evaluate(thread);
+                }
+                else
+                {
+                    result = Object.LpNl.initialize();
+                }
             }
 
             thread.CurrentNode = Parent;

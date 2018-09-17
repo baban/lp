@@ -263,8 +263,6 @@ namespace LP.Parser
         static IdentifierTerminal createSymbolId()
         {
             var SymbolId = new IdentifierTerminal("SymbolId");
-            SymbolId.AddSuffix("?");
-            SymbolId.AddSuffix("!");
             SymbolId.AllFirstChars = ":";
             SymbolId.AddPrefix(":", IdOptions.NameIncludesPrefix);
 
