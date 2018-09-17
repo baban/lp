@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -25,10 +25,17 @@ namespace LP.Node
             thread.CurrentNode = this;
             string name = functionName.Token.Text;
             var scope = thread.CurrentScope;
-            var slot = scope.AddSlot(name);
-            var function = Object.LpBlock.initialize(Body);
-            //function.arguments = new Util.LpArguments(ArgVarnames, false);
-            //scope.SetValue(slot.Index, function);
+            var dic = scope.AsDictionary();
+
+            if (!dic.ContainsKey("methods"))
+            {
+                dic["methods"] = new Dictionary<string, object>();
+            }
+            var fdic = (Dictionary<string, object>)dic["methods"];
+
+            var function = Object.LpBlock.initialize(Body, CallArgs);
+            fdic[name] = function;
+
             thread.CurrentNode = Parent;
 
             return function;

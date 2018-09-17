@@ -27,6 +27,13 @@ namespace LP.Object
             return obj;
         }
 
+        public static LpObject initialize(AstNode stmts, AstNode args)
+        {
+            LpObject obj = init();
+            obj.statements = stmts;
+            return obj;
+        }
+
         /*
         public static LpObject initialize(List<Ast.LpAstNode> stmts, string[] args, bool argsLoose = false )
         {

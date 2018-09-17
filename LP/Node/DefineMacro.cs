@@ -27,7 +27,6 @@ namespace LP.Node
             var scope = thread.CurrentScope;
             var slot = scope.AddSlot(name);
             var function = Object.LpBlock.initialize(Body);
-            //function.arguments = new Util.LpArguments(ArgVarnames, false);
             scope.SetValue(slot.Index, function);
             thread.CurrentNode = Parent;
 

@@ -58,11 +58,11 @@ namespace LP
                 if ( options.Evaluate != null )
                 {
                     sysInit("", args, 0);
-                    Console.WriteLine("initialize");
+                    Debug.WriteLine("initialize");
                     var parser = new Parser.LpGrammer();
                     var language = new LanguageData(parser);
                     ScriptApp app = new ScriptApp(language);
-                    Console.WriteLine("parse");
+                    Debug.WriteLine("parse");
                     return;
                 }
 
@@ -230,13 +230,13 @@ namespace LP
             printVersion();
             // Console.WriteLine("[GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.0.68)] on darwin");
             // Console.WriteLine("[Type 'help' 'copyright' 'credits' or 'licence' for more information");
-            Console.WriteLine("initialize");
+            Debug.WriteLine("initialize");
             var parser = new Parser.LpGrammer();
             //Console.WriteLine("initialize parser");
             var language = new LanguageData(parser);
             //Console.WriteLine("initialize language");
             ScriptApp app = new ScriptApp(language);
-            Console.WriteLine("parse");
+            Debug.WriteLine("parse");
 
             string line = null;
 

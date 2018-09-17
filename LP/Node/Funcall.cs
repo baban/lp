@@ -23,8 +23,13 @@ namespace LP.Node
             thread.CurrentNode = this;
 
             var scope = thread.CurrentScope;
-            var slot = scope.Info.GetSlot(functionName.Token.Text);
-            var function = (Object.LpObject)scope.GetValue(slot.Index);
+
+            var dic = scope.AsDictionary();
+            var fdic = (Dictionary<string, object>)dic["methods"];
+
+            var name = functionName.Token.Text;
+            var function = (Object.LpObject)fdic[name];
+
             var result = (Object.LpObject)EvaluateInStmts(function, thread);
 
             thread.CurrentNode = Parent;
@@ -35,21 +40,30 @@ namespace LP.Node
         object EvaluateInStmts(Object.LpObject function, ScriptThread thread)
         {
             var newScopeInfo = new ScopeInfo(thread.CurrentNode, false);
+
             var args = (Object.LpObject[])Args.Evaluate(thread);
             thread.PushClosureScope(newScopeInfo, thread.CurrentScope, args);
+
             var scope = thread.CurrentScope;
-            var prms = scope.Parameters;
-            var names = function.arguments.arguments;
-            Queue<Object.LpObject> q = new Queue<Object.LpObject>(new List<Object.LpObject>(args));
-            for(int i=0; i < names.Length ; i++)
+
+            var dic = scope.AsDictionary();
+            dic["methods"] = new Dictionary<string, object>();
+            dic["variables"] = new Dictionary<string, object>();
+            var methods = (Dictionary<string, object>)dic["methods"];
+            var variables = (Dictionary<string, object>)dic["variables"];
+            /*
+            var parameters = scope.Parameters;
+
+            for(int i=0; i < args.Length ; i++)
             {
-                var name = names[i];
-                var slot = newScopeInfo.AddSlot(name, SlotType.Parameter);
                 var v = args[i];
-                scope.SetValue(slot.Index, v);
+                variables[i.ToString()] = v;
             }
+            */
             var result = function.statements.Evaluate(thread);
+
             thread.PopScope();
+
             return result;
         }
     }
