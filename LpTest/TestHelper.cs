@@ -45,6 +45,11 @@ namespace LpTest
             return t;
         }
 
+        static public Type getModule(string name)
+        {
+            return Assembly.LoadFrom("LP.exe").GetModule("LP.exe").GetType(name);
+        }
+
         public static Parser CreateParser(Terminal terminal, string terminator = "end")
         {
             var grammar = new TerminalTestGrammar(terminal, terminator);
@@ -52,6 +57,7 @@ namespace LpTest
             CheckGrammarErrors(parser);
             return parser;
         }
+
 
         public static Parser CreateParser(BnfExpression expr, string terminator = "end")
         {

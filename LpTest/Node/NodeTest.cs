@@ -1,9 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
 using Irony.Parsing;
-using Irony.Interpreter;
 using System.Reflection;
 
 namespace LpTest.Node
@@ -68,6 +65,12 @@ namespace LpTest.Node
             token = parser.ParseInput("hoge");
             Assert.AreEqual(token.Text, "hoge");
 
+            token = parser.ParseInput("hoge?");
+            Assert.AreEqual(token.Text, "hoge?");
+
+            token = parser.ParseInput("hoge!");
+            Assert.AreEqual(token.Text, "hoge!");
+
             token = parser.ParseInput("Hoge");
             Assert.AreNotEqual(token.Text, "Hoge");
 
@@ -76,40 +79,6 @@ namespace LpTest.Node
 
             token = parser.ParseInput("VAR_NAME");
             Assert.AreNotEqual(token.Text, "VAR_NAME");
-        }
-
-        [TestMethod]
-        public void createExclamationIdentifierTest()
-        {
-            Type t = TestHelper.InitParser();
-            var m = t.GetMethod("createExclamationIdentifier", BindingFlags.NonPublic | BindingFlags.Static);
-            var expr = (IdentifierTerminal)m.Invoke(null, null);
-
-            Parser parser = TestHelper.CreateParser(expr);
-            Token token;
-
-            token = parser.ParseInput("hoge!");
-            Assert.AreEqual(token.Text, "hoge!");
-
-            token = parser.ParseInput("Hoge!");
-            Assert.AreNotEqual(token.Text, "Hoge!");
-        }
-
-        [TestMethod]
-        public void createQuestionIdentifierTest()
-        {
-            Type t = TestHelper.InitParser();
-            var m = t.GetMethod("createQuestionIdentifier", BindingFlags.NonPublic | BindingFlags.Static);
-            var expr = (IdentifierTerminal)m.Invoke(null, null);
-
-            Parser parser = TestHelper.CreateParser(expr);
-            Token token;
-
-            token = parser.ParseInput("hoge?");
-            Assert.AreEqual(token.Text, "hoge?");
-
-            token = parser.ParseInput("Hoge?");
-            Assert.AreNotEqual(token.Text, "Hoge?");
         }
 
         [TestMethod]
@@ -165,7 +134,6 @@ namespace LpTest.Node
 
             token = parser.ParseInput(":hoge");
             Assert.AreEqual(token.Text, ":hoge");
-
         }
 
         [TestMethod]

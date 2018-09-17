@@ -14,7 +14,7 @@ namespace LpTest.Object
     {
         private Type getModule(string name)
         {
-            return Assembly.LoadFrom("LP.exe").GetModule("LP.exe").GetType(name);
+            return TestHelper.getModule(name);
         }
 
         private Type initParser()
@@ -46,7 +46,7 @@ namespace LpTest.Object
             PrivateType pt = new PrivateType(t);
             Assert.IsInstanceOfType(pt.InvokeStatic("initialize"), ot);
         }
-
+        /*
         [TestMethod]
         public void push()
         {
@@ -58,6 +58,7 @@ namespace LpTest.Object
             var so = new PrivateType(t).InvokeStatic("push", new object[] { o, args, null });
             var ary = so.GetType().InvokeMember("arrayValues", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, so, null);
         }
+        */
     }
     /*
     [TestFixture]

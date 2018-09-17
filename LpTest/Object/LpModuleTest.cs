@@ -14,9 +14,7 @@ namespace LpTest.Object
     {
         private Type getModule(string name)
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType(name);
+            Type t = TestHelper.getModule(name);
             return t;
         }
 
@@ -34,7 +32,7 @@ namespace LpTest.Object
         {
             return getModule("LP.Object.LpModule");
         }
-
+        /*
         [TestMethod]
         public void initialize0()
         {
@@ -53,5 +51,6 @@ namespace LpTest.Object
             var so = pt.InvokeStatic("new_", new object[]{ o, args, null });
             Assert.AreEqual("LP.Object.LpObject", so.GetType().ToString());
         }
+        */
     }
 }

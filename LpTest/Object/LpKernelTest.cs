@@ -22,12 +22,11 @@ namespace LpTest.Object
 
         private Type initKernel()
         {
-            Assembly asm = Assembly.LoadFrom("LP.exe");
-            Module mod = asm.GetModule("LP.exe");
-            Type t = mod.GetType("LP.Object.LpKernel");
+            Type t = TestHelper.getModule("LP.Object.LpKernel");
             return t;
         }
 
+        /*
         [TestMethod]
         public void print()
         {
@@ -49,7 +48,7 @@ namespace LpTest.Object
             var ret = k.GetMethod("if_", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { null, args, null });
             //Assert.AreEqual(10, ret.GetType().InvokeMember("doubleValue", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, null, ret, null));
         }
-        /*
+
         [TestMethod]
         public void loop()
         {
