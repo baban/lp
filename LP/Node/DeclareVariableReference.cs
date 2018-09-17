@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -25,10 +26,15 @@ namespace LP.Node
 
             var scope = thread.CurrentScope;
             var dic = scope.AsDictionary();
+            if (!dic.ContainsKey("variables"))
+            {
+                dic["variables"] = new Dictionary<string, object>();
+            }
+            var vdic = (Dictionary<string, object>)dic["variables"];
 
             thread.CurrentNode = Parent;
 
-            return new object[] { Varname, dic };
+            return new object[] { Varname, vdic };
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -24,7 +24,11 @@ namespace LP.Node
             var ret = Object.LpNl.initialize();
             var scope = thread.CurrentScope;
             var dic = scope.AsDictionary();
-            dic[Varname] = ret;
+            if (!dic.ContainsKey("variables")) {
+                dic["variables"] = new Dictionary<string, object>();
+            }
+            var vdic = (Dictionary<string, object>)dic["variables"];
+            vdic[Varname] = ret;
 
             thread.CurrentNode = Parent;
 

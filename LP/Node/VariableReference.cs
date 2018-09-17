@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -34,20 +34,22 @@ namespace LP.Node
             return new object[] { Varname,  dic };
         }
 
-        System.Collections.Generic.IDictionary<string,object> searchContext(Scope scope)
+        IDictionary<string,object> searchContext(Scope scope)
         {
             var dic = scope.AsDictionary();
+            if ( !dic.ContainsKey("variables") ) {
+                dic["variables"] = new Dictionary<string, object>();
+            }
+            var vdic = (Dictionary<string, object>)dic["variables"];
 
-            if (dic.ContainsKey(Varname))
+            if (vdic.ContainsKey(Varname))
             {
-                return dic;
+                return vdic;
             } else if(scope.Parent != null)
             {
                 return searchContext(scope.Parent);
-            }
-            else
-            {
-                return dic;
+            } else {
+                return vdic;
             }
         }
     }

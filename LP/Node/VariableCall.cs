@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using Irony.Ast;
 using Irony.Interpreter;
 using Irony.Interpreter.Ast;
@@ -25,14 +26,21 @@ namespace LP.Node
 
             var scope = thread.CurrentScope;
             var dic = scope.AsDictionary();
+            if (!dic.ContainsKey("variables")) {
+                dic["variables"] = new Dictionary<string, object>();
+            }
+            var vdic = (Dictionary<string, object>)dic["variables"];
 
             Object.LpObject value = null;
-            if (dic.ContainsKey(Varname))
+            if (vdic.ContainsKey(Varname))
             {
-                value = (Object.LpObject)dic[Varname];
-            } else if(isBinaryClassName(Varname))
+                value = (Object.LpObject)vdic[Varname];
+            }
+            else if (isBinaryClassName(Varname))
             {
                 value = binaryClassCall(Varname);
+            } else {
+                throw new Error.NameError();
             }
 
             thread.CurrentNode = Parent;

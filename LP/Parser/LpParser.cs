@@ -85,7 +85,7 @@ namespace LP.Parser
             var QuestionQuote = new NonTerminal("QuestionQuote", typeof(Node.QuestionQuote));
             var VariableCall = new NonTerminal("VariableCall", typeof(Node.VariableCall));
             var ConstVariableCall = new NonTerminal("ConstVariableCall", typeof(Node.ConstVariableCall));
-            var ConstVariableReference = new NonTerminal("VariableCall", typeof(Node.DeclareVariableReference));
+            var ConstVariableReference = new NonTerminal("VariableCall", typeof(Node.DeclareConstVariableReference));
             var DeclareVariable = new NonTerminal("DeclareVariableReference", typeof(Node.DeclareVariable));
             var DeclareVariableReference = new NonTerminal("DeclareVariableReference", typeof(Node.DeclareVariableReference));
             var VariableReference = new NonTerminal("VariableReference", typeof(Node.VariableReference));
