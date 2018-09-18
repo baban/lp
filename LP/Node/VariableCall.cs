@@ -25,16 +25,12 @@ namespace LP.Node
             string Varname = node.Token.Text;
 
             var scope = thread.CurrentScope;
-            var dic = scope.AsDictionary();
-            if (!dic.ContainsKey("variables")) {
-                dic["variables"] = new Dictionary<string, object>();
-            }
-            var vdic = (Dictionary<string, object>)dic["variables"];
+            var dic = Util.Scope.findDictionary(scope, "variables");
 
             Object.LpObject value = null;
-            if (vdic.ContainsKey(Varname))
+            if (dic.ContainsKey(Varname))
             {
-                value = (Object.LpObject)vdic[Varname];
+                value = (Object.LpObject)dic[Varname];
             }
             else if (isBinaryClassName(Varname))
             {

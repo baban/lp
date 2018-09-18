@@ -24,12 +24,15 @@ namespace LP.Node
 
             var scope = thread.CurrentScope;
 
-            var dic = scope.AsDictionary();
-            var fdic = (Dictionary<string, object>)dic["methods"];
+            var dic = Util.Scope.findDictionary(scope, "methods");
 
             var name = functionName.Token.Text;
-            var function = (Object.LpObject)fdic[name];
 
+            if (!dic.ContainsKey(name)) {
+                throw new Error.LpNoMethodError();
+            }
+
+            var function = (Object.LpObject)dic[name];
             var result = (Object.LpObject)EvaluateInStmts(function, thread);
 
             thread.CurrentNode = Parent;

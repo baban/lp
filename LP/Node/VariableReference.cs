@@ -25,7 +25,6 @@ namespace LP.Node
         {
             thread.CurrentNode = this;
 
-
             var scope = thread.CurrentScope;
             var dic = searchContext(scope); 
 
@@ -36,20 +35,16 @@ namespace LP.Node
 
         IDictionary<string,object> searchContext(Scope scope)
         {
-            var dic = scope.AsDictionary();
-            if ( !dic.ContainsKey("variables") ) {
-                dic["variables"] = new Dictionary<string, object>();
-            }
-            var vdic = (Dictionary<string, object>)dic["variables"];
+            var dic = Util.Scope.findDictionary(scope, "variables");
 
-            if (vdic.ContainsKey(Varname))
+            if (dic.ContainsKey(Varname))
             {
-                return vdic;
+                return dic;
             } else if(scope.Parent != null)
             {
                 return searchContext(scope.Parent);
             } else {
-                return vdic;
+                return dic;
             }
         }
     }

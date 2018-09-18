@@ -192,6 +192,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\LpArguments.cs" />
+    <Compile Include="Util\Scope.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

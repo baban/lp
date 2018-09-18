@@ -25,16 +25,10 @@ namespace LP.Node
             thread.CurrentNode = this;
             string name = functionName.Token.Text;
             var scope = thread.CurrentScope;
-            var dic = scope.AsDictionary();
 
-            if (!dic.ContainsKey("methods"))
-            {
-                dic["methods"] = new Dictionary<string, object>();
-            }
-            var fdic = (Dictionary<string, object>)dic["methods"];
-
+            var dic = Util.Scope.findDictionary(scope, "methods");
             var function = Object.LpBlock.initialize(Body, CallArgs);
-            fdic[name] = function;
+            dic[name] = function;
 
             thread.CurrentNode = Parent;
 

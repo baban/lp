@@ -26,16 +26,11 @@ namespace LP.Node
             thread.CurrentNode = this;
 
             var scope = thread.CurrentScope;
-            var dic = scope.AsDictionary();
-            if (!dic.ContainsKey("const_variables"))
-            {
-                dic["const_variables"] = new Dictionary<string, object>();
-            }
-            var vdic = (Dictionary<string, object>)dic["const_variables"];
+            var dic = Util.Scope.findDictionary(scope, "const_variables");
 
             thread.CurrentNode = Parent;
 
-            return new object[] { Varname, vdic };
+            return new object[] { Varname, dic };
         }
     }
 }
