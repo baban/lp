@@ -24,20 +24,26 @@ namespace LP.Node
 
             var scope = thread.CurrentScope;
 
-            var dic = Util.Scope.findDictionary(scope, "methods");
-
             var name = functionName.Token.Text;
 
-            if (!dic.ContainsKey(name)) {
-                throw new Error.LpNoMethodError();
-            }
-
-            var function = (Object.LpObject)dic[name];
+            var function = searchMetod(scope, name);
             var result = (Object.LpObject)EvaluateInStmts(function, thread);
 
             thread.CurrentNode = Parent;
 
             return result;
+        }
+
+        Object.LpObject searchMetod(Scope scope, string name) {
+            var dic = Util.Scope.findDictionary(scope, "methods");
+
+            if (dic.ContainsKey(name))
+                return (Object.LpObject)dic[name];
+
+            if (scope.Parent == null)
+                throw new Error.LpNoMethodError();
+            
+            return searchMetod(scope.Parent, name);
         }
 
         object EvaluateInStmts(Object.LpObject function, ScriptThread thread)
