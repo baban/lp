@@ -110,6 +110,25 @@ namespace LP.Object
             throw new Error.LpNoMethodError();
         }
 
+        public LpMethod searchMethod(string name, LpObject self) {
+
+            LpMethod m = (LpMethod)self.methods[name];
+
+            if (null != m)
+                return m;
+
+            // method_missing
+            m = methods["method_missing"] as LpMethod;
+            if (null != m)
+                return m;
+
+            // superclass
+            if (null != superclass)
+                return superclass.searchMethod(name, self);
+
+            return null;
+        }
+
         public bool isMethodExist(string name, LpObject self, LpObject[] args, LpObject block) {
             if(methods[name] != null) return true;
             if(methods["method_missing"] != null) return false;

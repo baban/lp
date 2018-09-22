@@ -35,15 +35,36 @@ namespace LP.Node
         }
 
         Object.LpObject searchMetod(Scope scope, string name) {
+            var ret = searchContext(scope, name);
+
+            if (ret != null)
+                return ret;
+
+            var klass = currentClass(scope);
+
+            Object.LpMethod m = klass.searchMethod(name, klass);
+            if (m != null)
+                return Object.LpMethod.initialize(m.method);
+
+            throw new Error.LpNoMethodError();
+        }
+
+        Object.LpObject currentClass(Scope scope)
+        {
+            return Object.LpKernel.initialize();
+        }
+
+        Object.LpObject searchContext(Scope scope, string name)
+        {
             var dic = Util.Scope.findDictionary(scope, "methods");
 
             if (dic.ContainsKey(name))
                 return (Object.LpObject)dic[name];
 
             if (scope.Parent == null)
-                throw new Error.LpNoMethodError();
-            
-            return searchMetod(scope.Parent, name);
+                return null;
+
+            return searchContext(scope.Parent, name);
         }
 
         object EvaluateInStmts(Object.LpObject function, ScriptThread thread)
