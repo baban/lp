@@ -1,4 +1,5 @@
 ﻿using System;
+using Irony.Interpreter;
 using Irony.Interpreter.Ast;
 
 namespace LP.Object
@@ -22,12 +23,12 @@ namespace LP.Object
             return init(className, new AstNode(), isBinary);
         }
 
-        public static LpObject initialize(string className, AstNode stmts)
+        public static LpObject initialize(string className, AstNode stmts, bool isBinary = false, Scope scope = null)
         {
             return init(className, stmts);
         }
 
-        private static LpObject init(string className, AstNode stmts, bool isBinary = false)
+        private static LpObject init(string className, AstNode stmts, bool isBinary = false, Scope scope = null)
         {
             LpObject obj = createClassTemplate( className );
             obj.class_name = className;

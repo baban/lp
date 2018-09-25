@@ -57,11 +57,11 @@ namespace LP.Object
             obj.methods["nil?"] = new LpMethod(new BinMethod(is_nil), 0 );
             obj.methods["to_bool"] = new LpMethod(new BinMethod(to_bool), 0);
             obj.methods["to_s"] = new LpMethod(new BinMethod(to_s), 0);
+            obj.methods["methods"] = new LpMethod(new BinMethod(methods_), 0);
 
             // Lv1
             // TODO: blank?
             // TODO: tap
-            obj.methods["methods"] = new LpMethod(new BinMethod(methods_), 0);
             obj.methods["alias"] = new LpMethod(new BinMethod(alias), 2);
             obj.methods["do"] = new LpMethod(new BinMethod(instance_eval), 0);
             obj.methods["=="] = new LpMethod(new BinMethod(eq), 1);

@@ -25,22 +25,14 @@ namespace LP.Node
             string Varname = node.Token.Text;
 
             var scope = thread.CurrentScope;
-            var dic = Util.Scope.findDictionary(scope, "variables");
+            var dic = Util.Scope.searchContext(scope, "variables", Varname);
+            thread.CurrentNode = Parent;
 
-            Object.LpObject value = null;
-            if (dic.ContainsKey(Varname))
-            {
-                value = (Object.LpObject)dic[Varname];
-            }
-            else if (isBinaryClassName(Varname))
-            {
-                value = binaryClassCall(Varname);
-            } else {
+            if (dic == null) {
                 throw new Error.NameError();
             }
 
-            thread.CurrentNode = Parent;
-
+            Object.LpObject value = (Object.LpObject)dic[Varname];
             return value;
         }
 
