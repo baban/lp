@@ -15,7 +15,6 @@ namespace LP.Parser
             new object[]{ OperandType.LEFT_UNARY,             new string[]{ "!", "~" } },
             new object[]{ OperandType.LEFT_UNARY,          new string[]{ "not" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "**" } },
-            //new object[]{ OperandType.LEFT_UNARY,             new string[]{ "-" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "*", "/", "%" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "+","-" } },
             new object[]{ OperandType.CHARIN_OPERATOR, new string[]{ "<<",">>" } },
@@ -237,6 +236,7 @@ namespace LP.Parser
         static NumberLiteral createNumberLiteral()
         {
             var Num = new NumberLiteral("Number");
+            Num.AddPrefix("-", NumberOptions.AllowSign);
             Num.AddPrefix("0x", NumberOptions.Hex);
             Num.AddPrefix("0d", NumberOptions.Default);
             Num.AddPrefix("0o", NumberOptions.Octal);
